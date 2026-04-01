@@ -2,7 +2,7 @@ import { Lock } from "lucide-react";
 
 export default function Password() {
   return (
-    <div className="p-8">
+    <div className="">
       {/* Page header */}
       <div className="mb-8">
         <div className="flex items-center gap-3">
