@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import AppLogo from "../AppLogo";
 
 const PERKS = [
   "Free to get started — no credit card required",

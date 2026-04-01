@@ -20,8 +20,7 @@ import { motion } from "framer-motion";
 import AppLogo from "../AppLogo";
 import { useAuth } from "../../contexts/AuthContext";
 import useAnimations from "../../contexts/AnimationContext";
-
-const APP_VERSION = "0.1.0";
+import useVersion from "../../contexts/VersionContext";
 
 const NAV = [
   { id: "password", label: "Password", icon: Lock, to: "/dashboard/password" },
@@ -241,6 +240,7 @@ function NavItem({ item, depth, mode, onRequestExpand }) {
 export default function Sidebar({ mode, onRequestExpand }) {
   const { user } = useAuth();
   const { sidebarVariants } = useAnimations();
+  const { version } = useVersion();
   const initials = (user?.firstName?.[0] ?? "") + (user?.lastName?.[0] ?? "");
   const isIcons = mode === "icons";
 
@@ -319,19 +319,15 @@ export default function Sidebar({ mode, onRequestExpand }) {
 
       {/* Version */}
       <div
-        className={`border-t border-white/15 flex-shrink-0 ${isIcons ? "py-3 flex justify-center" : "px-4 py-3"}`}
+        className={`flex-shrink-0 text-center ${isIcons ? "py-2 flex justify-center" : "px-4 py-1 border-t border-white/15 "}`}
       >
         {isIcons ? (
           <span
             className="text-white/30 text-[9px] font-mono"
-            title={`Version ${APP_VERSION}`}
-          >
-            v
-          </span>
+            title={version}
+          ></span>
         ) : (
-          <span className="text-white/40 text-xs font-mono">
-            v{APP_VERSION}
-          </span>
+          <span className="text-white text-xs font-mono">{version}</span>
         )}
       </div>
     </motion.aside>

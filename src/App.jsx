@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 import { AnimationProvider } from "./contexts/AnimationContext";
+import { VersionProvider } from "./contexts/VersionContext";
 import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/auth/LoginPage";
 import RegisterPage from "./components/auth/RegisterPage";
@@ -70,13 +71,15 @@ function RootFallback() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AnimationProvider>
-        <NotificationProvider>
-          <AuthProvider>
-            <AppRoutes />
-          </AuthProvider>
-        </NotificationProvider>
-      </AnimationProvider>
+      <VersionProvider>
+        <AnimationProvider>
+          <NotificationProvider>
+            <AuthProvider>
+              <AppRoutes />
+            </AuthProvider>
+          </NotificationProvider>
+        </AnimationProvider>
+      </VersionProvider>
     </BrowserRouter>
   );
 }

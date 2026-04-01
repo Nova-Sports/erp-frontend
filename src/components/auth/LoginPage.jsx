@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import AppLogo from "../AppLogo";
 import { useAuth } from "../../contexts/AuthContext";
+import useVersion from "../../contexts/VersionContext";
 
 const MODULE_BULLETS = [
   "HRM",
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
+  const { version } = useVersion();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -207,6 +209,10 @@ export default function LoginPage() {
               >
                 Create account
               </Link>
+            </p>
+
+            <p className="text-center text-xs text-gray-400 mt-4">
+              Current {version}
             </p>
           </div>
         </div>
