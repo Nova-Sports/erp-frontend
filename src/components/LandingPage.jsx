@@ -77,7 +77,7 @@ export default function LandingPage() {
       <header className="bg-brand sticky top-0 z-50 shadow-md shadow-brand/20">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
           <div className="flex items-center">
-            <AppLogo height="h-9" />
+            <AppLogo height="h-16 rounded-lg mt-5" />
           </div>
           <nav className="flex items-center gap-2">
             <Link

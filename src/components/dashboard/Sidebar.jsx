@@ -258,7 +258,7 @@ export default function Sidebar({ mode, onRequestExpand }) {
         {isIcons ? (
           <AppLogo height="h-7" className="mx-auto" />
         ) : (
-          <AppLogo width="w-[90%] rounded-lg" centered />
+          <AppLogo width="w-[85%] rounded-lg" centered />
         )}
       </div>
 
