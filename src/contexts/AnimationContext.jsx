@@ -59,9 +59,7 @@ export const AnimationProvider = ({ children }) => {
   };
 
   return (
-    <AnimationContext.Provider value={animationValues}>
-      {children}
-    </AnimationContext.Provider>
+    <AnimationContext value={animationValues}>{children}</AnimationContext>
   );
 };
 

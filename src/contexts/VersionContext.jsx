@@ -10,11 +10,7 @@ export const VersionProvider = ({ children }) => {
     version,
   };
 
-  return (
-    <VersionContext.Provider value={versionValues}>
-      {children}
-    </VersionContext.Provider>
-  );
+  return <VersionContext value={versionValues}>{children}</VersionContext>;
 };
 
 export default function useVersion() {

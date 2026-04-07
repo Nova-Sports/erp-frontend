@@ -32,9 +32,9 @@ export function NotificationProvider({ children }) {
   }, []);
 
   return (
-    <NotificationContext.Provider value={{ notification, notify, dismiss }}>
+    <NotificationContext value={{ notification, notify, dismiss }}>
       {children}
-    </NotificationContext.Provider>
+    </NotificationContext>
   );
 }
 
