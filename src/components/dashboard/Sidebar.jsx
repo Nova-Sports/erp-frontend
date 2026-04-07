@@ -268,7 +268,6 @@ export default function Sidebar({ mode, onRequestExpand }) {
           <AppLogo width="w-[85%] rounded-lg" centered />
         )}
       </div>
-
       {/* User info */}
       <div
         className={`border-b border-white/15 flex-shrink-0 ${isIcons ? "py-3 flex justify-center" : "px-4 py-3"}`}
@@ -300,7 +299,6 @@ export default function Sidebar({ mode, onRequestExpand }) {
           </div>
         )}
       </div>
-
       {/* Navigation */}
       <nav
         className="flex-1 overflow-y-auto scrollbar-thin py-3 px-2"
@@ -323,7 +321,6 @@ export default function Sidebar({ mode, onRequestExpand }) {
           ))}
         </ul>
       </nav>
-
       {/* Version */}
       <div
         className={`flex-shrink-0 text-center ${isIcons ? "py-2 flex justify-center" : "px-4 py-1 border-t border-white/15 "}`}

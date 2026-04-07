@@ -106,12 +106,10 @@ export async function registerUser({ firstName, lastName, phone, email }) {
 /**
  * Read the currently authenticated user from localStorage.
  * Returns the user object, or null if not logged in.
+ * Synchronous — localStorage.getItem is a sync API.
  */
-export async function getCurrentUser() {
+export function getCurrentUser() {
   try {
-    // mimic async API call delay
-    await new Promise((r) => setTimeout(r, 500));
-
     const raw = localStorage.getItem(STORAGE_USER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {
