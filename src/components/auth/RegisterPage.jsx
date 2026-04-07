@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Eye,
@@ -19,6 +20,20 @@ const PERKS = [
   "Enterprise-grade security",
 ];
 
+// Separate component so useFormStatus can read the pending state of the parent <form>
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg text-sm transition-colors mt-1"
+    >
+      {pending ? "Creating account…" : "Create Account"}
+    </button>
+  );
+}
+
 export default function RegisterPage() {
   const [form, setForm] = useState({
     firstName: "",
@@ -28,46 +43,49 @@ export default function RegisterPage() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    if (error) setError("");
-  };
-
-  const validate = () => {
-    if (!form.firstName.trim()) return "First name is required.";
-    if (!form.lastName.trim()) return "Last name is required.";
-    if (!form.phone.trim()) return "Phone number is required.";
-    if (!form.email.trim()) return "Email address is required.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+  function validate(data) {
+    if (!data.firstName.trim()) return "First name is required.";
+    if (!data.lastName.trim()) return "Last name is required.";
+    if (!data.phone.trim()) return "Phone number is required.";
+    if (!data.email.trim()) return "Email address is required.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email))
       return "Please enter a valid email address.";
-    if (form.password.length < 6)
+    if (data.password.length < 6)
       return "Password must be at least 6 characters.";
     return null;
-  };
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationError = validate();
-    if (validationError) {
-      setError(validationError);
-      return;
+  async function registerAction(_prevState, formData) {
+    const data = {
+      firstName: formData.get("firstName") ?? "",
+      lastName: formData.get("lastName") ?? "",
+      phone: formData.get("phone") ?? "",
+      email: formData.get("email") ?? "",
+      password: formData.get("password") ?? "",
+    };
+
+    const validationError = validate(data);
+    if (validationError) return { error: validationError };
+
+    // Artificial delay to mimic async request
+    await new Promise((r) => setTimeout(r, 500));
+
+    const result = await register(data);
+    if (result.success) {
+      navigate("/dashboard", { replace: true });
+      return { error: null };
     }
-    setLoading(true);
-    setTimeout(() => {
-      const result = register(form);
-      if (result.success) {
-        navigate("/dashboard", { replace: true });
-      } else {
-        setError(result.error || "Registration failed. Please try again.");
-        setLoading(false);
-      }
-    }, 500);
+    return { error: result.error || "Registration failed. Please try again." };
+  }
+
+  const [state, formAction] = useActionState(registerAction, { error: null });
+
+  const handleChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   return (
@@ -126,14 +144,14 @@ export default function RegisterPage() {
               Fill in your details to get started
             </p>
 
-            {error && (
+            {state.error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg p-3 mb-4">
                 <AlertCircle size={15} className="flex-shrink-0" />
-                {error}
+                {state.error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <form action={formAction} className="space-y-4" noValidate>
               {/* First / Last name */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -275,13 +293,7 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg text-sm transition-colors mt-1"
-              >
-                {loading ? "Creating account…" : "Create Account"}
-              </button>
+              <SubmitButton />
             </form>
 
             <p className="text-center text-sm text-gray-500 mt-6">

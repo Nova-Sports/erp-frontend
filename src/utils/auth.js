@@ -53,10 +53,13 @@ const TEST_CREDENTIALS = [
  * Returns { success: true, user } or { success: false, error }.
  * On success, persists user data and auth token to localStorage.
  */
-export function loginUser(email, password) {
+export async function loginUser(email, password) {
   const match = TEST_CREDENTIALS.find(
     (cred) => cred.email === email && cred.password === password,
   );
+
+  // mimic async API call delay
+  await new Promise((r) => setTimeout(r, 500));
 
   if (!match) {
     return { success: false, error: "Invalid email or password." };
@@ -76,7 +79,7 @@ export function loginUser(email, password) {
  * Returns { success: true, user } or { success: false, error }.
  * On success, persists user data and auth token to localStorage.
  */
-export function registerUser({ firstName, lastName, phone, email }) {
+export async function registerUser({ firstName, lastName, phone, email }) {
   const token = "mock_token_" + Date.now();
   const userData = {
     userId: "usr_" + Date.now(),
@@ -91,6 +94,9 @@ export function registerUser({ firstName, lastName, phone, email }) {
     token,
   };
 
+  // mimic async API call delay
+  await new Promise((r) => setTimeout(r, 500));
+
   localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(userData));
   localStorage.setItem(STORAGE_TOKEN_KEY, token);
 
@@ -101,8 +107,11 @@ export function registerUser({ firstName, lastName, phone, email }) {
  * Read the currently authenticated user from localStorage.
  * Returns the user object, or null if not logged in.
  */
-export function getCurrentUser() {
+export async function getCurrentUser() {
   try {
+    // mimic async API call delay
+    await new Promise((r) => setTimeout(r, 500));
+
     const raw = localStorage.getItem(STORAGE_USER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch {

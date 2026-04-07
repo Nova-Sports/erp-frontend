@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
 import AppLogo from "../AppLogo";
@@ -14,43 +15,55 @@ const MODULE_BULLETS = [
   "Purchasing",
 ];
 
+// Separate component so useFormStatus can read the pending state of the parent <form>
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg text-sm transition-colors mt-1"
+    >
+      {pending ? "Signing in…" : "Sign In"}
+    </button>
+  );
+}
+
 export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const { version } = useVersion();
   const navigate = useNavigate();
 
+  async function loginAction(_prevState, formData) {
+    const email = formData.get("email")?.trim().toLowerCase() ?? "";
+    const password = formData.get("password") ?? "";
+
+    if (!email || !password) {
+      return { error: "Please fill in all fields." };
+    }
+
+    // Artificial delay to mimic async request
+    await new Promise((r) => setTimeout(r, 500));
+
+    const result = await login(email, password);
+    if (result.success) {
+      navigate("/dashboard", { replace: true });
+      return { error: null };
+    }
+    return { error: result.error };
+  }
+
+  const [state, formAction] = useActionState(loginAction, { error: null });
+
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    if (error) setError("");
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.email.trim() || !form.password) {
-      setError("Please fill in all fields.");
-      return;
-    }
-    setLoading(true);
-    // Slight artificial delay to mimic async request
-    setTimeout(() => {
-      const result = login(form.email.trim().toLowerCase(), form.password);
-      if (result.success) {
-        navigate("/dashboard", { replace: true });
-      } else {
-        setError(result.error);
-        setLoading(false);
-      }
-    }, 500);
   };
 
   const fillTestCredentials = () => {
     setForm({ email: "admin@sportswear.erp", password: "Admin@123" });
-    setError("");
   };
 
   return (
@@ -111,14 +124,14 @@ export default function LoginPage() {
               Enter your credentials to access your account
             </p>
 
-            {error && (
+            {state.error && (
               <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg p-3 mb-4">
                 <AlertCircle size={15} className="flex-shrink-0" />
-                {error}
+                {state.error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <form action={formAction} className="space-y-4" noValidate>
               {/* Email */}
               <div>
                 <label
@@ -182,13 +195,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-brand hover:bg-brand-hover disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg text-sm transition-colors mt-1"
-              >
-                {loading ? "Signing in…" : "Sign In"}
-              </button>
+              <SubmitButton />
             </form>
 
             <div className="text-center mt-3">

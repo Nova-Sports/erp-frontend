@@ -12,14 +12,14 @@ export function AuthProvider({ children }) {
   // Initialise from localStorage so sessions survive page reloads
   const [user, setUser] = useState(() => getCurrentUser());
 
-  const login = (email, password) => {
-    const result = loginUser(email, password);
+  const login = async (email, password) => {
+    const result = await loginUser(email, password);
     if (result.success) setUser(result.user);
     return result;
   };
 
-  const register = (data) => {
-    const result = registerUser(data);
+  const register = async (data) => {
+    const result = await registerUser(data);
     if (result.success) setUser(result.user);
     return result;
   };
