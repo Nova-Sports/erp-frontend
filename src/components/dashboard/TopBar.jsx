@@ -27,7 +27,7 @@ const TYPE_STYLES = {
   },
   info: {
     icon: Info,
-    classes: "bg-accent/10 text-accent border border-accent/25",
+    classes: "bg-info/10 text-info border border-info/25",
   },
 };
 

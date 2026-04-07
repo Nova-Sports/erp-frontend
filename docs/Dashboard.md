@@ -143,7 +143,7 @@ const TYPE_STYLES = {
   success: { icon: CheckCircle, classes: "bg-success/10 text-success ..." },
   error: { icon: AlertCircle, classes: "bg-danger/10 text-danger ..." },
   warning: { icon: AlertTriangle, classes: "bg-warning/10 text-warning ..." },
-  info: { icon: Info, classes: "bg-accent/10 text-accent ..." },
+  info: { icon: Info, classes: "bg-info/10 text-info ..." },
 };
 ```
 

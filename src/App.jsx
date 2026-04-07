@@ -7,8 +7,9 @@ import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/auth/LoginPage";
 import RegisterPage from "./components/auth/RegisterPage";
 import Dashboard from "./components/dashboard/Dashboard";
-import Password from "./components/modules/Password";
+import Password from "./Pages/password-manager/Password";
 import NotFound from "./components/NotFound";
+import CustomComponents from "./Pages/password-manager/custom-components/CustomComponents";
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -50,6 +51,14 @@ function AppRoutes() {
       >
         <Route index element={<Navigate to="password" replace />} />
         <Route path="password" element={<Password />} />
+
+        {/* =========== Sales Routes =============== */}
+        {/* =========== Manufacturing Routes =============== */}
+        {/* =========== Miscellaneous Routes =============== */}
+
+        {/* =========== Components Routes =============== */}
+        <Route path="components" element={<CustomComponents />} />
+
         {/* Catch-all inside dashboard — stays in shell, shows 404 */}
         <Route path="*" element={<NotFound />} />
       </Route>

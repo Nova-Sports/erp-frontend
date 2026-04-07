@@ -132,7 +132,7 @@ function SaveButton() {
 | `success` | `success` (green) | `CheckCircle`   |
 | `error`   | `danger` (red)    | `AlertCircle`   |
 | `warning` | `warning` (amber) | `AlertTriangle` |
-| `info`    | `accent` (cyan)   | `Info`          |
+| `info`    | `info` (cyan)     | `Info`          |
 
 ---
 

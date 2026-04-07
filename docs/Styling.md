@@ -16,7 +16,7 @@ Each token has sub-keys: `DEFAULT`, `hover`, `light`, and `foreground`.
 | ----------- | --------- | --------- | --------- | ---------- | ---------------------------------------------- |
 | `primary`   | `#5b6af8` | `#4a59f0` | `#eef0ff` | `#ffffff`  | Brand purple — sidebar, active states, buttons |
 | `secondary` | `#64748b` | `#475569` | `#f1f5f9` | `#ffffff`  | Muted grey — secondary text, borders           |
-| `accent`    | `#06b6d4` | `#0891b2` | `#ecfeff` | `#ffffff`  | Cyan — info notifications, highlights          |
+| `info`      | `#06b6d4` | `#0891b2` | `#ecfeff` | `#ffffff`  | Cyan — info notifications, highlights          |
 | `success`   | `#10b981` | `#059669` | `#d1fae5` | `#ffffff`  | Green — success states                         |
 | `warning`   | `#f59e0b` | `#d97706` | `#fef3c7` | `#ffffff`  | Amber — warnings                               |
 | `danger`    | `#ef4444` | `#dc2626` | `#fee2e2` | `#ffffff`  | Red — errors, destructive actions              |

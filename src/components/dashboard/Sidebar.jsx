@@ -98,6 +98,13 @@ const NAV = [
     icon: MoreHorizontal,
     to: "/dashboard/miscellaneous",
   },
+  // Custom Components Page
+  {
+    id: "components",
+    label: "Components",
+    icon: MoreHorizontal,
+    to: "/dashboard/components",
+  },
 ];
 
 function hasActiveDescendant(item, pathname) {

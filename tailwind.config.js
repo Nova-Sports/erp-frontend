@@ -18,7 +18,7 @@ export default {
           light: "#f1f5f9",
           foreground: "#ffffff",
         },
-        accent: {
+        info: {
           DEFAULT: "#06b6d4",
           hover: "#0891b2",
           light: "#ecfeff",

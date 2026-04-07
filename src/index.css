@@ -7,6 +7,7 @@
     font-family: "Nunito", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: #374151; /* gray-700 — soft dark, not harsh black */
   }
   * {
     box-sizing: border-box;
@@ -28,4 +29,10 @@
     background: rgba(255, 255, 255, 0.4);
     border-radius: 2px;
   }
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
