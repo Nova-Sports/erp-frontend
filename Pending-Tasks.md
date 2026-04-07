@@ -24,12 +24,12 @@
     - single-select
     - with search
 
-  - buttons variants
-    - success
-    - danger
-    - info
-    - warning
-    - secondary
+  - ✅ buttons variants
+    - ✅ success
+    - ✅ danger
+    - ✅ info
+    - ✅ warning
+    - ✅ secondary
     - light
     - dark
 

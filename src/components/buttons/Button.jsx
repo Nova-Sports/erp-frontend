@@ -1,11 +1,11 @@
 // default className
 const baseClasses =
-  "disabled:opacity-60 shadow-md shadow-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors";
+  "disabled:opacity-60 shadow-md shadow-gray-400/60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors";
 
 // Sizes
 const sizeClasses = {
   sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2.5 text-sm",
+  md: "px-4 py-2 text-sm",
   lg: "px-5 py-3 text-base",
 };
 
@@ -18,6 +18,8 @@ const variantClasses = {
   success: "bg-success hover:bg-success-hover text-success-foreground",
   warning: "bg-warning hover:bg-warning-hover text-warning-foreground",
   danger: "bg-danger hover:bg-danger-hover text-danger-foreground",
+  light: "bg-white hover:bg-gray-100 text-gray-800",
+  dark: "bg-gray-800 hover:bg-gray-900 text-white",
 };
 
 export default function Button({
