@@ -59,7 +59,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col w-[440px] xl:w-[480px] flex-shrink-0 bg-brand p-10 justify-between">
         <div>
           <Link to="/" className="flex items-center mb-14">
-            <AppLogo height="h-10" />
+            <AppLogo width={"mx-auto"} />
           </Link>
           <h2 className="text-white text-3xl font-bold leading-tight mb-4">
             Welcome back to
