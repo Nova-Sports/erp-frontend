@@ -32,7 +32,42 @@
 }
 
 .flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @apply flex items-center justify-center;
 }
+
+.hide-input-arrow {
+  -moz-appearance: textfield;
+}
+
+/* ----------------------------
+        Start Form Controls 
+-------------------------------- */
+.form-control {
+  @apply border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary;
+}
+
+.form-control-sm {
+  @apply text-sm py-1 px-3;
+}
+.form-control-lg {
+  @apply text-lg py-3 px-4;
+}
+
+/* Form type = File,select */
+input[type="file"],
+select {
+  @apply bg-white;
+}
+select {
+  @apply cursor-pointer;
+}
+
+select {
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  -moz-appearance: none; /* Firefox */
+  appearance: none; /* Standard */
+}
+
+/* ----------------------------
+        End Form Controls 
+-------------------------------- */

@@ -32,6 +32,7 @@ export default function Button({
   onClick = () => {},
   beforeTitle = () => {},
   afterTitle = () => {},
+  disabled = false,
 }) {
   /* ******************** All States ************************* */
 
@@ -45,6 +46,7 @@ export default function Button({
         type={type}
         className={`${customClasses ? customClasses : baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${appendClasses}`}
         onClick={onClick}
+        disabled={disabled}
       >
         {beforeTitle()}
         {title}

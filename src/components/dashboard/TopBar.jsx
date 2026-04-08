@@ -21,6 +21,10 @@ const TYPE_STYLES = {
     icon: AlertCircle,
     classes: "bg-danger/10 text-danger border border-danger/25",
   },
+  danger: {
+    icon: AlertCircle,
+    classes: "bg-danger/10 text-danger border border-danger/25",
+  },
   warning: {
     icon: AlertTriangle,
     classes: "bg-warning/10 text-warning border border-warning/25",

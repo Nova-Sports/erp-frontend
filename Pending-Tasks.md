@@ -30,8 +30,8 @@
     - ✅ info
     - ✅ warning
     - ✅ secondary
-    - light
-    - dark
+    - ✅ light
+    - ✅ dark
 
   - Inputs
     - text
