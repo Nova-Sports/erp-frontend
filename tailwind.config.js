@@ -6,6 +6,12 @@ export default {
       colors: {
         // ── Semantic design tokens ────────────────────────────────────────────
         // Use these in new components for consistency.
+        // primary: {
+        //   DEFAULT: "#ff8c42",
+        //   hover: "#ff7a1f",
+        //   light: "#ffe8d6",
+        //   foreground: "#ffffff",
+        // },
         primary: {
           DEFAULT: "#5b6af8",
           hover: "#4a59f0",

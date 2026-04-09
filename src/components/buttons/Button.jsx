@@ -20,6 +20,7 @@ const variantClasses = {
   danger: "bg-danger hover:bg-danger-hover text-danger-foreground",
   light: "bg-white hover:bg-gray-100 text-gray-800",
   dark: "bg-gray-800 hover:bg-gray-900 text-white",
+  none: "",
 };
 
 export default function Button({
@@ -43,14 +44,20 @@ export default function Button({
   return (
     <div>
       <button
-        type={type}
+        type={type === "icon" ? "button" : type}
         className={`${customClasses ? customClasses : baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${appendClasses}`}
         onClick={onClick}
         disabled={disabled}
       >
-        {beforeTitle()}
-        {title}
-        {afterTitle()}
+        {type === "icon" ? (
+          title()
+        ) : (
+          <>
+            {beforeTitle()}
+            {title}
+            {afterTitle()}
+          </>
+        )}
       </button>
     </div>
   );

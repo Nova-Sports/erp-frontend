@@ -24,6 +24,10 @@
     - single-select
     - with search
 
+  - Accordion
+    - with icons
+    - without icons
+
   - ✅ buttons variants
     - ✅ success
     - ✅ danger
@@ -33,14 +37,14 @@
     - ✅ light
     - ✅ dark
 
-  - Inputs
-    - text
-    - password
-    - email
-    - number
-    - date
-    - select
-    - textarea
+  - ✅ Inputs
+    - ✅ text
+    - ✅ password
+    - ✅ email
+    - ✅ number
+    - ✅ date
+    - ✅ select
+    - ✅ textarea
 
   - Modals with position options
     - center

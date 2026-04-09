@@ -13,6 +13,14 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 
 const TYPE_STYLES = {
+  primary: {
+    icon: CheckCircle,
+    classes: "bg-primary/10 text-primary border border-primary/25",
+  },
+  secondary: {
+    icon: CheckCircle,
+    classes: "bg-secondary/10 text-secondary border border-secondary/25",
+  },
   success: {
     icon: CheckCircle,
     classes: "bg-success/10 text-success border border-success/25",
