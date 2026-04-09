@@ -31,6 +31,7 @@ export const Modal = ({ children, open, onHide, customClass, appendClass }) => {
   };
 
   const closeModal = () => {
+    if (onHide) onHide();
     setIsOpen(false);
     setContent(null);
   };
@@ -49,10 +50,11 @@ export const Modal = ({ children, open, onHide, customClass, appendClass }) => {
       closeModal();
     }
 
+    if (!open) return;
+
     // ESC key listener for closing modal only when it's open
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        console.log("ran close");
         closeModal();
       }
     };
