@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { useNotification } from "@/contexts/NotificationContext";
 import FormInput from "@/components/form-input/FormInput";
 import { Accordion } from "@/components/Accordion/Accordion";
-import { Modal } from "@/components/Modal/Modal";
-import { Dropdown } from "@/components/Dropdown/Dropdown";
+import { Modal } from "@/components/modal/Modal";
+import { Dropdown } from "@/components/dropdown/Dropdown";
+import Table from "@/components/table/Table";
 
 /*=======================================
     API Search Demo
@@ -461,7 +462,6 @@ const RenderModals = () => {
                 size={size}
                 open={open}
                 onHide={() => setOpen(false)}
-                appendClass="w-full"
               >
                 <Modal.Header>{label} Modal</Modal.Header>
                 <Modal.Body>
@@ -643,6 +643,22 @@ const RenderAccordion = () => {
   );
 };
 
+const RenderTable = () => {
+  const headers = [
+    { id: "name", label: "Name", render: (row) => row.name },
+    { id: "age", label: "Age", render: (row) => row.age },
+    { id: "email", label: "Email", render: (row) => row.email },
+  ];
+
+  const data = [
+    { name: "Alice", age: 30, email: "alice@example.com" },
+    { name: "Bob", age: 25, email: "bob@example.com" },
+    { name: "Charlie", age: 35, email: "charlie@example.com" },
+  ];
+
+  return <Table headers={headers} data={data} />;
+};
+
 export default function CustomComponents() {
   /* ******************** All States ************************* */
 
@@ -668,6 +684,10 @@ export default function CustomComponents() {
     {
       name: "Inputs",
       render: <RenderInputs />,
+    },
+    {
+      name: "Table",
+      render: <RenderTable />,
     },
 
     // Future components can be added here
