@@ -5,13 +5,8 @@
   - Pagination logic component
   - Search logic component
 
-- Api Success Reject Handler
-  - Work with status codes
-
-- Custom Form component
-  - Validation logic
-  - Error handling
-  - Success handling
+- ✅ Api Success Reject Handler
+  - ✅ Work with status codes
 
 - Lock Functionality
   - Add Lock button in settings
@@ -24,9 +19,7 @@
     - single-select
     - with search
 
-  - Accordion
-    - with icons
-    - without icons
+  - ✅ Accordion
 
   - ✅ buttons variants
     - ✅ success
@@ -47,6 +40,6 @@
     - ✅ textarea
 
   - Modals with position options
-    - center
-    - right to left
-    - bottom to top
+    - ✅ center
+    - ✅ right to left
+    - ✅ bottom to top

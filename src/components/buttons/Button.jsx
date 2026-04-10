@@ -1,6 +1,6 @@
 // default className
 const baseClasses =
-  "disabled:opacity-60 shadow-md shadow-gray-400/60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors";
+  "disabled:opacity-60 shadow-sm shadow-gray-400/60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors";
 
 // Sizes
 const sizeClasses = {

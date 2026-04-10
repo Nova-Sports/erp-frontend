@@ -103,36 +103,210 @@ const RenderInputs = () => {
 };
 
 const RenderModals = () => {
-  const [openCenterModal, setOpenCenterModal] = useState(false);
-  return (
-    <div>
-      <Button
-        title="Open Center Modal"
-        variant="primary"
-        onClick={() => setOpenCenterModal(true)}
-      />
+  const [openCenterSm, setOpenCenterSm] = useState(false);
+  const [openCenterMd, setOpenCenterMd] = useState(false);
+  const [openCenterLg, setOpenCenterLg] = useState(false);
+  const [openCenterXl, setOpenCenterXl] = useState(false);
+  const [openRight, setOpenRight] = useState(false);
+  const [openBottom, setOpenBottom] = useState(false);
+  const [openBottomLeft, setOpenBottomLeft] = useState(false);
+  const [openBottomRight, setOpenBottomRight] = useState(false);
+  const [openBottomFull, setOpenBottomFull] = useState(false);
 
-      <Modal
-        position="right"
-        size="md"
-        open={openCenterModal}
-        onHide={() => {
-          setOpenCenterModal(false);
-        }}
-        appendClass={"h-full"}
-      >
-        <Modal.Header>Center Modal</Modal.Header>
-        <Modal.Body appendClass={"h-full"}>
-          This is dpress ESC to close.
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            title="Close"
-            variant="secondary"
-            onClick={() => setOpenCenterModal(false)}
-          />
-        </Modal.Footer>
-      </Modal>
+  const centerModals = [
+    {
+      label: "Center SM",
+      position: "center",
+      size: "sm",
+      open: openCenterSm,
+      setOpen: setOpenCenterSm,
+    },
+    {
+      label: "Center MD",
+      position: "center",
+      size: "md",
+      open: openCenterMd,
+      setOpen: setOpenCenterMd,
+    },
+    {
+      label: "Center LG",
+      position: "center",
+      size: "lg",
+      open: openCenterLg,
+      setOpen: setOpenCenterLg,
+    },
+    {
+      label: "Center XL",
+      position: "center",
+      size: "xl",
+      open: openCenterXl,
+      setOpen: setOpenCenterXl,
+    },
+  ];
+
+  const rightModals = [
+    {
+      label: "Right",
+      position: "right",
+      open: openRight,
+      setOpen: setOpenRight,
+    },
+  ];
+
+  const bottomModals = [
+    {
+      label: "Bottom",
+      position: "bottom",
+      open: openBottom,
+      setOpen: setOpenBottom,
+    },
+    {
+      label: "Bottom-Left",
+      position: "bottom-left",
+      open: openBottomLeft,
+      setOpen: setOpenBottomLeft,
+    },
+    {
+      label: "Bottom-Right",
+      position: "bottom-right",
+      open: openBottomRight,
+      setOpen: setOpenBottomRight,
+    },
+
+    {
+      label: "Bottom-Full",
+      position: "bottom",
+      size: "full",
+      open: openBottomFull,
+      setOpen: setOpenBottomFull,
+    },
+  ];
+
+  return (
+    <div className="mt-4 space-y-4">
+      {/* Center Variants */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Center Variants
+        </p>
+        <div className="flex flex-wrap gap-3">
+          {centerModals.map(({ label, position, size, open, setOpen }) => (
+            <div key={label}>
+              <Button
+                title={label}
+                variant="primary"
+                size="sm"
+                onClick={() => setOpen(true)}
+              />
+              <Modal
+                position={position}
+                size={size}
+                open={open}
+                onHide={() => setOpen(false)}
+              >
+                <Modal.Header>{label} Modal</Modal.Header>
+                <Modal.Body>
+                  Position: <strong>{position}</strong> &middot; Size:{" "}
+                  <strong>{size}</strong>
+                  <br />
+                  Click outside or press ESC to close.
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    title="Close"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setOpen(false)}
+                  />
+                </Modal.Footer>
+              </Modal>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right Variants (h-full) */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Right Variants (h-full)
+        </p>
+        <div className="flex flex-wrap gap-3">
+          {rightModals.map(({ label, position, open, setOpen }) => (
+            <div key={label}>
+              <Button
+                title={label}
+                variant="info"
+                size="sm"
+                onClick={() => setOpen(true)}
+              />
+              <Modal
+                position={position}
+                open={open}
+                onHide={() => setOpen(false)}
+                appendClass="h-full"
+              >
+                <Modal.Header>{label} Modal</Modal.Header>
+                <Modal.Body>
+                  Position: <strong>{position}</strong>
+                  <br />
+                  This panel is full-height. Click outside or press ESC to
+                  close.
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    title="Close"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setOpen(false)}
+                  />
+                </Modal.Footer>
+              </Modal>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom Variants (slides up) */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Bottom Variants (slides up)
+        </p>
+        <div className="flex flex-wrap gap-3">
+          {bottomModals.map(({ label, position, size, open, setOpen }) => (
+            <div key={label}>
+              <Button
+                title={label}
+                variant="warning"
+                size="sm"
+                onClick={() => setOpen(true)}
+              />
+              <Modal
+                position={position}
+                size={size}
+                open={open}
+                onHide={() => setOpen(false)}
+                appendClass="w-full"
+              >
+                <Modal.Header>{label} Modal</Modal.Header>
+                <Modal.Body>
+                  Position: <strong>{position}</strong>
+                  <br />
+                  Slides up from the bottom. Click outside or press ESC to
+                  close.
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    title="Close"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => setOpen(false)}
+                  />
+                </Modal.Footer>
+              </Modal>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

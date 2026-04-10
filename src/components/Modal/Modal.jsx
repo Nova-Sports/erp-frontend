@@ -70,6 +70,7 @@ const MODAL_SIZE = {
   md: "w-[600px] max-w-full",
   lg: "w-[900px] max-w-full",
   xl: "w-[1200px] max-w-full",
+  full: "w-full",
 };
 
 /*=======================================
@@ -145,13 +146,13 @@ export const Modal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={backdropClass}
+          className={`${backdropClass} ${marginLeft}`}
           onClick={closeModal}
         >
           <ModalContext value={contextValue}>
             <motion.div
               {...contentAnimation}
-              className={`${marginLeft} ${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${appendClass || ""}`}
+              className={`${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${appendClass || ""}`}
               onClick={(e) => e.stopPropagation()}
             >
               {children}
