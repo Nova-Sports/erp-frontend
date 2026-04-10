@@ -5,6 +5,70 @@ import { useNotification } from "@/contexts/NotificationContext";
 import FormInput from "@/components/form-input/FormInput";
 import { Accordion } from "@/components/Accordion/Accordion";
 import { Modal } from "@/components/Modal/Modal";
+import { Dropdown } from "@/components/Dropdown/Dropdown";
+
+/*=======================================
+    API Search Demo
+    Uses JSONPlaceholder /users?q= as a fake API
+========================================= */
+const ApiSearchDemo = () => {
+  const [selected, setSelected] = useState("");
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async (term) => {
+    if (!term) {
+      setResults([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`https://jsonplaceholder.typicode.com/users`);
+      const data = await res.json();
+      // Client filter to simulate server search (real API would filter server-side)
+      const filtered = data.filter((u) =>
+        u.name.toLowerCase().includes(term.toLowerCase()),
+      );
+      setResults(filtered);
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-sm">
+      <Dropdown
+        value={selected}
+        onChange={setSelected}
+        onSearch={handleSearch}
+        loading={loading}
+        debounce={400}
+        placeholder="Search users..."
+      >
+        <Dropdown.Trigger />
+        <Dropdown.Menu>
+          {results.length > 0
+            ? results.map((user) => (
+                <Dropdown.Item key={user.id} value={user.name}>
+                  <div>
+                    <p className="font-medium">{user.name}</p>
+                    <p className="text-xs text-gray-400">{user.email}</p>
+                  </div>
+                </Dropdown.Item>
+              ))
+            : !loading && (
+                <Dropdown.Empty>Type to search users...</Dropdown.Empty>
+              )}
+        </Dropdown.Menu>
+      </Dropdown>
+      <p className="text-xs text-gray-400 mt-1">
+        Selected: {selected || "none"}
+      </p>
+    </div>
+  );
+};
 
 const RenderButtons = () => {
   const { notify, dismiss } = useNotification();
@@ -66,35 +130,112 @@ const RenderButtons = () => {
 };
 
 const RenderInputs = () => {
+  const [inputs, setInputs] = useState({
+    text1: "",
+    text2: "",
+    email1: "",
+    email2: "",
+    password1: "",
+    password2: "",
+    number: "",
+    date: "",
+    file: null,
+    textarea: "",
+    select: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setInputs((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
+
   return (
     <div className="flex flex-col gap-4 mt-4">
-      <input type="text" placeholder="Enter text" className="form-control" />
       <input
         type="text"
+        name="text1"
+        value={inputs.text1}
+        onChange={handleChange}
+        placeholder="Enter text"
+        className="form-control"
+      />
+      <input
+        type="text"
+        name="text2"
+        value={inputs.text2}
+        onChange={handleChange}
         placeholder="Enter text"
         className="form-control form-control-sm"
       />
-      <FormInput type="email" />
-      <FormInput type="password" />
+      <FormInput
+        type="email"
+        value={inputs.email1}
+        onChange={(e) =>
+          setInputs((prev) => ({ ...prev, email1: e.target.value }))
+        }
+      />
+      <FormInput
+        type="password"
+        value={inputs.password1}
+        onChange={(e) =>
+          setInputs((prev) => ({ ...prev, password1: e.target.value }))
+        }
+      />
       <input
         type="number"
+        name="number"
+        value={inputs.number}
+        onChange={handleChange}
         placeholder="Enter number"
         className="form-control"
       />
-      <input type="email" placeholder="Enter email" className="form-control" />
+      <input
+        type="email"
+        name="email2"
+        value={inputs.email2}
+        onChange={handleChange}
+        placeholder="Enter email"
+        className="form-control"
+      />
       <input
         type="password"
+        name="password2"
+        value={inputs.password2}
+        onChange={handleChange}
         placeholder="Enter password"
         className="form-control"
       />
-      <input type="date" placeholder="Select date" className="form-control" />
-      <input type="file" className="form-control" />
+      <input
+        type="date"
+        name="date"
+        value={inputs.date}
+        onChange={handleChange}
+        placeholder="Select date"
+        className="form-control"
+      />
+      <input
+        type="file"
+        name="file"
+        onChange={handleChange}
+        className="form-control"
+      />
       <textarea
+        name="textarea"
+        value={inputs.textarea}
+        onChange={handleChange}
         className="form-control"
         rows={4}
         placeholder="Enter text here..."
       />
-      <select className="form-control">
+      <select
+        name="select"
+        value={inputs.select}
+        onChange={handleChange}
+        className="form-control"
+      >
         <option value="">Select an option</option>
         <option value="option1">Option 1</option>
       </select>
@@ -311,6 +452,148 @@ const RenderModals = () => {
   );
 };
 
+const FRUITS = [
+  "Apple",
+  "Banana",
+  "Cherry",
+  "Date",
+  "Elderberry",
+  "Fig",
+  "Grape",
+  "Honeydew",
+  "Kiwi",
+  "Lemon",
+  "Mango",
+  "Orange",
+];
+
+const RenderDropdowns = () => {
+  const [single, setSingle] = useState("");
+  const [multi, setMulti] = useState([]);
+  const [searchSingle, setSearchSingle] = useState("");
+  const [searchMulti, setSearchMulti] = useState([]);
+
+  return (
+    <div className="mt-4 space-y-6">
+      {/* Single Select */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Single Select
+        </p>
+        <div className="max-w-xs">
+          <Dropdown
+            value={single}
+            onChange={setSingle}
+            placeholder="Pick a fruit"
+          >
+            <Dropdown.Trigger />
+            <Dropdown.Menu>
+              {FRUITS.map((f) => (
+                <Dropdown.Item key={f} value={f}>
+                  {f}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <p className="text-xs text-gray-400 mt-1">
+            Selected: {single || "none"}
+          </p>
+        </div>
+      </div>
+
+      {/* Multi Select */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Multi Select
+        </p>
+        <div className="max-w-sm">
+          <Dropdown
+            value={multi}
+            onChange={setMulti}
+            mode="multi"
+            placeholder="Pick fruits"
+          >
+            <Dropdown.Trigger />
+            <Dropdown.Menu>
+              {FRUITS.map((f) => (
+                <Dropdown.Item key={f} value={f}>
+                  {f}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <p className="text-xs text-gray-400 mt-1">
+            Selected: {multi.length ? multi.join(", ") : "none"}
+          </p>
+        </div>
+      </div>
+
+      {/* Single Select with Search */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Single Select + Search
+        </p>
+        <div className="max-w-xs">
+          <Dropdown
+            value={searchSingle}
+            onChange={setSearchSingle}
+            searchable
+            placeholder="Search fruits..."
+          >
+            <Dropdown.Trigger />
+            <Dropdown.Menu>
+              {FRUITS.map((f) => (
+                <Dropdown.Item key={f} value={f}>
+                  {f}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <p className="text-xs text-gray-400 mt-1">
+            Selected: {searchSingle || "none"}
+          </p>
+        </div>
+      </div>
+
+      {/* Multi Select with Search */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          Multi Select + Search
+        </p>
+        <div className="max-w-sm">
+          <Dropdown
+            value={searchMulti}
+            onChange={setSearchMulti}
+            mode="multi"
+            searchable
+            placeholder="Search & pick fruits..."
+          >
+            <Dropdown.Trigger />
+            <Dropdown.Menu>
+              {FRUITS.map((f) => (
+                <Dropdown.Item key={f} value={f}>
+                  {f}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+          <p className="text-xs text-gray-400 mt-1">
+            Selected: {searchMulti.length ? searchMulti.join(", ") : "none"}
+          </p>
+        </div>
+      </div>
+
+      {/* API Search (simulated) */}
+      <div>
+        <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-2">
+          API Search (simulated with JSONPlaceholder)
+        </p>
+        <ApiSearchDemo />
+      </div>
+    </div>
+  );
+};
+
 const RenderAccordion = () => {
   return (
     <div>
@@ -338,6 +621,10 @@ export default function CustomComponents() {
     {
       name: "Modals",
       render: <RenderModals />,
+    },
+    {
+      name: "Dropdowns",
+      render: <RenderDropdowns />,
     },
     {
       name: "Accordion",
