@@ -17,10 +17,10 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import AppLogo from "../AppLogo";
-import { useAuth } from "../../contexts/AuthContext";
-import useAnimations from "../../contexts/AnimationContext";
-import useVersion from "../../contexts/VersionContext";
+import AppLogo from "../../AppLogo";
+import { useAuth } from "../../../contexts/AuthContext";
+import useAnimations from "../../../contexts/AnimationContext";
+import useVersion from "../../../contexts/VersionContext";
 
 const NAV = [
   { id: "password", label: "Password", icon: Lock, to: "/dashboard/password" },

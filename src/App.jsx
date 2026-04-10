@@ -10,6 +10,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import Password from "./Pages/password-manager/Password";
 import NotFound from "./components/NotFound";
 import CustomComponents from "./Pages/password-manager/custom-components/CustomComponents";
+import { SidebarProvider } from "./components/dashboard/sidebar/SidebarContext";
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -83,9 +84,11 @@ export default function App() {
       <VersionProvider>
         <AnimationProvider>
           <NotificationProvider>
-            <AuthProvider>
-              <AppRoutes />
-            </AuthProvider>
+            <SidebarProvider>
+              <AuthProvider>
+                <AppRoutes />
+              </AuthProvider>
+            </SidebarProvider>
           </NotificationProvider>
         </AnimationProvider>
       </VersionProvider>

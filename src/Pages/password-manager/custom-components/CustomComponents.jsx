@@ -103,17 +103,35 @@ const RenderInputs = () => {
 };
 
 const RenderModals = () => {
-  const [openCenterModal, setOpenCenterModal] = useState(true);
+  const [openCenterModal, setOpenCenterModal] = useState(false);
   return (
     <div>
+      <Button
+        title="Open Center Modal"
+        variant="primary"
+        onClick={() => setOpenCenterModal(true)}
+      />
+
       <Modal
+        position="right"
+        size="md"
         open={openCenterModal}
         onHide={() => {
           setOpenCenterModal(false);
         }}
+        appendClass={"h-full"}
       >
-        {" "}
-        child
+        <Modal.Header>Center Modal</Modal.Header>
+        <Modal.Body appendClass={"h-full"}>
+          This is dpress ESC to close.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            title="Close"
+            variant="secondary"
+            onClick={() => setOpenCenterModal(false)}
+          />
+        </Modal.Footer>
       </Modal>
     </div>
   );

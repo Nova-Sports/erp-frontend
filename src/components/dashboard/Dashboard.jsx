@@ -1,35 +1,16 @@
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebar/Sidebar";
 import TopBar from "./TopBar";
-
-const LG = 1024;
-const isMobile = () => window.innerWidth < LG;
+import { useSidebarContext } from "./sidebar/SidebarContext";
 
 export default function Dashboard() {
-  // 3 modes: 'expanded' | 'icons' | 'closed'
-  // Desktop toggles: expanded ↔ icons
-  // Mobile  toggles: expanded ↔ closed
-  const [mode, setMode] = useState(() => (isMobile() ? "closed" : "expanded"));
+  /* ========================= All States ========================= */
+  const { mode, setMode, toggle } = useSidebarContext();
 
-  // On resize: if user shrinks to mobile while in icon mode, collapse
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth < LG) {
-        setMode((m) => (m === "icons" ? "closed" : m));
-      }
-    };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
+  /*  ========================= All Functions ========================= */
 
-  const toggle = () => {
-    const mobile = isMobile();
-    setMode((m) => {
-      if (mobile) return m === "closed" ? "expanded" : "closed";
-      return m === "expanded" ? "icons" : "expanded";
-    });
-  };
+  /* ========================= All UseEffects ========================= */
 
   return (
     <div className="flex h-screen bg-page overflow-hidden">
