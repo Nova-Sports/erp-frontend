@@ -254,6 +254,8 @@ const RenderModals = () => {
   const [openBottomRight, setOpenBottomRight] = useState(false);
   const [openBottomFull, setOpenBottomFull] = useState(false);
 
+  const [openNestedModal, setOpenNestedModal] = useState(false);
+
   const centerModals = [
     {
       label: "Center SM",
@@ -347,6 +349,39 @@ const RenderModals = () => {
               >
                 <Modal.Header>{label} Modal</Modal.Header>
                 <Modal.Body>
+                  <Button
+                    title="Open Nested Modal"
+                    variant="info"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenNestedModal(true);
+                    }}
+                  />
+                  {/* Open Center modal inside modal */}
+                  <Modal
+                    position="center"
+                    size="sm"
+                    open={openNestedModal}
+                    onHide={() => setOpenNestedModal(false)}
+                  >
+                    <Modal.Header>Nested Modal</Modal.Header>
+                    <Modal.Body>
+                      This is a nested modal inside the {label} modal. It should
+                      work without issues!
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button
+                        title="Close"
+                        variant="secondary"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenNestedModal(false);
+                        }}
+                      />
+                    </Modal.Footer>
+                  </Modal>
                   Position: <strong>{position}</strong> &middot; Size:{" "}
                   <strong>{size}</strong>
                   <br />

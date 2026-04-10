@@ -14,10 +14,10 @@
   - Unlock the screen when the user interacts with it
 
 - Custom Re-useable components
-  - Dropdown
-    - multi-select
-    - single-select
-    - with search
+  - ✅ Dropdown
+    - ✅ multi-select
+    - ✅ single-select
+    - ✅ with search
 
   - ✅ Accordion
 
