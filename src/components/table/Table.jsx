@@ -19,7 +19,7 @@ export default function Table({
     sortDirection: "asc",
   });
 
-  const [tableData, setTableData] = useState(headers || []);
+  const [tableData, setTableData] = useState([]);
   const [tableColumnsList, setTableColumnsList] = useState([]);
 
   /*  ========================= All Functions ========================= */
