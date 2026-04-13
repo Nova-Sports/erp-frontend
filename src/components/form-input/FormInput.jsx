@@ -17,6 +17,9 @@ export default function FormInput({
   min = undefined,
   max = undefined,
   regexPattern = undefined,
+  labelTrue = "Yes",
+  labelFalse = "No",
+  id = undefined,
 }) {
   /* ******************** All States ************************* */
 
@@ -25,6 +28,34 @@ export default function FormInput({
   /* ******************** All Functions ************************* */
 
   /* ******************** All UseEffects ************************* */
+
+  const inputClass = `peer rounded-full outline-none duration-100 after:duration-500 w-14 h-6 bg-primary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-light  after:content-['${labelFalse}'] after:absolute after:outline-none after:rounded-full after:h-4 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center after:text-sky-800 after:font-bold peer-checked:after:translate-x-4 text-xs peer-checked:after:content-['${labelTrue}'] peer-checked:after:border-white`;
+
+  if (type === "checkbox") {
+    return (
+      <div className="flex items-center">
+        <label className="inline-flex items-center cursor-pointer">
+          <input
+            className="sr-only "
+            checked={value}
+            onChange={onChange}
+            disabled={disabled}
+            id={id || `checkbox-${value}`}
+            type="checkbox"
+          />
+          <div
+            className={`relative rounded-full outline-none duration-100 after:duration-500 w-16 h-6 bg-primary `}
+          >
+            <div
+              className={`absolute outline-none rounded-full h-4 w-fit px-1 bg-white top-1 left-1 flex justify-center items-center text-sky-800 font-bold duration-300 text-xs ${value ? "translate-x-4" : "left-1"}`}
+            >
+              {value ? labelTrue : labelFalse}
+            </div>
+          </div>
+        </label>
+      </div>
+    );
+  }
 
   if (type === "email") {
     return (

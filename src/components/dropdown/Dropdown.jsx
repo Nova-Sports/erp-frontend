@@ -1,14 +1,7 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-} from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, X, Search, Loader2 } from "lucide-react";
 import useAnimations from "@/contexts/AnimationContext";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, Loader2, Search, X } from "lucide-react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 /*=======================================
     Context
@@ -33,6 +26,9 @@ const defaultTriggerClass =
 
 const defaultMenuClass =
   "z-40 mt-1 w-full bg-white border border-secondary rounded-lg shadow-lg overflow-hidden";
+
+const defaultMenuFloatingClass =
+  "z-40 mt-1 min-w-40 text-start bg-white border border-secondary rounded-lg shadow-lg overflow-hidden absolute right-0 top-full";
 
 const defaultItemClass =
   "px-3 py-2 text-sm cursor-pointer transition-colors hover:bg-primary-light";
@@ -79,6 +75,7 @@ export function Dropdown({
   placeholder = "Select...",
   customClass,
   appendClass,
+  autoCloseOnChange = true,
 }) {
   /* --------------------------- All States --------------------------- */
   const [isOpen, setIsOpen] = useState(false);
@@ -102,9 +99,10 @@ export function Dropdown({
         ? current.filter((v) => v !== itemValue)
         : [...current, itemValue];
       onChange(next);
+      if (autoCloseOnChange) close();
     } else {
       onChange(itemValue);
-      close();
+      if (autoCloseOnChange) close();
     }
   };
 
@@ -186,7 +184,7 @@ export function Dropdown({
     Dropdown.Trigger
 ========================================= */
 
-function Trigger({ children, customClass, appendClass }) {
+function Trigger({ children, customClass, appendClass, renderIcon = true }) {
   const { isOpen, toggle, mode, value, placeholder, removeItem } =
     useDropdownContext();
 
@@ -228,10 +226,12 @@ function Trigger({ children, customClass, appendClass }) {
       className={`${customClass ? customClass : defaultTriggerClass} ${appendClass || ""}`}
     >
       <div className="flex-1 text-left min-w-0">{renderValue()}</div>
-      <ChevronDown
-        size={16}
-        className={`flex-shrink-0 ml-2 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-      />
+      {renderIcon && (
+        <ChevronDown
+          size={16}
+          className={`flex-shrink-0 ml-2 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
+      )}
     </button>
   );
 }
@@ -240,7 +240,7 @@ function Trigger({ children, customClass, appendClass }) {
     Dropdown.Menu
 ========================================= */
 
-function Menu({ children, customClass, appendClass }) {
+function Menu({ children, customClass, appendClass, floating = true }) {
   const { isOpen, search, setSearch, searchable, loading } =
     useDropdownContext();
   const { easing, duration } = useAnimations();
@@ -267,7 +267,7 @@ function Menu({ children, customClass, appendClass }) {
             y: -8,
             transition: { duration: duration.fast, ease: easing.easeIn },
           }}
-          className={`${customClass ? customClass : defaultMenuClass} ${appendClass || ""}`}
+          className={`${customClass ? customClass : floating ? defaultMenuFloatingClass : defaultMenuClass} ${appendClass || ""}`}
         >
           {searchable && (
             <div className="flex items-center px-3 border-b border-secondary">
@@ -282,7 +282,7 @@ function Menu({ children, customClass, appendClass }) {
               />
             </div>
           )}
-          <div className="max-h-60 overflow-y-auto py-1">
+          <div className="h-60 overflow-y-auto py-1">
             {loading ? (
               <div className="flex items-center justify-center py-4">
                 <Loader2 size={18} className="animate-spin text-primary" />
