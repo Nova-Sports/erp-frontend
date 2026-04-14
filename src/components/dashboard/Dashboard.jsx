@@ -25,7 +25,7 @@ export default function Dashboard() {
 
       <Sidebar mode={mode} onRequestExpand={() => setMode("expanded")} />
 
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex flex-col h-screen flex-1 min-w-0 overflow-hidden">
         <TopBar onMenuToggle={toggle} />
         <main className="flex-1 overflow-y-auto p-5">
           <Outlet />

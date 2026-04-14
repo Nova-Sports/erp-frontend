@@ -1,6 +1,7 @@
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import Button from "../buttons/Button";
+import { motion } from "framer-motion";
 
 // default className
 const baseClasses =
@@ -29,28 +30,78 @@ export default function FormInput({
 
   /* ******************** All UseEffects ************************* */
 
-  const inputClass = `peer rounded-full outline-none duration-100 after:duration-500 w-14 h-6 bg-primary peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-light  after:content-['${labelFalse}'] after:absolute after:outline-none after:rounded-full after:h-4 after:w-8 after:bg-white after:top-1 after:left-1 after:flex after:justify-center after:items-center after:text-sky-800 after:font-bold peer-checked:after:translate-x-4 text-xs peer-checked:after:content-['${labelTrue}'] peer-checked:after:border-white`;
-
+  // if (type === "checkbox") {
+  //   return (
+  //     <div className="flex items-center">
+  //       <label className="inline-flex items-center cursor-pointer">
+  //         <input
+  //           className="sr-only "
+  //           checked={value}
+  //           onChange={onChange}
+  //           disabled={disabled}
+  //           id={id || `checkbox-${value}`}
+  //           type="checkbox"
+  //         />
+  //         <div
+  //           className={`relative rounded-full outline-none duration-100 after:duration-500 w-12 h-6 bg-primary `}
+  //         >
+  //           <div
+  //             className={`absolute outline-none rounded-full h-4 w-6 bg-white top-1 left-1 flex justify-center items-center text-sky-800 font-bold duration-300 text-xs ${value ? "translate-x-4" : "left-1"}`}
+  //           >
+  //             {value ? labelTrue : labelFalse}
+  //           </div>
+  //         </div>
+  //       </label>
+  //     </div>
+  //   );
+  // }
   if (type === "checkbox") {
+    const knobVariants = {
+      off: {
+        x: 0,
+        transition: { type: "spring", stiffness: 500, damping: 30 },
+      },
+      on: {
+        x: 24,
+        transition: { type: "spring", stiffness: 500, damping: 30 },
+      },
+    };
+
+    const labelVariants = {
+      off: { opacity: 1 },
+      on: { opacity: 1 },
+    };
+
     return (
       <div className="flex items-center">
         <label className="inline-flex items-center cursor-pointer">
+          {/* real input stays intact */}
           <input
-            className="sr-only "
+            className="sr-only"
+            type="checkbox"
             checked={value}
             onChange={onChange}
             disabled={disabled}
-            id={id || `checkbox-${value}`}
-            type="checkbox"
+            id={id || `checkbox-${String(value)}`}
           />
-          <div
-            className={`relative rounded-full outline-none duration-100 after:duration-500 w-16 h-6 bg-primary `}
-          >
-            <div
-              className={`absolute outline-none rounded-full h-4 w-fit px-1 bg-white top-1 left-1 flex justify-center items-center text-sky-800 font-bold duration-300 text-xs ${value ? "translate-x-4" : "left-1"}`}
+
+          {/* switch track */}
+          <div className="relative w-12 h-6 rounded-full bg-primary flex items-center px-1">
+            {/* animated knob */}
+            <motion.div
+              className="h-4 w-6 bg-white rounded text-[10px] flex items-center justify-center font-medium text-sky-800"
+              variants={knobVariants}
+              animate={value ? "on" : "off"}
             >
-              {value ? labelTrue : labelFalse}
-            </div>
+              <motion.span
+                key={value ? "on" : "off"}
+                initial={{ opacity: 0, y: 2 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                {value ? labelTrue : labelFalse}
+              </motion.span>
+            </motion.div>
           </div>
         </label>
       </div>

@@ -110,7 +110,7 @@ export default function Table({
                     Render Column Select for Table    
                 ========================================= */
                 header.id === "actions" ? (
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-end ">
                     <div>{header.label}</div>
                     <Dropdown onChange={() => {}} autoCloseOnChange={false}>
                       <Dropdown.Trigger
@@ -119,7 +119,7 @@ export default function Table({
                       >
                         <EllipsisVertical size={18} />
                       </Dropdown.Trigger>
-                      <Dropdown.Menu>
+                      <Dropdown.Menu appendClass={"h-60"}>
                         <h4 className="text-sm text-center py-2 px-2">
                           Toggle Columns
                         </h4>
@@ -129,25 +129,32 @@ export default function Table({
                           return (
                             <Dropdown.Item
                               key={column.label}
-                              appendClass={"py-0"}
-                              value={column}
+                              value={column.label}
                             >
                               <div className="flex items-center gap-2">
                                 <div className="mb-0">
-                                  <FormInput
+                                  <input
+                                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 "
+                                    type="checkbox"
+                                    checked={column.enabled}
+                                    onChange={() => handleEnableChange(column)}
+                                    id={`checkbox-${column.label}`}
+                                  />
+                                  {/* <FormInput
                                     onChange={(e) => {
                                       handleEnableChange(column);
                                     }}
                                     labelTrue={"Show"}
                                     labelFalse={"Hide"}
                                     type="checkbox"
+                                    labelContainer="md"
                                     value={column.enabled}
                                     id={`checkbox-${column.label}`}
-                                  />
+                                  /> */}
                                 </div>
                                 <label
                                   htmlFor={`checkbox-${column.label}`}
-                                  className="mb-1 w-full cursor-pointer select-none text-sm py-2"
+                                  className="mb-1 min-w-44 cursor-pointer text-sm py-2"
                                 >
                                   {column.label}
                                 </label>

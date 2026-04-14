@@ -560,6 +560,7 @@ const RenderDropdowns = () => {
             onChange={setMulti}
             mode="multi"
             placeholder="Pick fruits"
+            autoCloseOnChange={false}
           >
             <Dropdown.Trigger />
             <Dropdown.Menu floating={false}>
@@ -614,6 +615,7 @@ const RenderDropdowns = () => {
             onChange={setSearchMulti}
             mode="multi"
             searchable
+            autoCloseOnChange={false}
             placeholder="Search & pick fruits..."
           >
             <Dropdown.Trigger />

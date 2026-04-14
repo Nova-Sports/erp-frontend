@@ -31,10 +31,10 @@ const defaultMenuFloatingClass =
   "z-40 mt-1 min-w-40 text-start bg-white border border-secondary rounded-lg shadow-lg overflow-hidden absolute right-0 top-full";
 
 const defaultItemClass =
-  "px-3 py-2 text-sm cursor-pointer transition-colors hover:bg-primary-light";
+  "px-3 py-2 text-sm cursor-pointer h-9 flex items-center transition-colors hover:bg-primary-light";
 
 const defaultItemActiveClass =
-  "px-3 py-2 text-sm cursor-pointer bg-primary text-primary-foreground";
+  "px-3 py-2 text-sm cursor-pointer bg-primary h-9 flex items-center text-primary-foreground";
 
 const defaultSearchClass =
   "w-full px-3 py-2 text-sm outline-none placeholder:text-gray-400";
@@ -323,6 +323,7 @@ function Item({ children, value: itemValue, customClass, appendClass }) {
     <div
       onClick={() => selectItem(itemValue)}
       className={`${customClass ? customClass : active ? defaultItemActiveClass : defaultItemClass} ${appendClass || ""}`}
+      // className="flex items-center gap-2 h-9"
     >
       {children}
     </div>
