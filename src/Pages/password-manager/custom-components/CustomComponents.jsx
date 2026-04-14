@@ -7,6 +7,7 @@ import { Accordion } from "@/components/Accordion/Accordion";
 import { Modal } from "@/components/modal/Modal";
 import { Dropdown } from "@/components/dropdown/Dropdown";
 import Table from "@/components/table/Table";
+import Tabs from "@/components/tabs/Tabs";
 
 /*=======================================
     API Search Demo
@@ -658,6 +659,80 @@ const RenderAccordion = () => {
   );
 };
 
+const RenderTabs = () => {
+  const [activeTab, setActiveTab] = useState("Primary");
+
+  return (
+    <div>
+      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} appendClasses="">
+        <Tabs.tab
+          tabKey="Primary"
+          afterTabContent={(active) => (
+            <span
+              className={`px-2 rounded text-sm font-bold ${active ? "bg-white text-primary" : "bg-primary text-white"}`}
+            >
+              {" "}
+              3
+            </span>
+          )}
+        >
+          <div className="bg-white rounded shadow px-6 py-6">
+            <h2 className="text-xl font-bold border-b-4 pe-2 mb-3 w-fit">
+              Primary Tab:
+            </h2>
+            <p>
+              This is the content for the primary tab. It is shown by default
+              when the component loads.
+            </p>
+          </div>
+        </Tabs.tab>
+        <Tabs.tab
+          tabKey="Secondary"
+          afterTabContent={(active) => (
+            <span
+              className={`px-2 rounded text-sm font-bold ${active ? "bg-white text-primary" : "bg-primary text-white"}`}
+            >
+              {" "}
+              5
+            </span>
+          )}
+        >
+          <div className="bg-white rounded shadow px-6 py-6">
+            <h2 className="text-xl font-bold border-b-4 pe-2 mb-3 w-fit">
+              Secondary Tab:
+            </h2>
+            <p>
+              This is the content for the secondary tab. It is shown by default
+              when the component loads.
+            </p>
+          </div>
+        </Tabs.tab>
+        <Tabs.tab
+          tabKey="Tertiary"
+          afterTabContent={(active) => (
+            <span
+              className={`px-2 rounded text-sm font-bold ${active ? "bg-white text-primary" : "bg-primary text-white"}`}
+            >
+              {" "}
+              4
+            </span>
+          )}
+        >
+          <div className="bg-white rounded shadow px-6 py-6">
+            <h2 className="text-xl font-bold border-b-4 pe-2 mb-3 w-fit">
+              Tertiary Tab:
+            </h2>
+            <p>
+              This is the content for the tertiary tab. It is shown by default
+              when the component loads.
+            </p>
+          </div>
+        </Tabs.tab>
+      </Tabs>
+    </div>
+  );
+};
+
 const RenderTable = () => {
   const { notify } = useNotification();
 
@@ -823,9 +898,15 @@ export default function CustomComponents() {
 
   const components = [
     {
+      name: "Tabs",
+      render: <RenderTabs />,
+      defaultOpen: true,
+    },
+    {
       name: "Buttons",
       render: <RenderButtons />,
     },
+
     {
       name: "Modals",
       render: <RenderModals />,
@@ -867,9 +948,9 @@ export default function CustomComponents() {
       <h1 className="text-2xl font-extrabold uppercase text-gray-500 mb-8 border-b-4 border-slate-300  rounded-lg w-fit px-2 pe-8 pb-2">
         Custom Components
       </h1>
-      {components.map(({ name, render }, index) => (
+      {components.map(({ name, render, defaultOpen = false }, index) => (
         <div key={name} className="mb-4">
-          <Accordion>
+          <Accordion defaultOpen={defaultOpen}>
             <Accordion.Header appendClasses={"font-extrabold"}>
               {name}
             </Accordion.Header>

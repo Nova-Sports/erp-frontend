@@ -58,6 +58,10 @@ export default {
           dark: "#2e2e35",
           darker: "#1e1e24",
         },
+        heading: {
+          DEFAULT: "#1e1e24",
+          light: "#2e2e35",
+        },
       },
       fontFamily: {
         sans: ["Nunito", "system-ui", "sans-serif"],
