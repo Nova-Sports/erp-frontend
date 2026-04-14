@@ -16,8 +16,8 @@ export const useTabsContext = () => {
 const defaultTabClass = "w-full";
 
 const defaultNavWrapperClass =
-  "flex  rounded overflow-hidden shadow-md transition-colors w-fit duration-300 border border-primary";
-const defaultNavClass = "px-4 py-2 flex items-center gap-2";
+  "flex max-md:flex-wrap rounded overflow-hidden shadow-md transition-colors w-fit duration-300 border border-primary";
+const defaultNavClass = "max-md:w-full px-4 py-2 flex items-center gap-2";
 
 const defaultActiveNavClass =
   "bg-primary text-white transition-colors duration-300  ";

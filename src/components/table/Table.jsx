@@ -191,7 +191,7 @@ export default function Table({
               {tableData?.map((header) => (
                 <td
                   className={[
-                    "px-4 py-2 border-b  border-blue-gray-50 md:truncate",
+                    "px-4 py-2 border-b border-blue-gray-50 md:truncate text-nowrap",
                     header.id === "actions" ? "text-end" : "text-left",
                     header.customRClasses || "",
                   ].join(" ")}

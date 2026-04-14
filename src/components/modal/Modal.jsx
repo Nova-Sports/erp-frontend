@@ -70,7 +70,7 @@ const MODAL_SIZE = {
   sm: "max-w-sm w-full",
   md: "w-[600px] max-w-full",
   lg: "w-[900px] max-w-full",
-  xl: "w-[1200px] max-w-full",
+  xl: "md:w-[1200px]",
 };
 
 /*=======================================
@@ -153,7 +153,7 @@ export const Modal = ({
           <ModalContext value={contextValue}>
             <motion.div
               {...contentAnimation}
-              className={`relative ${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${size === "full" && position === "bottom" ? "w-full" : ""} ${size === "full" && position === "right" ? "h-full" : ""} ${appendClass || ""}`}
+              className={`relative ${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${size === "full" && position === "bottom" ? "w-full" : ""} ${size === "full" && position === "right" ? "h-full max-md:w-[90%]" : ""} ${appendClass || ""}`}
               onClick={(e) => e.stopPropagation()}
             >
               {position === "right" && size === "full" && (
