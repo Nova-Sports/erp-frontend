@@ -178,13 +178,13 @@ const RenderInputs = () => {
         placeholder="Enter text"
         className="form-control form-control-sm"
       />
-      <FormInput
+      {/* <FormInput
         type="checkbox"
         value={inputs.checkbox}
         onChange={(e) =>
           setInputs((prev) => ({ ...prev, checkbox: e.target.checked }))
         }
-      />
+      /> */}
       <FormInput
         type="email"
         value={inputs.email1}

@@ -200,7 +200,7 @@ export default function LandingPage() {
       <footer className="bg-gray-50 border-t border-gray-200 py-8 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
           <div className="flex items-center">
-            <AppLogo height="h-8" />
+            <AppLogo height="h-12" />
           </div>
           <p className="text-gray-500 text-sm">
             © 2026 SportswearERP. All rights reserved.
