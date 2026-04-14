@@ -282,7 +282,7 @@ function Menu({ children, customClass, appendClass, floating = true }) {
               />
             </div>
           )}
-          <div className="h-60 overflow-y-auto overflow-x-hidden py-1">
+          <div className="max-h-60 overflow-y-auto overflow-x-hidden py-1">
             {loading ? (
               <div className="flex items-center justify-center py-4">
                 <Loader2 size={18} className="animate-spin text-primary" />
@@ -301,7 +301,13 @@ function Menu({ children, customClass, appendClass, floating = true }) {
     Dropdown.Item
 ========================================= */
 
-function Item({ children, value: itemValue, customClass, appendClass }) {
+function Item({
+  children,
+  value: itemValue,
+  onClick,
+  customClass,
+  appendClass,
+}) {
   const {
     selectItem,
     isSelected,
@@ -321,9 +327,12 @@ function Item({ children, value: itemValue, customClass, appendClass }) {
 
   return (
     <div
-      onClick={() => selectItem(itemValue)}
-      className={`${customClass ? customClass : active ? defaultItemActiveClass : defaultItemClass} ${appendClass || ""}`}
-      // className="flex items-center gap-2 h-9"
+      onClick={(e) => {
+        e.stopPropagation();
+        selectItem(itemValue);
+        if (onClick) onClick(e);
+      }}
+      className={`${customClass ? customClass : active ? defaultItemActiveClass : defaultItemClass} ${appendClass}`}
     >
       {children}
     </div>

@@ -306,6 +306,7 @@ const RenderModals = () => {
     {
       label: "Right",
       position: "right",
+      size: "full",
       open: openRight,
       setOpen: setOpenRight,
     },
@@ -422,7 +423,7 @@ const RenderModals = () => {
           Right Variants (h-full)
         </p>
         <div className="flex flex-wrap gap-3">
-          {rightModals.map(({ label, position, open, setOpen }) => (
+          {rightModals.map(({ label, position, size, open, setOpen }) => (
             <div key={label}>
               <Button
                 title={label}
@@ -434,7 +435,7 @@ const RenderModals = () => {
                 position={position}
                 open={open}
                 onHide={() => setOpen(false)}
-                appendClass="h-full"
+                size={size}
               >
                 <Modal.Header>{label} Modal</Modal.Header>
                 <Modal.Body>

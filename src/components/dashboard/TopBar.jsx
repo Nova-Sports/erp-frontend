@@ -11,6 +11,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
+import { Dropdown } from "../dropdown/Dropdown";
+import { Modal } from "../modal/Modal";
+import { useState } from "react";
+import LockScreen from "./LockScreen";
 
 const TYPE_STYLES = {
   primary: {
@@ -47,6 +51,8 @@ export default function TopBar({ onMenuToggle }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { notification, dismiss } = useNotification();
+
+  const [accountsSettingsModal, setAccountsSettingsModal] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -90,13 +96,38 @@ export default function TopBar({ onMenuToggle }) {
 
       {/* Right ── settings + logout */}
       <div className="flex items-center gap-1 flex-shrink-0">
-        <button
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-          aria-label="Settings"
-          title="Settings"
-        >
-          <Settings size={17} />
-        </button>
+        <Dropdown value={"settings"} onChange={() => {}}>
+          <Dropdown.Trigger
+            customClass={"border-0 flex-center"}
+            renderIcon={false}
+          >
+            <button
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+              aria-label="Settings"
+              title="Settings"
+            >
+              <Settings size={18} />
+            </button>
+          </Dropdown.Trigger>
+          <Dropdown.Menu floating={true} appendClass={"w-48  px-2 py-0"}>
+            <h5 className="text-xs border-b font-bold border-light px-3 py-2 mb-1">
+              SETTINGS
+            </h5>
+            <Dropdown.Item
+              appendClass={"py-0 my-0"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setAccountsSettingsModal(true);
+              }}
+            >
+              <Settings size={14} className="mr-2" />
+              Account Settings
+            </Dropdown.Item>
+            <Dropdown.Item appendClass={"p-0"}>
+              <LockScreen />
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
         <button
           onClick={handleLogout}
           className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-danger hover:bg-danger/10 transition-colors"
@@ -106,6 +137,27 @@ export default function TopBar({ onMenuToggle }) {
           <LogOut size={17} />
         </button>
       </div>
+      {/*=======================================
+          Settings Page    
+      ========================================= */}
+      <Modal
+        open={accountsSettingsModal}
+        onHide={() => setAccountsSettingsModal(false)}
+        position="right"
+        size="full"
+        appendClass={"w-2/5"}
+      >
+        <Modal.Header>Account Settings</Modal.Header>
+        <Modal.Body>Accounts settings content goes here</Modal.Body>
+        <Modal.Footer>
+          <button
+            onClick={() => setAccountsSettingsModal(false)}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
+          >
+            Close
+          </button>
+        </Modal.Footer>
+      </Modal>
     </header>
   );
 }

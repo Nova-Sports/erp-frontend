@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { createContext, useContext, useState, useEffect } from "react";
 import { useSidebarContext } from "../dashboard/sidebar/SidebarContext";
 // Create Context
 const ModalContext = createContext();
@@ -70,7 +71,6 @@ const MODAL_SIZE = {
   md: "w-[600px] max-w-full",
   lg: "w-[900px] max-w-full",
   xl: "w-[1200px] max-w-full",
-  full: "w-full",
 };
 
 /*=======================================
@@ -80,7 +80,7 @@ const MODAL_SIZE = {
 const defaultHeaderClass =
   "border-b border-secondary py-4 px-4 font-medium text-lg";
 
-const defaultBodyClass = "bg-white rounded-lg p-6 w-full";
+const defaultBodyClass = "bg-white rounded-lg p-6 w-full h-full";
 
 const defaultFooterClass =
   "border-t border-secondary py-3 px-4 flex justify-end gap-2";
@@ -88,6 +88,7 @@ const defaultFooterClass =
 // Modal Provider Component
 export const Modal = ({
   children,
+  type = "standard",
   open,
   onHide,
   customClass,
@@ -152,9 +153,18 @@ export const Modal = ({
           <ModalContext value={contextValue}>
             <motion.div
               {...contentAnimation}
-              className={`${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${appendClass || ""}`}
+              className={`relative ${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${size === "full" && position === "bottom" ? "w-full" : ""} ${size === "full" && position === "right" ? "h-full" : ""} ${appendClass || ""}`}
               onClick={(e) => e.stopPropagation()}
             >
+              {position === "right" && size === "full" && (
+                <div
+                  className="absolute text-white px-3 py-2 rounded-l-full top-11 -left-0 -translate-x-full bg-black/50 cursor-pointer hover:bg-black transition-colors"
+                  onClick={closeModal}
+                >
+                  <X size={18} />
+                </div>
+              )}
+
               {children}
             </motion.div>
           </ModalContext>
