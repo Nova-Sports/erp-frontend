@@ -119,7 +119,7 @@ export default function Table({
                       >
                         <EllipsisVertical size={18} />
                       </Dropdown.Trigger>
-                      <Dropdown.Menu appendClass={"h-60"}>
+                      <Dropdown.Menu>
                         <h4 className="text-sm text-center py-2 px-2">
                           Toggle Columns
                         </h4>

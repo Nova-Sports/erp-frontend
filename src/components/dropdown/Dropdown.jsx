@@ -282,7 +282,7 @@ function Menu({ children, customClass, appendClass, floating = true }) {
               />
             </div>
           )}
-          <div className="h-60 overflow-y-auto py-1">
+          <div className="h-60 overflow-y-auto overflow-x-hidden py-1">
             {loading ? (
               <div className="flex items-center justify-center py-4">
                 <Loader2 size={18} className="animate-spin text-primary" />
