@@ -11,6 +11,7 @@ import Password from "./Pages/password-manager/Password";
 import NotFound from "./components/NotFound";
 import CustomComponents from "./Pages/password-manager/custom-components/CustomComponents";
 import { SidebarProvider } from "./components/dashboard/sidebar/SidebarContext";
+import TestComponent from "./components/test/TestComponent";
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -59,6 +60,7 @@ function AppRoutes() {
 
         {/* =========== Components Routes =============== */}
         <Route path="components" element={<CustomComponents />} />
+        <Route path="test-component" element={<TestComponent />} />
 
         {/* Catch-all inside dashboard — stays in shell, shows 404 */}
         <Route path="*" element={<NotFound />} />

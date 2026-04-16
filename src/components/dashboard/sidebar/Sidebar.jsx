@@ -105,6 +105,12 @@ const NAV = [
     icon: MoreHorizontal,
     to: "/dashboard/components",
   },
+  {
+    id: "test-component",
+    label: "Test Component",
+    icon: MoreHorizontal,
+    to: "/dashboard/test-component",
+  },
 ];
 
 function hasActiveDescendant(item, pathname) {

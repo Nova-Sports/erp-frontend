@@ -95,7 +95,7 @@ export default function Table({
   }, [tableColumnsList, headers, data]);
 
   return (
-    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl max-md:overflow-x-auto">
+    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl max-md:overflow-x-auto overflow-hidden">
       <table className="w-full table-auto">
         <thead>
           <tr>
@@ -105,7 +105,7 @@ export default function Table({
                   header.sortBy && _handleSortBy(header.sortBy);
                 }}
                 className={[
-                  "px-4 py-2 border-b border-blue-gray-50 bg-blue-gray-50",
+                  "px-4 py-3 border-b border-gray-300 bg-neutral-300",
                   header.id === "actions" ? "text-end" : "text-left",
                   header.customHClasses || "",
                   header.sortBy ? "cursor-pointer" : "",
@@ -134,7 +134,7 @@ export default function Table({
                     <div>{header.label}</div>
                     <Dropdown onChange={() => {}} autoCloseOnChange={false}>
                       <Dropdown.Trigger
-                        appendClass={"border-0"}
+                        appendClass={"border-0 bg-transparent"}
                         renderIcon={false}
                       >
                         <EllipsisVertical size={18} />
