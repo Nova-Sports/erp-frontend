@@ -53,6 +53,20 @@ export default function Table({
     setTableData(enabledColumns);
   };
 
+  const handleBuildColumnList = (headers) => {
+    if (tableColumnsList.length) return;
+
+    let filteredColumns = headers?.filter((header) => header.id !== "actions");
+
+    setTableColumnsList(
+      (prev) =>
+        filteredColumns?.map((header) => ({
+          label: header.label,
+          enabled: true,
+        })) || [],
+    );
+  };
+
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
@@ -63,20 +77,26 @@ export default function Table({
   }, [searchParams]);
 
   useEffect(() => {
-    setTableData((prev) => headers);
-    let filteredColumns = headers?.filter((header) => header.id !== "actions");
+    handleBuildColumnList(headers);
+  }, [headers]);
 
-    setTableColumnsList(
-      filteredColumns?.map((header) => ({
-        label: header.label,
-        enabled: true,
-      })) || [],
+  // Sync tableData with enabled columns whenever tableColumnsList or headers change
+  useEffect(() => {
+    // Only include enabled columns
+    let enabledColumns = headers.filter((header) =>
+      tableColumnsList.find((col) => col.label === header.label && col.enabled),
     );
-  }, [headers, data]);
+    // Always include the actions column if present
+    const actionColumn = headers.find((header) => header.id === "actions");
+    if (actionColumn && !enabledColumns.includes(actionColumn)) {
+      enabledColumns.push(actionColumn);
+    }
+    setTableData(enabledColumns);
+  }, [tableColumnsList, headers, data]);
 
   return (
     <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl max-md:overflow-x-auto">
-      <table className="w-full md:table-fixed">
+      <table className="w-full table-auto">
         <thead>
           <tr>
             {tableData?.map((header) => (

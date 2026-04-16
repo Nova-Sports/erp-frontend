@@ -76,13 +76,28 @@ export default function TopBar({ onMenuToggle }) {
       </button>
 
       {/* Center ── flash message */}
-      <div className="flex-1 flex items-center justify-center min-w-0">
+      <div className="flex-1 relative flex items-center justify-center min-w-0">
         {notification && style && MsgIcon && (
           <div
-            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium max-w-xl ${style.classes}`}
+            className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium max-w-xl ${style.classes}`}
           >
             <MsgIcon size={14} className="flex-shrink-0" aria-hidden="true" />
             <span className="truncate">{notification.message}</span>
+            <button
+              onClick={dismiss}
+              className="flex-shrink-0 ml-1 opacity-60 hover:opacity-100 transition-opacity"
+              aria-label="Dismiss"
+            >
+              <X size={12} />
+            </button>
+          </div>
+        )}
+        {notification && style && MsgIcon && (
+          <div
+            className={`inline-flex absolute -top-4 md:hidden items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium max-w-xl ${style.classes}`}
+          >
+            <MsgIcon size={14} className="flex-shrink-0" aria-hidden="true" />
+            <span className="text-wrap">{notification.message}</span>
             <button
               onClick={dismiss}
               className="flex-shrink-0 ml-1 opacity-60 hover:opacity-100 transition-opacity"
@@ -101,13 +116,13 @@ export default function TopBar({ onMenuToggle }) {
             customClass={"border-0 flex-center"}
             renderIcon={false}
           >
-            <button
+            <div
               className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
               aria-label="Settings"
               title="Settings"
             >
               <Settings size={18} />
-            </button>
+            </div>
           </Dropdown.Trigger>
           <Dropdown.Menu floating={true} appendClass={"w-48  px-2 py-0"}>
             <h5 className="text-xs border-b font-bold border-light px-3 py-2 mb-1">

@@ -937,11 +937,7 @@ export default function CustomComponents() {
   /* ******************** All UseEffects ************************* */
 
   useEffect(() => {
-    notify(
-      "This page is under construction. Check back later for new components!",
-      "danger",
-      5000,
-    );
+    notify("This is notification Test", "danger", 5000);
   }, []);
 
   return (

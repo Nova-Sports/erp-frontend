@@ -55,7 +55,7 @@ export function Accordion({
 function Header({ children, customClass, activeClass, appendClasses }) {
   const { isOpen, toggle } = useAccordionContext();
   return (
-    <button
+    <div
       onClick={toggle}
       className={`${customClass ? customClass : defaultHeaderClass}  ${isOpen && activeClass ? activeClass : isOpen && !activeClass ? "bg-white/75" : ""} ${appendClasses}`}
     >
@@ -65,7 +65,7 @@ function Header({ children, customClass, activeClass, appendClasses }) {
       >
         ▼
       </span>
-    </button>
+    </div>
   );
 }
 
