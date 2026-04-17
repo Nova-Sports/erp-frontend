@@ -10,6 +10,7 @@ export default function Table({
   onClick,
   onDoubleClick,
   handleSortBy,
+  appendClass,
 }) {
   /* ========================= All States ========================= */
   const [searchParams, setSearchParams] = useSearchParams();
@@ -95,7 +96,9 @@ export default function Table({
   }, [tableColumnsList, headers, data]);
 
   return (
-    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-lg p-2 rounded-xl max-md:overflow-x-auto ">
+    <div
+      className={`relative flex flex-col w-full h-full text-gray-700 bg-white shadow-lg p-2 rounded-xl max-md:overflow-x-auto ${appendClass || ""}`}
+    >
       <table className="w-full table-auto">
         <thead className="">
           <tr className="bg-primary/15 text-primary">

@@ -42,23 +42,21 @@ export default function Button({
   /* ******************** All UseEffects ************************* */
 
   return (
-    <div>
-      <button
-        type={type === "icon" ? "button" : type}
-        className={`${customClasses ? customClasses : baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${appendClasses}`}
-        onClick={onClick}
-        disabled={disabled}
-      >
-        {type === "icon" ? (
-          title()
-        ) : (
-          <>
-            {beforeTitle()}
-            {title}
-            {afterTitle()}
-          </>
-        )}
-      </button>
-    </div>
+    <button
+      type={type === "icon" ? "button" : type}
+      className={`${customClasses ? customClasses : baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${appendClasses}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {type === "icon" ? (
+        title()
+      ) : (
+        <>
+          {beforeTitle()}
+          {title}
+          {afterTitle()}
+        </>
+      )}
+    </button>
   );
 }

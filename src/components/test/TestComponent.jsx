@@ -4,6 +4,7 @@ import Table from "../table/Table";
 import { useNotification } from "@/contexts/NotificationContext";
 import { Dropdown } from "../dropdown/Dropdown";
 import { Modal } from "../modal/Modal";
+import { Menu, Search } from "lucide-react";
 
 export default function TestComponent() {
   /* ========================= All States ========================= */
@@ -96,6 +97,227 @@ export default function TestComponent() {
     setTableData(sortedData);
   };
 
+  /* =============================== Actions Filters ======================================= */
+
+  const ActionItems = () => {
+    /* ========================= All States ========================= */
+
+    // Modal States
+    const [showMobileActionMenu, setSHowMobileActionMenu] = useState(false);
+
+    /*  ========================= All Functions ========================= */
+
+    /* ========================= All UseEffects ========================= */
+
+    /*=======================================
+        Custom Components    
+    ========================================= */
+
+    const RenderLimit = () => {
+      return (
+        <div className="flex items-center gap-2">
+          <span className=" md:inline">Show</span>
+          <Dropdown value={limit} onChange={(v) => setLimit(v)}>
+            <Dropdown.Trigger
+              appendClass={"w-16 !py-1 !border-primary !bg-primary-light "}
+              // renderIcon={false}
+            >
+              {limit}
+            </Dropdown.Trigger>
+            <Dropdown.Menu appendClass={"min-w-20"} direction={"left"}>
+              {[5, 10, 20, 50].map((option) => (
+                <Dropdown.Item key={option} value={option}>
+                  {option}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      );
+    };
+
+    const RenderFilterByLocation = () => {
+      return (
+        <Dropdown
+          value={selectedLocation}
+          onChange={(value) => setSelectedLocation(value)}
+        >
+          <Dropdown.Trigger
+            appendClass={"!border-primary !border-1 !bg-primary/10"}
+            // renderIcon={false}
+          >
+            Filter By : {selectedLocation?.locationName || "All Locations"}
+          </Dropdown.Trigger>
+          <Dropdown.Menu>
+            <Dropdown.Item value={{ id: 9999999, locationName: "no-location" }}>
+              Without Location
+            </Dropdown.Item>
+            {locationsList.map((location) => (
+              <Dropdown.Item
+                key={location.id}
+                value={location.id}
+                onClick={() => setSelectedLocation(location)}
+              >
+                {location.locationName}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+      );
+    };
+
+    const RenderSearchFilters = () => {
+      return (
+        <Dropdown value={searchBy} onChange={(value) => setSearchBy(value)}>
+          <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
+            <span className="md:inline">Search By : </span>
+            {searchBy || "All"}
+          </Dropdown.Trigger>
+          <Dropdown.Menu>
+            {headers
+              .filter((header) => header.sortBy)
+              .map((header) => (
+                <Dropdown.Item key={header.id} value={header.id}>
+                  {header.label}
+                </Dropdown.Item>
+              ))}
+          </Dropdown.Menu>
+        </Dropdown>
+      );
+    };
+
+    const RenderSearch = () => {
+      return (
+        <form className="flex items-center  gap-2">
+          {/* Search By Filters */}
+          <div className="hidden md:block">
+            <RenderSearchFilters />
+          </div>
+          <input
+            type="text"
+            placeholder="Search..."
+            className="form-control md:!w-96 flex-1"
+          />
+
+          <Button
+            title=""
+            afterTitle={() => {
+              return <Search size={18} />;
+            }}
+            variant="info"
+            appendClasses="md:hidden"
+          />
+          <Button
+            title="Search"
+            variant="info"
+            appendClasses="hidden md:block"
+          />
+        </form>
+      );
+    };
+
+    const RenderAfterSearchButtons = () => {
+      return (
+        <>
+          {/* Add New Entry */}
+          <Button
+            title="Add New"
+            onClick={(e) => {
+              setShowAddUpdateModal(true);
+            }}
+          />
+        </>
+      );
+    };
+
+    return (
+      <>
+        {/*=======================================
+          Desktop Mode    
+      ========================================= */}
+        <div
+          className={`mx-3 my-3 py-3 px-4 ${true && "bg-white shadow-sm"} hidden md:flex md:flex-row flex-col items-center  justify-between rounded-xl`}
+        >
+          <div>
+            <RenderLimit />
+          </div>
+          <div>
+            <div className="flex flex-col md:flex-row items-center gap-5">
+              {/* =============== Filter By Locations */}
+              <div>
+                <RenderFilterByLocation />
+              </div>
+
+              {/* =============== Search */}
+              <div>
+                <RenderSearch />
+              </div>
+              {/* =============== After Search Buttons */}
+              <div>
+                <RenderAfterSearchButtons />
+              </div>
+            </div>
+          </div>
+        </div>
+        {/*=======================================
+            Mobile View    
+        ========================================= */}
+        <div className="md:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
+          <div className="flex flex-col gap-2">
+            <div className=" flex items-center justify-between">
+              <div className="w-3/5">
+                <RenderSearchFilters />
+              </div>
+
+              <Button
+                title=""
+                onClick={() => {
+                  setSHowMobileActionMenu(true);
+                }}
+                afterTitle={() => {
+                  return <Menu size={18} />;
+                }}
+              />
+            </div>
+            <RenderSearch />
+          </div>
+        </div>
+        <Modal
+          open={showMobileActionMenu}
+          onHide={() => {
+            setSHowMobileActionMenu(false);
+          }}
+          position="bottom"
+          size="full"
+          appendClass={"max-h-[50dvh]"}
+        >
+          <Modal.Header>Actions</Modal.Header>
+          <Modal.Body>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <RenderLimit />
+                <RenderFilterByLocation />
+              </div>
+
+              <RenderAfterSearchButtons />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              title="Close"
+              variant="secondary"
+              onClick={() => {
+                setSHowMobileActionMenu(false);
+              }}
+            />
+          </Modal.Footer>
+        </Modal>
+      </>
+    );
+  };
+
+  /* =============================== Table Functions ======================================= */
+
   const headers = [
     {
       id: "name",
@@ -173,101 +395,12 @@ export default function TestComponent() {
       {/*=======================================
             Top Action Row    
         ========================================= */}
-      <div
-        className={`mx-3 my-3 py-3 px-4 ${true && "bg-white shadow-sm"}  flex items-center  justify-between rounded-xl`}
-      >
-        <div className="flex items-center  gap-2">
-          Show
-          <Dropdown value={limit} onChange={(v) => setLimit(v)}>
-            <Dropdown.Trigger
-              appendClass={"w-16 !py-1 !border-primary !bg-primary-light "}
-              // renderIcon={false}
-            >
-              {limit}
-            </Dropdown.Trigger>
-            <Dropdown.Menu appendClass={"min-w-20"} direction={"left"}>
-              {[5, 10, 20, 50].map((option) => (
-                <Dropdown.Item key={option} value={option}>
-                  {option}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div>
-          <div className="flex items-center gap-5">
-            {/* Filter By Locations */}
-            <Dropdown
-              value={selectedLocation}
-              onChange={(value) => setSelectedLocation(value)}
-            >
-              <Dropdown.Trigger
-                appendClass={"!border-primary !border-1 !bg-primary/10"}
-                renderIcon={false}
-              >
-                Filter By : {selectedLocation?.locationName || "All Locations"}
-              </Dropdown.Trigger>
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  value={{ id: 9999999, locationName: "no-location" }}
-                >
-                  Without Location
-                </Dropdown.Item>
-                {locationsList.map((location) => (
-                  <Dropdown.Item
-                    key={location.id}
-                    value={location.id}
-                    onClick={() => setSelectedLocation(location)}
-                  >
-                    {location.locationName}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+      <ActionItems />
 
-            {/* Search */}
-            <form className="flex items-center gap-2">
-              {/* Search By Filters */}
-              <Dropdown
-                value={searchBy}
-                onChange={(value) => setSearchBy(value)}
-              >
-                <Dropdown.Trigger
-                  appendClass={"!border-info !border-1 !bg-info/10"}
-                >
-                  Search By : {searchBy || "All"}
-                </Dropdown.Trigger>
-                <Dropdown.Menu>
-                  {headers
-                    .filter((header) => header.sortBy)
-                    .map((header) => (
-                      <Dropdown.Item key={header.id} value={header.id}>
-                        {header.label}
-                      </Dropdown.Item>
-                    ))}
-                </Dropdown.Menu>
-              </Dropdown>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="form-control !w-96"
-              />
-              <Button title="Search" variant="info" />
-            </form>
-            {/* Add New Entry */}
-            <Button
-              title="Add New"
-              onClick={(e) => {
-                setShowAddUpdateModal(true);
-              }}
-            />
-          </div>
-        </div>
-      </div>
       {/*=======================================
           Table Section    
       ========================================= */}
-      <div className="h-[84dvh] px-3 pb-1 overflow-y-auto ">
+      <div className="md:h-[84vh] h-[80dvh] px-3 pb-1 overflow-y-auto ">
         <Table
           headers={headers}
           data={tableData}
