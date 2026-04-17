@@ -3,13 +3,13 @@ import { createContext, useContext, useState } from "react";
 import { motion } from "framer-motion";
 
 const defaultAccordionClass =
-  "border overflow-hidden border-secondary rounded-lg";
+  "border-b overflow-hidden border-secondary/30 rounded-sm";
 
 const defaultHeaderClass =
-  "flex items-center justify-between w-full py-3 px-4 hover:bg-white/75 font-medium text-left cursor-pointer";
+  "flex items-center justify-between w-full py-3 px-4 hover:bg-white font-medium text-left cursor-pointer";
 
 const defaultContentClass =
-  "overflow-hidden border-t bg-white/50 border-secondary py-3 px-4";
+  "overflow-hidden border-t bg-white border-secondary py-3 px-4";
 
 // Step 1: Create a private context — this is the hidden communication channel
 const AccordionContext = createContext();

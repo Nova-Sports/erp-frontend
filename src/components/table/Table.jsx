@@ -96,7 +96,7 @@ export default function Table({
 
   return (
     <div
-      className={`relative flex flex-col w-full h-full text-gray-700 bg-white overflow-y-auto shadow-lg p-2 rounded-xl max-md:overflow-x-auto ${appendClass || ""}`}
+      className={`relative flex flex-col w-full h-full text-gray-700 bg-white overflow-y-auto shadow-lg py-3 px-3 rounded-xl max-md:overflow-x-auto ${appendClass || ""}`}
     >
       <table className="w-full table-auto">
         <thead className="">

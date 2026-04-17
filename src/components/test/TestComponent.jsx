@@ -10,7 +10,7 @@ import FormInput from "../form-input/FormInput";
 
 export default function TestComponent() {
   /* ========================= All States ========================= */
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
 
   const [searchBy, setSearchBy] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -407,37 +407,37 @@ export default function TestComponent() {
       sortColumn === "outSideSalesPerson" ||
       sortColumn === "paymentTerm"
     ) {
-      const sortedData = [...tableData].sort((a, b) => {
+      const sortedData = [...tableLimitData].sort((a, b) => {
         const aValue = a[sortColumn].name.toLowerCase();
         const bValue = b[sortColumn].name.toLowerCase();
         if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
         if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
         return 0;
       });
-      setTableData(sortedData);
+      setTableLimitData(sortedData);
       return;
     }
 
     if (sortColumn === "locationId") {
-      const sortedData = [...tableData].sort((a, b) => {
+      const sortedData = [...tableLimitData].sort((a, b) => {
         const aValue = a.locations.locationName.toLowerCase();
         const bValue = b.locations.locationName.toLowerCase();
         if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
         if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
         return 0;
       });
-      setTableData(sortedData);
+      setTableLimitData(sortedData);
       return;
     }
 
-    const sortedData = [...tableData].sort((a, b) => {
+    const sortedData = [...tableLimitData].sort((a, b) => {
       if (a[sortColumn] < b[sortColumn])
         return sortDirection === "asc" ? -1 : 1;
       if (a[sortColumn] > b[sortColumn])
         return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
-    setTableData(sortedData);
+    setTableLimitData(sortedData);
   };
 
   const handleLimitChange = (newLimit) => {
@@ -589,7 +589,7 @@ export default function TestComponent() {
           Desktop Mode    
       ========================================= */}
         <div
-          className={`mx-3 my-3 py-3 px-4 ${true && "bg-white shadow-sm"} hidden md:flex md:flex-row flex-col items-center  justify-between rounded-xl`}
+          className={`mx-3 my-4 py-3 px-4 ${true && "bg-white shadow-sm"} hidden md:flex md:flex-row flex-col items-center  justify-between rounded-xl`}
         >
           <div>
             <RenderLimit />
@@ -681,7 +681,7 @@ export default function TestComponent() {
       {/*=======================================
           Table Section    
       ========================================= */}
-      <div className="md:h-[84vh] h-[80dvh] px-3 pb-1 overflow-y-auto ">
+      <div className="md:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
         <Table
           headers={tableHeaders}
           data={tableLimitData}

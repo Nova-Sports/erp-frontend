@@ -38,6 +38,7 @@
     - ✅ date
     - ✅ select
     - ✅ textarea
+    - Add Before and After icons for inputs
 
   - Modals with position options
     - ✅ center
