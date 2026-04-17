@@ -75,7 +75,7 @@ const ApiSearchDemo = () => {
 const RenderButtons = () => {
   const { notify, dismiss } = useNotification();
   return (
-    <div className="flex flex-wrap gap-4 mt-4">
+    <div className="flex flex-row items-start  gap-4 mt-4">
       <Button
         title="Primary sm"
         variant="primary"
