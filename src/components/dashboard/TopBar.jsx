@@ -65,14 +65,14 @@ export default function TopBar({ onMenuToggle }) {
   const MsgIcon = style?.icon;
 
   return (
-    <header className="h-12 flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-3 gap-3 z-10 relative">
+    <header className="h-12 flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-5 pe-8 gap-3 z-10 relative">
       {/* Left ── hamburger */}
       <button
         onClick={onMenuToggle}
         className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors flex-shrink-0"
         aria-label="Toggle navigation"
       >
-        <Menu size={18} />
+        <Menu size={22} />
       </button>
 
       {/* Center ── flash message */}
@@ -124,7 +124,11 @@ export default function TopBar({ onMenuToggle }) {
               <Settings size={18} />
             </div>
           </Dropdown.Trigger>
-          <Dropdown.Menu floating={true} appendClass={"w-48  px-2 py-0"}>
+          <Dropdown.Menu
+            floating={true}
+            direction="right"
+            appendClass={"w-48  px-2 py-0"}
+          >
             <h5 className="text-xs border-b font-bold border-light px-3 py-2 mb-1">
               SETTINGS
             </h5>

@@ -22,13 +22,13 @@ function useDropdownContext() {
 ========================================= */
 
 const defaultTriggerClass =
-  "flex items-center justify-between w-full px-3 py-2 text-sm border border-secondary rounded-lg bg-white cursor-pointer hover:border-primary transition-colors";
+  "flex items-center justify-between w-full text-sm border border-secondary rounded-lg bg-white cursor-pointer hover:border-primary transition-colors px-3 py-2";
 
 const defaultMenuClass =
   "z-40 mt-1 w-full bg-white border border-secondary rounded-lg shadow-lg overflow-hidden";
 
 const defaultMenuFloatingClass =
-  "z-40 mt-1 min-w-40 text-start bg-white border border-secondary rounded-lg shadow-lg overflow-hidden absolute right-0 top-full";
+  "z-40 mt-1 min-w-40 text-start bg-white border border-secondary rounded-lg shadow-lg overflow-hidden absolute top-full";
 
 const defaultItemClass =
   "px-3 py-2 text-sm cursor-pointer h-9 flex items-center transition-colors hover:bg-primary-light";
@@ -223,7 +223,7 @@ function Trigger({ children, customClass, appendClass, renderIcon = true }) {
     <button
       type="button"
       onClick={toggle}
-      className={`${customClass ? customClass : defaultTriggerClass} ${appendClass || ""}`}
+      className={`${customClass ? customClass : defaultTriggerClass} ${appendClass}`}
     >
       <div className="flex-1 text-left min-w-0">{renderValue()}</div>
       {renderIcon && (
@@ -240,7 +240,13 @@ function Trigger({ children, customClass, appendClass, renderIcon = true }) {
     Dropdown.Menu
 ========================================= */
 
-function Menu({ children, customClass, appendClass, floating = true }) {
+function Menu({
+  children,
+  customClass,
+  appendClass,
+  direction = "left",
+  floating = true,
+}) {
   const { isOpen, search, setSearch, searchable, loading } =
     useDropdownContext();
   const { easing, duration } = useAnimations();
@@ -267,7 +273,7 @@ function Menu({ children, customClass, appendClass, floating = true }) {
             y: -8,
             transition: { duration: duration.fast, ease: easing.easeIn },
           }}
-          className={`${customClass ? customClass : floating ? defaultMenuFloatingClass : defaultMenuClass} ${appendClass || ""}`}
+          className={`${customClass ? customClass : floating ? defaultMenuFloatingClass : defaultMenuClass} ${appendClass || ""} ${direction === "left" ? "left-0" : "right-0"}`}
         >
           {searchable && (
             <div className="flex items-center px-3 border-b border-secondary">

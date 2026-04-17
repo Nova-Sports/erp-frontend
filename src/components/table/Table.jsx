@@ -95,17 +95,19 @@ export default function Table({
   }, [tableColumnsList, headers, data]);
 
   return (
-    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl max-md:overflow-x-auto overflow-hidden">
+    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-lg p-2 rounded-xl max-md:overflow-x-auto ">
       <table className="w-full table-auto">
         <thead>
-          <tr>
-            {tableData?.map((header) => (
+          <tr className="bg-primary/20 text-primary rounded-xl">
+            {tableData?.map((header, index) => (
               <th
                 onClick={() => {
                   header.sortBy && _handleSortBy(header.sortBy);
                 }}
                 className={[
-                  "px-4 py-3 border-b border-gray-300 bg-neutral-300",
+                  "px-4 py-3 ",
+                  index === 0 ? "rounded-l-xl" : "",
+                  index === tableData.length - 1 ? "rounded-r-xl" : "",
                   header.id === "actions" ? "text-end" : "text-left",
                   header.customHClasses || "",
                   header.sortBy ? "cursor-pointer" : "",
@@ -116,7 +118,7 @@ export default function Table({
                     Render Columns With Sort Functions    
                 ========================================= */}
                 {header.sortBy && sortBy.sortBy === header.sortBy ? (
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 ">
                     {header.label}
                     <span>
                       {sortBy.sortDirection === "asc" ? (
@@ -134,12 +136,12 @@ export default function Table({
                     <div>{header.label}</div>
                     <Dropdown onChange={() => {}} autoCloseOnChange={false}>
                       <Dropdown.Trigger
-                        appendClass={"border-0 bg-transparent"}
+                        customClass={"border-0 bg-none flex-center px-2 py-1"}
                         renderIcon={false}
                       >
                         <EllipsisVertical size={18} />
                       </Dropdown.Trigger>
-                      <Dropdown.Menu>
+                      <Dropdown.Menu direction="right">
                         <h4 className="text-sm text-center py-2 px-2">
                           Toggle Columns
                         </h4>

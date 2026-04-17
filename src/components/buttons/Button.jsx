@@ -1,12 +1,12 @@
 // default className
 const baseClasses =
-  "disabled:opacity-60 shadow-sm shadow-gray-400/60 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors";
+  "disabled:opacity-60 shadow-sm shadow-gray-400/60 disabled:cursor-not-allowed text-white font-semibold rounded-md transition-colors";
 
 // Sizes
 const sizeClasses = {
   sm: "px-3 py-1.5 text-sm",
   md: "px-4 py-2 text-sm",
-  lg: "px-5 py-3 text-base",
+  lg: "px-5 py-3.5 text-base",
 };
 
 // variant classes can be added here if needed, e.g. primary, secondary, etc.
