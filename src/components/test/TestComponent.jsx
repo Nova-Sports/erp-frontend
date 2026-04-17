@@ -465,7 +465,7 @@ export default function TestComponent() {
     const RenderLimit = () => {
       return (
         <div className="flex items-center gap-2">
-          <span className=" md:inline">Show</span>
+          <span className=" lg:inline">Show</span>
           <Dropdown value={limit} onChange={(v) => handleLimitChange(v)}>
             <Dropdown.Trigger
               appendClass={"w-16 !py-1 !border-primary !bg-primary-light "}
@@ -519,7 +519,7 @@ export default function TestComponent() {
       return (
         <Dropdown value={searchBy} onChange={(value) => setSearchBy(value)}>
           <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
-            <span className="md:inline">Search By : </span>
+            <span className="lg:inline">Search By : </span>
             <span className="text-nowrap">{searchBy || "All"}</span>
           </Dropdown.Trigger>
           <Dropdown.Menu appendClass="w-full">
@@ -543,13 +543,13 @@ export default function TestComponent() {
       return (
         <form className="flex items-center  gap-2">
           {/* Search By Filters */}
-          <div className="hidden md:block">
+          <div className="hidden lg:block">
             <RenderSearchFilters />
           </div>
           <input
             type="text"
             placeholder="Search..."
-            className="form-control md:!w-96 flex-1"
+            className="form-control lg:!w-96 flex-1"
           />
 
           <Button
@@ -558,12 +558,12 @@ export default function TestComponent() {
               return <Search size={18} />;
             }}
             variant="info"
-            appendClasses="md:hidden"
+            appendClasses="lg:hidden"
           />
           <Button
             title="Search"
             variant="info"
-            appendClasses="hidden md:block"
+            appendClasses="hidden lg:block"
           />
         </form>
       );
@@ -589,13 +589,13 @@ export default function TestComponent() {
           Desktop Mode    
       ========================================= */}
         <div
-          className={`mx-3 my-4 py-3 px-4 ${true && "bg-white shadow-sm"} hidden md:flex md:flex-row flex-col items-center  justify-between rounded-xl`}
+          className={`mx-3 my-4 py-3 px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
         >
           <div>
             <RenderLimit />
           </div>
           <div className="">
-            <div className="flex flex-col md:flex-row items-center gap-5">
+            <div className="flex flex-col lg:flex-row items-center gap-5">
               {/* =============== Filter By Locations */}
               <div>
                 <RenderFilterByLocation />
@@ -615,7 +615,7 @@ export default function TestComponent() {
         {/*=======================================
             Mobile View    
         ========================================= */}
-        <div className="md:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
+        <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
           <div className="flex flex-col gap-2">
             <div className=" flex items-center justify-between">
               <div className="">
@@ -681,7 +681,7 @@ export default function TestComponent() {
       {/*=======================================
           Table Section    
       ========================================= */}
-      <div className="md:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
+      <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
         <Table
           headers={tableHeaders}
           data={tableLimitData}
