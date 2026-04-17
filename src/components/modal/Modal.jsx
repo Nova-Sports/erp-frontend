@@ -153,12 +153,12 @@ export const Modal = ({
           <ModalContext value={contextValue}>
             <motion.div
               {...contentAnimation}
-              className={`relative ${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${size === "full" && position === "bottom" ? "w-full" : ""} ${size === "full" && position === "right" ? "h-full max-md:w-[90%]" : ""} ${appendClass || ""}`}
+              className={`relative ${customClass ? customClass : `${MODAL_BASE} ${MODAL_SIZE[size]}`} ${size === "full" && position === "bottom" ? "w-full" : ""} ${size === "full" && position === "right" ? "h-full md:w-1/3 max-md:w-[90%]" : ""} ${appendClass || ""}`}
               onClick={(e) => e.stopPropagation()}
             >
               {position === "right" && size === "full" && (
                 <div
-                  className="absolute text-white px-3 py-2 rounded-l-full top-11 -left-0 -translate-x-full bg-black/50 cursor-pointer hover:bg-black transition-colors"
+                  className="absolute text-white  px-3 py-2 rounded-l-full top-11 -left-0 -translate-x-full bg-black/50 cursor-pointer hover:bg-black transition-colors"
                   onClick={closeModal}
                 >
                   <X size={18} />

@@ -941,7 +941,7 @@ export default function CustomComponents() {
   }, []);
 
   return (
-    <div>
+    <div className="p-4">
       <h1 className="text-2xl font-extrabold uppercase text-gray-500 mb-8 border-b-4 border-slate-300  rounded-lg w-fit px-2 pe-8 pb-2">
         Custom Components
       </h1>

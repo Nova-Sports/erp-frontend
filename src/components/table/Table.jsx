@@ -97,15 +97,15 @@ export default function Table({
   return (
     <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-lg p-2 rounded-xl max-md:overflow-x-auto ">
       <table className="w-full table-auto">
-        <thead>
-          <tr className="bg-primary/20 text-primary rounded-xl">
+        <thead className="">
+          <tr className="bg-primary/15 text-primary">
             {tableData?.map((header, index) => (
               <th
                 onClick={() => {
                   header.sortBy && _handleSortBy(header.sortBy);
                 }}
                 className={[
-                  "px-4 py-3 ",
+                  "px-4 py-3",
                   index === 0 ? "rounded-l-xl" : "",
                   index === tableData.length - 1 ? "rounded-r-xl" : "",
                   header.id === "actions" ? "text-end" : "text-left",

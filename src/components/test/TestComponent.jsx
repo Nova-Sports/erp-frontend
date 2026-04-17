@@ -3,6 +3,7 @@ import Button from "../buttons/Button";
 import Table from "../table/Table";
 import { useNotification } from "@/contexts/NotificationContext";
 import { Dropdown } from "../dropdown/Dropdown";
+import { Modal } from "../modal/Modal";
 
 export default function TestComponent() {
   /* ========================= All States ========================= */
@@ -16,6 +17,11 @@ export default function TestComponent() {
     { id: 3, locationName: "Krown Resellers" },
     { id: 4, locationName: "Nova Sports" },
   ]);
+
+  // Modal States
+  const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [currentRowData, setCurrentRowData] = useState(null);
 
   /*  ========================= All Functions ========================= */
 
@@ -163,9 +169,12 @@ export default function TestComponent() {
   ];
 
   return (
-    <>
+    <div className="">
+      {/*=======================================
+            Top Action Row    
+        ========================================= */}
       <div
-        className={`py-2 px-4 mb-3 ${true && "bg-white shadow-sm"}  flex items-center  justify-between rounded-xl`}
+        className={`mx-3 my-3 py-3 px-4 ${true && "bg-white shadow-sm"}  flex items-center  justify-between rounded-xl`}
       >
         <div className="flex items-center  gap-2">
           Show
@@ -246,11 +255,19 @@ export default function TestComponent() {
               <Button title="Search" variant="info" />
             </form>
             {/* Add New Entry */}
-            <Button title="Add New" />
+            <Button
+              title="Add New"
+              onClick={(e) => {
+                setShowAddUpdateModal(true);
+              }}
+            />
           </div>
         </div>
       </div>
-      <div className="h-[84dvh] pb-1 pr-1 overflow-y-auto ">
+      {/*=======================================
+          Table Section    
+      ========================================= */}
+      <div className="h-[84dvh] px-3 pb-1 overflow-y-auto ">
         <Table
           headers={headers}
           data={tableData}
@@ -263,6 +280,49 @@ export default function TestComponent() {
           }}
         />
       </div>
-    </>
+
+      {/*=======================================
+          Add / Update Modal    
+      ========================================= */}
+      <Modal
+        open={showAddUpdateModal}
+        onHide={() => {
+          setShowAddUpdateModal(false);
+          setIsUpdateMode(false);
+          setCurrentRowData(null);
+        }}
+        position="right"
+        size={"full"}
+      >
+        <Modal.Header>
+          {isUpdateMode ? "Update Entry" : "Add New Entry"}
+        </Modal.Header>
+        <Modal.Body>
+          {/* Form fields for adding/updating entry go here */}
+          <p>Form content goes here...</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            title={isUpdateMode ? "Update" : "Add"}
+            variant="primary"
+            onClick={() => {
+              // Handle add/update logic here
+              setShowAddUpdateModal(false);
+              setIsUpdateMode(false);
+              setCurrentRowData(null);
+            }}
+          />
+          <Button
+            title="Cancel"
+            variant="secondary"
+            onClick={() => {
+              setShowAddUpdateModal(false);
+              setIsUpdateMode(false);
+              setCurrentRowData(null);
+            }}
+          />
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 }
