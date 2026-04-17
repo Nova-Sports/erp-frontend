@@ -43,7 +43,7 @@
         Start Form Controls 
 -------------------------------- */
 .form-control {
-  @apply border border-gray-300 rounded-md py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary;
+  @apply border w-full border-gray-300 rounded-md py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary;
 }
 
 .form-control-sm {

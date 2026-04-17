@@ -2,7 +2,6 @@ import { ArrowDown, ArrowUp, EllipsisVertical, Menu } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Dropdown } from "../dropdown/Dropdown";
-import FormInput from "../form-input/FormInput";
 
 export default function Table({
   headers,
@@ -97,7 +96,7 @@ export default function Table({
 
   return (
     <div
-      className={`relative flex flex-col w-full h-full text-gray-700 bg-white shadow-lg p-2 rounded-xl max-md:overflow-x-auto ${appendClass || ""}`}
+      className={`relative flex flex-col w-full h-full text-gray-700 bg-white overflow-y-auto shadow-lg p-2 rounded-xl max-md:overflow-x-auto ${appendClass || ""}`}
     >
       <table className="w-full table-auto">
         <thead className="">
@@ -108,7 +107,7 @@ export default function Table({
                   header.sortBy && _handleSortBy(header.sortBy);
                 }}
                 className={[
-                  "px-4 py-3",
+                  "px-4 py-3 text-nowrap",
                   index === 0 ? "rounded-l-xl" : "",
                   index === tableData.length - 1 ? "rounded-r-xl" : "",
                   header.id === "actions" ? "text-end" : "text-left",

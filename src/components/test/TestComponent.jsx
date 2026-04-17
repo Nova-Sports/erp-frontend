@@ -5,6 +5,8 @@ import { useNotification } from "@/contexts/NotificationContext";
 import { Dropdown } from "../dropdown/Dropdown";
 import { Modal } from "../modal/Modal";
 import { Menu, Search } from "lucide-react";
+import { div, span } from "framer-motion/client";
+import FormInput from "../form-input/FormInput";
 
 export default function TestComponent() {
   /* ========================= All States ========================= */
@@ -31,62 +33,403 @@ export default function TestComponent() {
 
   const [tableData, setTableData] = useState([
     {
-      name: "Bob",
-      age: 25,
-      email: "bob@example.com",
-      phone: "123-456-7890",
-      address: "123 Main St",
-      company: "Acme Inc",
-      department: "Sales",
+      id: 11,
+      customerId: 11,
+      customerName: "Customer 11",
+      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
+      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
+      paymentTerm: { id: 2, name: "Payment Term 2" },
+      poRequired: true,
+      state: "GA",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-11T10:00:00Z",
+      updatedAt: "2024-06-11T10:00:00Z",
     },
     {
-      name: "Alice",
-      age: 30,
-      email: "alice@example.com",
-      phone: "987-654-3210",
-      address: "456 Elm St",
-      company: "Globex Corp",
-      department: "Marketing",
+      id: 12,
+      customerId: 12,
+      customerName: "Customer 12",
+      insideSalesPerson: { id: 4, name: "Inside Sales Person 4" },
+      outSideSalesPerson: { id: 2, name: "Outside Sales Person 2" },
+      paymentTerm: { id: 3, name: "Payment Term 3" },
+      poRequired: false,
+      state: "GA2",
+      locationId: 1,
+      locations: { id: 3, locationName: "Krown Resellers" },
+      createdAt: "2024-06-12T10:00:00Z",
+      updatedAt: "2024-06-12T10:00:00Z",
     },
     {
-      name: "Charlie",
-      age: 35,
-      email: "charlie@example.com",
-      phone: "555-555-5555",
-      address: "789 Oak St",
-      company: "Initech",
-      department: "Engineering",
+      id: 13,
+      customerId: 13,
+      customerName: "Customer 13",
+      insideSalesPerson: { id: 1, name: "Inside Sales Person 1" },
+      outSideSalesPerson: { id: 3, name: "Outside Sales Person 3" },
+      paymentTerm: { id: 4, name: "Payment Term 4" },
+      poRequired: true,
+      state: "GA3",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-13T10:00:00Z",
+      updatedAt: "2024-06-13T10:00:00Z",
     },
     {
-      name: "David",
-      age: 40,
-      email: "david@example.com",
-      phone: "444-444-4444",
-      address: "101 Pine St",
-      company: "Hooli",
-      department: "Finance",
+      id: 14,
+      customerId: 14,
+      customerName: "Customer 14",
+      insideSalesPerson: { id: 2, name: "Inside Sales Person 2" },
+      outSideSalesPerson: { id: 4, name: "Outside Sales Person 4" },
+      paymentTerm: { id: 1, name: "Payment Term 1" },
+      poRequired: false,
+      state: "GA4",
+      locationId: 1,
+      locations: { id: 4, locationName: "Nova Sports" },
+      createdAt: "2024-06-14T10:00:00Z",
+      updatedAt: "2024-06-14T10:00:00Z",
     },
     {
-      name: "Eve",
-      age: 28,
-      email: "eve@example.com",
-      phone: "333-333-3333",
-      address: "202 Maple St",
-      company: "Umbrella Corp",
-      department: "Research",
+      id: 15,
+      customerId: 15,
+      customerName: "Customer 15",
+      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
+      outSideSalesPerson: { id: 2, name: "Outside Sales Person 2" },
+      paymentTerm: { id: 2, name: "Payment Term 2" },
+      poRequired: true,
+      state: "GA5",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-15T10:00:00Z",
+      updatedAt: "2024-06-15T10:00:00Z",
     },
     {
-      name: "Frank",
-      age: 32,
-      email: "frank@example.com",
-      phone: "222-222-2222",
-      address: "303 Birch St",
-      company: "Stark Industries",
-      department: "Development",
+      id: 16,
+      customerId: 16,
+      customerName: "Customer 16",
+      insideSalesPerson: { id: 4, name: "Inside Sales Person 4" },
+      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
+      paymentTerm: { id: 3, name: "Payment Term 3" },
+      poRequired: false,
+      state: "GA6",
+      locationId: 1,
+      locations: { id: 3, locationName: "Krown Resellers" },
+      createdAt: "2024-06-16T10:00:00Z",
+      updatedAt: "2024-06-16T10:00:00Z",
+    },
+    {
+      id: 17,
+      customerId: 17,
+      customerName: "Customer 17",
+      insideSalesPerson: { id: 1, name: "Inside Sales Person 1" },
+      outSideSalesPerson: { id: 4, name: "Outside Sales Person 4" },
+      paymentTerm: { id: 4, name: "Payment Term 4" },
+      poRequired: true,
+      state: "GA7",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-17T10:00:00Z",
+      updatedAt: "2024-06-17T10:00:00Z",
+    },
+    {
+      id: 18,
+      customerId: 18,
+      customerName: "Customer 18",
+      insideSalesPerson: { id: 2, name: "Inside Sales Person 2" },
+      outSideSalesPerson: { id: 3, name: "Outside Sales Person 3" },
+      paymentTerm: { id: 1, name: "Payment Term 1" },
+      poRequired: false,
+      state: "GA8",
+      locationId: 1,
+      locations: { id: 4, locationName: "Nova Sports" },
+      createdAt: "2024-06-18T10:00:00Z",
+      updatedAt: "2024-06-18T10:00:00Z",
+    },
+    {
+      id: 19,
+      customerId: 19,
+      customerName: "Customer 19",
+      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
+      outSideSalesPerson: { id: 2, name: "Outside Sales Person 2" },
+      paymentTerm: { id: 2, name: "Payment Term 2" },
+      poRequired: true,
+      state: "GA9",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-19T10:00:00Z",
+      updatedAt: "2024-06-19T10:00:00Z",
+    },
+    {
+      id: 20,
+      customerId: 20,
+      customerName: "Customer 20",
+      insideSalesPerson: { id: 4, name: "Inside Sales Person 4" },
+      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
+      paymentTerm: { id: 3, name: "Payment Term 3" },
+      poRequired: false,
+      state: "LA0",
+      locationId: 1,
+      locations: { id: 3, locationName: "Krown Resellers" },
+      createdAt: "2024-06-20T10:00:00Z",
+      updatedAt: "2024-06-20T10:00:00Z",
+    },
+    {
+      id: 21,
+      customerId: 21,
+      customerName: "Customer 21",
+      insideSalesPerson: { id: 1, name: "Inside Sales Person 1" },
+      outSideSalesPerson: { id: 2, name: "Outside Sales Person 2" },
+      paymentTerm: { id: 4, name: "Payment Term 4" },
+      poRequired: true,
+      state: "LA1",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-21T10:00:00Z",
+      updatedAt: "2024-06-21T10:00:00Z",
+    },
+    {
+      id: 22,
+      customerId: 22,
+      customerName: "Customer 22",
+      insideSalesPerson: { id: 2, name: "Inside Sales Person 2" },
+      outSideSalesPerson: { id: 3, name: "Outside Sales Person 3" },
+      paymentTerm: { id: 1, name: "Payment Term 1" },
+      poRequired: false,
+      state: "LA2",
+      locationId: 1,
+      locations: { id: 4, locationName: "Nova Sports" },
+      createdAt: "2024-06-22T10:00:00Z",
+      updatedAt: "2024-06-22T10:00:00Z",
+    },
+    {
+      id: 23,
+      customerId: 23,
+      customerName: "Customer 23",
+      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
+      outSideSalesPerson: { id: 4, name: "Outside Sales Person 4" },
+      paymentTerm: { id: 2, name: "Payment Term 2" },
+      poRequired: true,
+      state: "LA3",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-23T10:00:00Z",
+      updatedAt: "2024-06-23T10:00:00Z",
+    },
+    {
+      id: 24,
+      customerId: 24,
+      customerName: "Customer 24",
+      insideSalesPerson: { id: 4, name: "Inside Sales Person 4" },
+      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
+      paymentTerm: { id: 3, name: "Payment Term 3" },
+      poRequired: false,
+      state: "LA4",
+      locationId: 1,
+      locations: { id: 3, locationName: "Krown Resellers" },
+      createdAt: "2024-06-24T10:00:00Z",
+      updatedAt: "2024-06-24T10:00:00Z",
+    },
+    {
+      id: 25,
+      customerId: 25,
+      customerName: "Customer 25",
+      insideSalesPerson: { id: 1, name: "Inside Sales Person 1" },
+      outSideSalesPerson: { id: 3, name: "Outside Sales Person 3" },
+      paymentTerm: { id: 4, name: "Payment Term 4" },
+      poRequired: true,
+      state: "LA5",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-25T10:00:00Z",
+      updatedAt: "2024-06-25T10:00:00Z",
+    },
+    {
+      id: 26,
+      customerId: 26,
+      customerName: "Customer 26",
+      insideSalesPerson: { id: 2, name: "Inside Sales Person 2" },
+      outSideSalesPerson: { id: 4, name: "Outside Sales Person 4" },
+      paymentTerm: { id: 1, name: "Payment Term 1" },
+      poRequired: false,
+      state: "LA6",
+      locationId: 1,
+      locations: { id: 4, locationName: "Nova Sports" },
+      createdAt: "2024-06-26T10:00:00Z",
+      updatedAt: "2024-06-26T10:00:00Z",
+    },
+    {
+      id: 27,
+      customerId: 27,
+      customerName: "Customer 27",
+      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
+      outSideSalesPerson: { id: 2, name: "Outside Sales Person 2" },
+      paymentTerm: { id: 2, name: "Payment Term 2" },
+      poRequired: true,
+      state: "LA7",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-27T10:00:00Z",
+      updatedAt: "2024-06-27T10:00:00Z",
+    },
+    {
+      id: 28,
+      customerId: 28,
+      customerName: "Customer 28",
+      insideSalesPerson: { id: 4, name: "Inside Sales Person 4" },
+      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
+      paymentTerm: { id: 3, name: "Payment Term 3" },
+      poRequired: false,
+      state: "LA8",
+      locationId: 1,
+      locations: { id: 3, locationName: "Krown Resellers" },
+      createdAt: "2024-06-28T10:00:00Z",
+      updatedAt: "2024-06-28T10:00:00Z",
+    },
+    {
+      id: 29,
+      customerId: 29,
+      customerName: "Customer 29",
+      insideSalesPerson: { id: 1, name: "Inside Sales Person 1" },
+      outSideSalesPerson: { id: 4, name: "Outside Sales Person 4" },
+      paymentTerm: { id: 4, name: "Payment Term 4" },
+      poRequired: true,
+      state: "LA9",
+      locationId: 2,
+      locations: { id: 2, locationName: "Krown Retails" },
+      createdAt: "2024-06-29T10:00:00Z",
+      updatedAt: "2024-06-29T10:00:00Z",
+    },
+    {
+      id: 30,
+      customerId: 30,
+      customerName: "Customer 30",
+      insideSalesPerson: { id: 2, name: "Inside Sales Person 2" },
+      outSideSalesPerson: { id: 3, name: "Outside Sales Person 3" },
+      paymentTerm: { id: 1, name: "Payment Term 1" },
+      poRequired: false,
+      state: "State 30",
+      locationId: 1,
+      locations: { id: 4, locationName: "Nova Sports" },
+      createdAt: "2024-06-30T10:00:00Z",
+      updatedAt: "2024-06-30T10:00:00Z",
+    },
+  ]);
+
+  const [tableLimitData, setTableLimitData] = useState(
+    tableData.slice(0, limit),
+  );
+
+  const [tableHeaders, setTableHeaders] = useState([
+    {
+      id: "customerId",
+      label: "C-ID",
+      sortBy: "customerId",
+      customHClasses: "",
+      customRClasses: "",
+      render: (row) => <span className="text-nowrap">{row.customerId}</span>,
+    },
+    {
+      id: "customerName",
+      label: "Customer Name",
+      sortBy: "customerName",
+      render: (row) => row.customerName,
+    },
+    {
+      id: "insideSalesPerson",
+      label: "Inside Sales Person",
+      sortBy: "insideSalesPerson",
+      render: (row) => row.insideSalesPerson.name,
+    },
+    {
+      id: "outSideSalesPerson",
+      label: "Outside Sales Person",
+      sortBy: "outSideSalesPerson",
+      render: (row) => row.outSideSalesPerson.name,
+    },
+    {
+      id: "paymentTerm",
+      label: "Payment Term",
+      sortBy: "paymentTerm",
+      render: (row) => row.paymentTerm.name,
+    },
+    {
+      id: "poRequired",
+      label: "PO Required",
+      sortBy: "poRequired",
+      customRClasses: "w-8",
+      render: (row) => {
+        return (
+          <div className="text-center flex-center">
+            {row.poRequired ? (
+              <div className="w-10 h-6 flex-center bg-green-100 border-green-300 text-green-800 border text-center rounded-md">
+                <span className="text-xs uppercase font-semibold">Yes</span>
+              </div>
+            ) : (
+              <div className="w-10 h-6 flex-center bg-red-100 border-red-300 text-red-800 border text-center rounded-md">
+                <span className="text-xs uppercase font-semibold">No</span>
+              </div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: "state",
+      label: "State",
+      sortBy: "state",
+      customRClasses: "w-8 text-center",
+      customHClasses: "w-8 text-center",
+      render: (row) => row.state,
+    },
+    {
+      id: "locationId",
+      label: "Location",
+      sortBy: "locationId",
+      render: (row) => row.locations.locationName,
+    },
+    {
+      id: "actions",
+      label: "Actions",
+      sortBy: false,
+
+      render: (row) => {
+        return (
+          <div className="me-4">
+            <Button title="Edit" variant="primary" size="sm" />
+          </div>
+        );
+      },
     },
   ]);
 
   const handleSortBy = (sortColumn, sortDirection) => {
+    if (
+      sortColumn === "insideSalesPerson" ||
+      sortColumn === "outSideSalesPerson" ||
+      sortColumn === "paymentTerm"
+    ) {
+      const sortedData = [...tableData].sort((a, b) => {
+        const aValue = a[sortColumn].name.toLowerCase();
+        const bValue = b[sortColumn].name.toLowerCase();
+        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
+      setTableData(sortedData);
+      return;
+    }
+
+    if (sortColumn === "locationId") {
+      const sortedData = [...tableData].sort((a, b) => {
+        const aValue = a.locations.locationName.toLowerCase();
+        const bValue = b.locations.locationName.toLowerCase();
+        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
+      setTableData(sortedData);
+      return;
+    }
+
     const sortedData = [...tableData].sort((a, b) => {
       if (a[sortColumn] < b[sortColumn])
         return sortDirection === "asc" ? -1 : 1;
@@ -95,6 +438,12 @@ export default function TestComponent() {
       return 0;
     });
     setTableData(sortedData);
+  };
+
+  const handleLimitChange = (newLimit) => {
+    setLimit(newLimit);
+    // Update TableData to show new limit of entries
+    setTableLimitData(tableData.slice(0, newLimit));
   };
 
   /* =============================== Actions Filters ======================================= */
@@ -117,7 +466,7 @@ export default function TestComponent() {
       return (
         <div className="flex items-center gap-2">
           <span className=" md:inline">Show</span>
-          <Dropdown value={limit} onChange={(v) => setLimit(v)}>
+          <Dropdown value={limit} onChange={(v) => handleLimitChange(v)}>
             <Dropdown.Trigger
               appendClass={"w-16 !py-1 !border-primary !bg-primary-light "}
               // renderIcon={false}
@@ -171,13 +520,17 @@ export default function TestComponent() {
         <Dropdown value={searchBy} onChange={(value) => setSearchBy(value)}>
           <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
             <span className="md:inline">Search By : </span>
-            {searchBy || "All"}
+            <span className="text-nowrap">{searchBy || "All"}</span>
           </Dropdown.Trigger>
-          <Dropdown.Menu>
-            {headers
-              .filter((header) => header.sortBy)
+          <Dropdown.Menu appendClass="w-full">
+            {tableHeaders
+              ?.filter((header) => header.sortBy)
               .map((header) => (
-                <Dropdown.Item key={header.id} value={header.id}>
+                <Dropdown.Item
+                  appendClass={"py-0"}
+                  key={header.id}
+                  value={header.id}
+                >
                   {header.label}
                 </Dropdown.Item>
               ))}
@@ -241,7 +594,7 @@ export default function TestComponent() {
           <div>
             <RenderLimit />
           </div>
-          <div>
+          <div className="">
             <div className="flex flex-col md:flex-row items-center gap-5">
               {/* =============== Filter By Locations */}
               <div>
@@ -265,7 +618,7 @@ export default function TestComponent() {
         <div className="md:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
           <div className="flex flex-col gap-2">
             <div className=" flex items-center justify-between">
-              <div className="w-3/5">
+              <div className="">
                 <RenderSearchFilters />
               </div>
 
@@ -318,78 +671,6 @@ export default function TestComponent() {
 
   /* =============================== Table Functions ======================================= */
 
-  const headers = [
-    {
-      id: "name",
-      label: "Name",
-      sortBy: "name",
-      customHClasses: "w-32",
-      customRClasses: "w-32",
-      render: (row) => row.name,
-    },
-    {
-      id: "age",
-      label: "Age",
-      customHClasses: "w-16",
-      customRClasses: "w-16",
-      sortBy: "age",
-      render: (row) => row.age,
-    },
-    {
-      id: "email",
-      label: "Email",
-      sortBy: "email",
-      render: (row) => row.email,
-    },
-    {
-      id: "phone",
-      label: "Phone",
-      sortBy: "phone",
-      render: (row) => row.phone || "N/A",
-    },
-    {
-      id: "status",
-      label: "Status",
-      sortBy: "age",
-      render: (row) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-            row.age < 30
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {row.age < 30 ? "Young" : "Old"}
-        </span>
-      ),
-    },
-    {
-      id: "address",
-      label: "Address",
-      sortBy: "address",
-      render: (row) => row.address || "N/A",
-    },
-    {
-      id: "company",
-      label: "Company",
-      sortBy: "company",
-      render: (row) => row.company || "N/A",
-    },
-    {
-      id: "department",
-      label: "Department",
-      sortBy: "department",
-      render: (row) => row.department || "N/A",
-    },
-
-    {
-      id: "actions",
-      label: "Actions",
-      sortBy: false,
-      render: (row) => <Button title="Edit" variant="primary" size="sm" />,
-    },
-  ];
-
   return (
     <div className="">
       {/*=======================================
@@ -402,8 +683,8 @@ export default function TestComponent() {
       ========================================= */}
       <div className="md:h-[84vh] h-[80dvh] px-3 pb-1 overflow-y-auto ">
         <Table
-          headers={headers}
-          data={tableData}
+          headers={tableHeaders}
+          data={tableLimitData}
           handleSortBy={handleSortBy}
           onClick={() => {
             notify("Table row clicked", "info", 3000);
@@ -432,7 +713,55 @@ export default function TestComponent() {
         </Modal.Header>
         <Modal.Body>
           {/* Form fields for adding/updating entry go here */}
-          <p>Form content goes here...</p>
+          <form>
+            <div className="mb-3 bg-neutral-200 p-3 rounded-md">
+              <label htmlFor="customerName" className="block mb-1 font-medium">
+                Customer Name
+              </label>
+              <FormInput
+                type="text"
+                id={"customerName"}
+                placeholder="Enter Customer Name..."
+                value={currentRowData?.customerName || ""}
+                onChange={(e) => {
+                  setCurrentRowData({
+                    ...currentRowData,
+                    customerName: e.target.value,
+                  });
+                }}
+              />
+            </div>
+            <div className="mb-3 bg-neutral-200 p-3 rounded-md">
+              <label htmlFor="state" className="block mb-1 font-medium">
+                State
+              </label>
+
+              {/* <input
+                type="text"
+                id="state"
+                className="form-control"
+                value={currentRowData?.state || ""}
+                onChange={(e) => {
+                  setCurrentRowData({
+                    ...currentRowData,
+                    state: e.target.value,
+                  });
+                }}
+              /> */}
+              <FormInput
+                type="text"
+                id={"state"}
+                placeholder="Enter State..."
+                value={currentRowData?.state || ""}
+                onChange={(e) => {
+                  setCurrentRowData({
+                    ...currentRowData,
+                    state: e.target.value,
+                  });
+                }}
+              />
+            </div>
+          </form>
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -443,6 +772,13 @@ export default function TestComponent() {
               setShowAddUpdateModal(false);
               setIsUpdateMode(false);
               setCurrentRowData(null);
+              notify(
+                isUpdateMode
+                  ? "Entry updated successfully"
+                  : "Entry added successfully",
+                "success",
+                3000,
+              );
             }}
           />
           <Button
@@ -452,6 +788,7 @@ export default function TestComponent() {
               setShowAddUpdateModal(false);
               setIsUpdateMode(false);
               setCurrentRowData(null);
+              notify("Action cancelled", "warning", 3000);
             }}
           />
         </Modal.Footer>
