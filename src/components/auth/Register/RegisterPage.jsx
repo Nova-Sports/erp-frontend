@@ -87,7 +87,9 @@ export default function RegisterPage() {
                     <div className="rounded-full w-6 h-6 bg-primary absolute -z-10  animate-ping [animation-duration:1.8s]"></div>
                   )}
                 </div>
-                <div>Register Company</div>
+                <div className={step === 1 ? "font-bold" : ""}>
+                  Register Company
+                </div>
               </div>
 
               {/* ===== Divider ======== */}
@@ -103,7 +105,9 @@ export default function RegisterPage() {
                     <div className="rounded-full w-6 h-6 bg-primary absolute -z-10 animate-ping [animation-duration:1.8s]"></div>
                   )}
                 </div>
-                <div>Register Admin User</div>
+                <div className={step === 2 ? "font-bold" : ""}>
+                  Register Admin User
+                </div>
               </div>
             </div>
 
