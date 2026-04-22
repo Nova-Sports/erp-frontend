@@ -109,13 +109,13 @@ export default function LoginPage() {
 
       {/* ── Right Form Panel ── */}
       <div className="flex-1 flex items-center justify-center bg-page p-6">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-lg pb-8">
           {/* Mobile logo */}
           <Link
             to="/"
-            className="flex lg:hidden items-center justify-center mb-8"
+            className="flex lg:hidden items-center justify-center mb-12 h-48"
           >
-            <AppLogo height="h-10" />
+            <AppLogo width={"rounded-xl"} />
           </Link>
 
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">

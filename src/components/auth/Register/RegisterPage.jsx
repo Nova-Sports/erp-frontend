@@ -61,22 +61,22 @@ export default function RegisterPage() {
       </div>
 
       {/* ── Right Form Panel ── */}
-      <div className="flex-1 flex items-center justify-center bg-page p-6 overflow-y-auto">
-        <div className="w-full max-w-lg py-8">
+      <div className="flex-1 flex items-center justify-center bg-page px-6 overflow-y-auto">
+        <div className="w-full max-w-lg ">
           {/* Mobile logo */}
           <Link
             to="/"
-            className="flex lg:hidden items-center justify-center mb-8"
+            className="flex lg:hidden items-center justify-center mb-8 h-48"
           >
-            <AppLogo height="h-10" />
+            <AppLogo width={"rounded-xl"} />
           </Link>
 
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-8">
             {/*=======================================
                     Show Steps
             ========================================= */}
 
-            <div className="flex items-center justify-between  gap-2">
+            <div className="flex md:flex-row flex-col md:items-center justify-between gap-4 md:gap-2">
               {/* ========== Step 1 : Register Company ==================== */}
               <div className="flex items-center gap-3 shrink-0">
                 <div
@@ -93,7 +93,9 @@ export default function RegisterPage() {
               </div>
 
               {/* ===== Divider ======== */}
-              <div className="border-t border-gray-300 w-full"> </div>
+              <div className="border-t hidden md:block border-gray-300 w-full">
+                {" "}
+              </div>
 
               {/* ========== Step 2 : Register Admin User ==================== */}
               <div className="flex items-center gap-3 shrink-0">

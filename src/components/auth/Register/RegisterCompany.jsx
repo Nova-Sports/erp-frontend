@@ -261,8 +261,9 @@ export default function RegisterCompany() {
             />
           </div>
         </div>
-
-        <SubmitButton />
+        <div className="pt-1">
+          <SubmitButton />
+        </div>
       </form>
     </div>
   );
