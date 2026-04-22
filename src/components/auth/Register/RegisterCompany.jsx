@@ -1,4 +1,5 @@
 import FormInput from "@/components/form-input/FormInput";
+import { useAuth } from "@/contexts/AuthContext";
 import { AlertCircle, Loader } from "lucide-react";
 import React, { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
@@ -15,7 +16,8 @@ zip
 country
  */
 
-export default function RegisterCompany() {
+export default function RegisterCompany({}) {
+  const { registerCompany } = useAuth();
   /* ========================= All States ========================= */
   const [formData, setFormData] = useState({
     name: "",
@@ -64,9 +66,9 @@ export default function RegisterCompany() {
     await new Promise((r) => setTimeout(r, 500));
 
     // const result = await register(data);
-    const result = { success: true }; // Mock result for now
+    const result = await registerCompany(data);
     if (result.success) {
-      //   navigate("/dashboard", { replace: true });
+      // navigate("/dashboard", { replace: true });
       return { error: null };
     }
     return { error: result.error || "Registration failed. Please try again." };

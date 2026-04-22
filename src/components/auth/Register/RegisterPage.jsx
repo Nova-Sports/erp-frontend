@@ -1,5 +1,5 @@
 import { AlertCircle, Phone, User } from "lucide-react";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -18,10 +18,22 @@ const PERKS = [
 export default function RegisterPage() {
   /* ========================= All States ========================= */
   const [step, setStep] = useState(1);
+  const [companyInfo, setCompanyInfo] = useState(null);
 
   /*  ========================= All Functions ========================= */
 
   /* ========================= All UseEffects ========================= */
+
+  useEffect(() => {
+    const company = localStorage.getItem("company");
+    if (company) {
+      setCompanyInfo(JSON.parse(company));
+      setStep(2);
+    } else {
+      setCompanyInfo(null);
+      setStep(1);
+    }
+  }, [localStorage.getItem("company")]);
 
   return (
     <div className="min-h-screen flex">
@@ -78,13 +90,13 @@ export default function RegisterPage() {
 
             <div className="flex md:flex-row flex-col md:items-center justify-between gap-4 md:gap-2">
               {/* ========== Step 1 : Register Company ==================== */}
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-3 shrink-0 ">
                 <div
-                  className={`${step === 1 ? "bg-primary relative" : "bg-gray-200 text-neutral-400"} rounded-full w-8 h-8 flex items-center justify-center text-white z-10`}
+                  className={`${step === 1 ? "bg-primary relative" : "bg-gray-200 text-neutral-500"} rounded-full w-8 h-8 flex items-center justify-center text-white z-10`}
                 >
                   1
                   {step === 1 && (
-                    <div className="rounded-full w-6 h-6 bg-primary absolute -z-10  animate-ping [animation-duration:1.8s]"></div>
+                    <div className="rounded-full w-7 h-7 bg-primary absolute -z-10 animate-ping [animation-duration:1.8s]"></div>
                   )}
                 </div>
                 <div className={step === 1 ? "font-bold" : ""}>
@@ -100,11 +112,11 @@ export default function RegisterPage() {
               {/* ========== Step 2 : Register Admin User ==================== */}
               <div className="flex items-center gap-3 shrink-0">
                 <div
-                  className={`${step === 2 ? "bg-primary relative" : "bg-gray-200 text-neutral-400"} rounded-full w-8 h-8 flex items-center justify-center text-white z-10`}
+                  className={`${step === 2 ? "bg-primary relative" : "bg-gray-200 text-neutral-500"} rounded-full w-8 h-8 flex items-center justify-center text-white z-10`}
                 >
                   2
                   {step === 2 && (
-                    <div className="rounded-full w-6 h-6 bg-primary absolute -z-10 animate-ping [animation-duration:1.8s]"></div>
+                    <div className="rounded-full w-7 h-7 bg-primary absolute -z-10 animate-ping [animation-duration:1.8s]"></div>
                   )}
                 </div>
                 <div className={step === 2 ? "font-bold" : ""}>
@@ -116,7 +128,12 @@ export default function RegisterPage() {
             {/* =================== Steps Components ================ */}
             <div className="mt-8">
               {step === 1 && <RegisterCompany />}
-              {step === 2 && <RegisterUser />}
+              {step === 2 && (
+                <RegisterUser
+                  companyInfo={companyInfo}
+                  setCompanyInfo={setCompanyInfo}
+                />
+              )}
             </div>
 
             <p className="text-center text-sm text-gray-500 mt-6">

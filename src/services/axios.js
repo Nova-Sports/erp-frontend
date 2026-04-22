@@ -1,0 +1,66 @@
+import axios from "axios";
+// import { resetCompany } from "features/company/companySlice";
+// import store from "../store"; // Adjust the import path as necessary
+// import { logout } from "features/user/userSlice";
+
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  responseInterceptor: (response) => {
+    return response;
+  },
+  requestInterceptor: (request) => {
+    // Add your authentication logic here, e.g., attaching the authentication token to the request headers
+    return request;
+  },
+});
+
+API.interceptors.response.use(
+  (response) => {
+    // console.log("interceptedResponse");
+    // console.log(response.status);
+    // console.log(response.statusText);
+
+    return response;
+  },
+  (error) => {
+    console.log("intercepted section");
+
+    console.log(error);
+    return Promise.reject(error);
+  },
+);
+
+// API.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     console.log(error);
+
+//     if (
+//       (error.response.status === 401 || error.response.status === 403) &&
+//       (error.response.data.message === "Token Expired!" ||
+//         error.response.data.message === "No token provided!")
+//     ) {
+//       // Dispatch resetCompany action
+//       store.dispatch(resetCompany());
+//       store.dispatch(logout());
+
+//       // reset key user, userinfo, persist:root from localstorage
+//       localStorage.removeItem("user");
+//       localStorage.removeItem("token");
+//       localStorage.removeItem("userinfo");
+//       localStorage.removeItem("persist:root");
+
+//       // Token expired, handle the error here
+//       // alert("Token Expired! Please log in again.");
+
+//       // Optionally, redirect the user to the login page
+//       window.location.href = "/app/client-login";
+//     }
+//     return Promise.reject(error);
+//   },
+// );
+
+export default API;

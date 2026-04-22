@@ -1,3 +1,4 @@
+import Button from "@/components/buttons/Button";
 import FormInput from "@/components/form-input/FormInput";
 import { useAuth } from "@/contexts/AuthContext";
 import { Phone, User } from "lucide-react";
@@ -5,7 +6,7 @@ import React, { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useNavigate } from "react-router-dom";
 
-export default function RegisterUser() {
+export default function RegisterUser({ companyInfo, setCompanyInfo }) {
   const { register } = useAuth();
   const navigate = useNavigate();
   /* ========================= All States ========================= */
@@ -83,6 +84,19 @@ export default function RegisterUser() {
         <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 text-sm rounded-lg p-3 mb-4">
           <AlertCircle size={15} className="flex-shrink-0" />
           {state.error}
+        </div>
+      )}
+
+      {/* Company Info */}
+      {companyInfo && (
+        <div className="mb-4 flex items-center gap-2 bg-success/20 border-2 border-success justify-between py-2 px-3 rounded-lg ">
+          <div className="flex items-center gap-2">
+            <h3 className="font-medium text-gray-600">Company Info :</h3>
+            <p className="font-bold text-success">{companyInfo.name}</p>
+          </div>
+          <div>
+            <Button title="Reset Company" size="sm" />
+          </div>
         </div>
       )}
 
