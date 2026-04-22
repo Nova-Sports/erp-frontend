@@ -21,6 +21,9 @@ export default function FormInput({
   labelTrue = "Yes",
   labelFalse = "No",
   id = undefined,
+  name = undefined,
+  iconStart = null,
+  iconEnd = null,
 }) {
   /* ******************** All States ************************* */
 
@@ -83,6 +86,7 @@ export default function FormInput({
             onChange={onChange}
             disabled={disabled}
             id={id || `checkbox-${String(value)}`}
+            name={name}
           />
 
           {/* switch track */}
@@ -117,6 +121,7 @@ export default function FormInput({
         />
         <input
           type={type}
+          name={name}
           className={`w-full ${customClasses ? customClasses : "border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary"} ${appendClasses}  pl-10 `}
           placeholder={placeholder || "you@company.com"}
           autoComplete="email"
@@ -146,6 +151,8 @@ export default function FormInput({
           disabled={disabled}
           regexPattern={regexPattern}
           autoComplete="current-password"
+          name={name}
+          id={id || name}
 
           // className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
         />
@@ -153,7 +160,7 @@ export default function FormInput({
           type="icon"
           variant="none"
           onClick={() => setShowPassword((p) => !p)}
-          customClasses="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          customClasses="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
           tabIndex={-1}
           // aria-label={showPassword ? "Hide password" : "Show password"}
           title={() => {
@@ -167,9 +174,14 @@ export default function FormInput({
   if (type === "number") {
     return (
       <div>
+        {iconStart && (
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+            {iconStart}
+          </div>
+        )}
         <input
           type={type}
-          className={`${customClasses ? customClasses : baseClasses} ${appendClasses} hide-input-arrow`}
+          className={`${customClasses ? customClasses : baseClasses} ${iconStart && "!pl-9 !pr-3"} ${iconEnd && "!pr-9"} ${appendClasses} hide-input-arrow`}
           placeholder={placeholder}
           value={value}
           onChange={onChange}
@@ -177,22 +189,41 @@ export default function FormInput({
           regexPattern={regexPattern}
           min={min}
           max={max}
+          name={name}
+          id={id}
         />
+        {iconEnd && (
+          <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+            {iconEnd}
+          </div>
+        )}
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="relative">
+      {iconStart && (
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+          {iconStart}
+        </div>
+      )}
       <input
         type={type}
-        className={`${customClasses ? customClasses : baseClasses} ${appendClasses}`}
+        className={`${customClasses ? customClasses : baseClasses} ${iconStart && "!pl-9 !pr-3"} ${iconEnd && "!pr-9"} ${appendClasses}`}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         disabled={disabled}
         regexPattern={regexPattern}
+        name={name}
+        id={id}
       />
+      {iconEnd && (
+        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+          {iconEnd}
+        </div>
+      )}
     </div>
   );
 }

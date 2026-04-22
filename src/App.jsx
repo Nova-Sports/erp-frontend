@@ -5,7 +5,7 @@ import { AnimationProvider } from "./contexts/AnimationContext";
 import { VersionProvider } from "./contexts/VersionContext";
 import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/auth/LoginPage";
-import RegisterPage from "./components/auth/RegisterPage";
+import RegisterPage from "./components/auth/Register/RegisterPage";
 import Dashboard from "./components/dashboard/Dashboard";
 import Password from "./Pages/password-manager/Password";
 import NotFound from "./components/NotFound";

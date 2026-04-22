@@ -72,7 +72,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex flex-col w-[440px] xl:w-[480px] flex-shrink-0 bg-brand p-10 justify-between">
         <div>
           <Link to="/" className="flex items-center mb-14">
-            <AppLogo width={"mx-auto"} />
+            <AppLogo width={"mx-auto rounded-lg"} />
           </Link>
           <h2 className="text-white text-3xl font-bold leading-tight mb-4">
             Welcome back to
@@ -108,7 +108,7 @@ export default function LoginPage() {
       </div>
 
       {/* ── Right Form Panel ── */}
-      <div className="flex-1 flex items-center justify-center bg-gray-50 p-6">
+      <div className="flex-1 flex items-center justify-center bg-page p-6">
         <div className="w-full max-w-md">
           {/* Mobile logo */}
           <Link
