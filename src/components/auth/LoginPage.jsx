@@ -95,17 +95,6 @@ export default function LoginPage() {
             ))}
           </div>
         </div>
-
-        {/* Test credentials box */}
-        <div className="bg-white/10 border border-white/20 rounded-xl p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-white/50 mb-2">
-            Test Credentials
-          </p>
-          <p className="text-white/80 text-sm font-mono">
-            admin@sportswear.erp
-          </p>
-          <p className="text-white/80 text-sm font-mono">Admin@123</p>
-        </div>
       </div>
 
       {/* ── Right Form Panel ── */}
@@ -198,16 +187,6 @@ export default function LoginPage() {
 
               <SubmitButton />
             </form>
-
-            <div className="text-center mt-3">
-              <button
-                type="button"
-                onClick={fillTestCredentials}
-                className="text-xs text-brand hover:underline"
-              >
-                Fill test credentials
-              </button>
-            </div>
 
             <p className="text-center text-sm text-gray-500 mt-6">
               Don&apos;t have an account?{" "}

@@ -44,13 +44,23 @@ export default function Tabs({
 
   activeTabClass,
   inactiveTabClass,
+
+  noContent = false,
 }) {
   /* ========================= All States ========================= */
   const [tabsNavList, setTabsNavList] = useState([]);
   const [tabsContentList, setTabsContentList] = useState([]);
   const [afterTabContentList, setAfterTabContentList] = useState([]);
 
+  const [activeKey, setActiveKey] = useState(null);
+
   /*  ========================= All Functions ========================= */
+
+  const handleTabChange = (tabKey, setActiveKey, onTabChange) => {
+    setActiveKey(tabKey);
+    setActiveTab && setActiveTab(tabKey);
+    // if (onTabChange) onTabChange(tabKey);
+  };
 
   /* ========================= All UseEffects ========================= */
 
@@ -63,16 +73,21 @@ export default function Tabs({
     });
     setTabsContentList(tabContents);
     const afterTabContents = Children.map(children, (child) => {
+      if (child.props.noContent) return null;
       return {
         key: child.props.tabKey,
-        content: child.props.afterTabContent,
+        content: child.props.afterTabContent || (() => null),
       };
     });
-    setAfterTabContentList(afterTabContents);
+    setAfterTabContentList(afterTabContents || []);
   }, [children]);
 
+  useEffect(() => {
+    setActiveKey(activeTab || tabsNavList[0]);
+  }, [tabsNavList, activeTab]);
+
   return (
-    <TabsContext value={{ activeTab, setActiveTab }}>
+    <TabsContext value={{ activeKey, setActiveKey }}>
       <div
         className={`${customClass ? customClass : defaultTabClass} ${appendClasses}`}
       >
@@ -89,9 +104,9 @@ export default function Tabs({
           {tabsNavList.map((tabKey) => (
             <button
               key={tabKey}
-              onClick={() => setActiveTab(tabKey)}
+              onClick={() => handleTabChange(tabKey, setActiveKey, onTabChange)}
               className={`${customNavClass ? customNavClass : defaultNavClass} ${appendNavClasses} ${
-                activeTab === tabKey
+                activeKey === tabKey
                   ? activeTabClass || defaultActiveNavClass
                   : inactiveTabClass || defaultInactiveNavClass
               }`}
@@ -99,7 +114,7 @@ export default function Tabs({
               {tabKey}{" "}
               {afterTabContentList
                 .find((item) => item.key === tabKey)
-                ?.content(tabKey === activeTab)}
+                ?.content(tabKey === activeKey)}
             </button>
           ))}
         </div>
@@ -107,30 +122,46 @@ export default function Tabs({
         {/*=======================================
             Tab Content Section    
         ========================================= */}
-        {tabsContentList.map((tab) => (
-          <div
-            key={tab.key}
-            className={`${customContentClass ? customContentClass : defaultTabContentClass} ${appendContentClasses}`}
-            style={{ display: activeTab === tab.key ? "block" : "none" }}
-          >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: activeTab === tab.key ? 1 : 0 }}
-              transition={{ duration: 0.1 }}
+        {!noContent &&
+          tabsContentList.map((tab) => (
+            <div
+              key={tab.key}
+              className={`${customContentClass ? customContentClass : defaultTabContentClass} ${appendContentClasses}`}
+              style={{ display: activeKey === tab.key ? "block" : "none" }}
             >
-              {tab.content}
-            </motion.div>
-          </div>
-        ))}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: activeKey === tab.key ? 1 : 0 }}
+                transition={{ duration: 0.1 }}
+              >
+                {tab.content}
+              </motion.div>
+            </div>
+          ))}
       </div>
     </TabsContext>
   );
 }
 
-const Tab = ({ children, tabKey, customClass, appendClasses }) => {
+const Tab = ({
+  children,
+  tabKey,
+  customClass,
+  appendClasses,
+  activeClass,
+  inactiveClass,
+}) => {
+  const { activeKey } = React.useContext(TabsContext);
+  const isActive = activeKey === tabKey;
+  const appliedActiveClass = activeClass || "bg-primary text-white";
+  const appliedInactiveClass = inactiveClass || "";
   return (
     <div
-      className={`${customClass ? customClass : defaultTabClass} ${appendClasses}`}
+      className={`
+        ${customClass ? customClass : defaultTabClass}
+        ${appendClasses || ""}
+        ${isActive ? appliedActiveClass : appliedInactiveClass}
+      `}
     >
       {children}
     </div>

@@ -663,7 +663,14 @@ const RenderTabs = () => {
 
   return (
     <div>
-      <Tabs activeTab={activeTab} setActiveTab={setActiveTab} appendClasses="">
+      <Tabs
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        // onTabChange={(tabKey) => {
+        //   setActiveTab(tabKey);
+        // }}
+        appendClasses=""
+      >
         <Tabs.tab
           tabKey="Primary"
           afterTabContent={(active) => (
