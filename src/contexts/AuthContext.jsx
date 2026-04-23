@@ -12,7 +12,6 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     try {
       const { data } = await API.post("/auth/login", { email, password });
-      console.log("login response: ", data);
 
       if (data.success && data.employee && data.token) {
         setUser({ ...data.employee, token: data.token });
