@@ -1,13 +1,14 @@
 import Button from "@/components/buttons/Button";
 import FormInput from "@/components/form-input/FormInput";
 import { useAuth } from "@/contexts/AuthContext";
-import { Phone, User } from "lucide-react";
+import API from "@/services/axios";
+import { AlertCircle, Loader, Phone, User } from "lucide-react";
 import React, { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useNavigate } from "react-router-dom";
 
-export default function RegisterUser({ companyInfo, setCompanyInfo }) {
-  const { register } = useAuth();
+export default function RegisterUser({ companyInfo, setCompanyInfo, setStep }) {
+  const { registerUser } = useAuth();
   const navigate = useNavigate();
   /* ========================= All States ========================= */
 
@@ -20,6 +21,7 @@ export default function RegisterUser({ companyInfo, setCompanyInfo }) {
   });
 
   const [state, formAction] = useActionState(registerAction, { error: null });
+  const [companyResetLoading, setCompanyResetLoading] = useState(false);
 
   /*  ========================= All Functions ========================= */
 
@@ -36,26 +38,77 @@ export default function RegisterUser({ companyInfo, setCompanyInfo }) {
   }
 
   async function registerAction(_prevState, formData) {
+    let companyId = companyInfo?.id;
+
+    if (!companyId) {
+      const storedCompany = localStorage.getItem("company");
+      if (!storedCompany) {
+        return {
+          error:
+            "Company information is missing. Please start by registering your company.",
+        };
+      }
+
+      if (storedCompany) {
+        const parsedCompany = JSON.parse(storedCompany);
+        companyId = parsedCompany.id;
+      }
+    }
+
     const data = {
       firstName: formData.get("firstName") ?? "",
       lastName: formData.get("lastName") ?? "",
       phone: formData.get("phone") ?? "",
       email: formData.get("email") ?? "",
       password: formData.get("password") ?? "",
+      companyId,
     };
 
     const validationError = validate(data);
     if (validationError) return { error: validationError };
 
     // Artificial delay to mimic async request
-    await new Promise((r) => setTimeout(r, 500));
+    // await new Promise((r) => setTimeout(r, 500));
 
-    const result = await register(data);
+    const result = await registerUser(data);
+
     if (result.success) {
+      // remove company from localStorage since user is now registered and logged in
+      localStorage.removeItem("company");
       navigate("/dashboard", { replace: true });
       return { error: null };
     }
     return { error: result.error || "Registration failed. Please try again." };
+  }
+
+  async function resetCompany() {
+    try {
+      setCompanyResetLoading(true);
+      // get company from localStorage and delete it
+      let companyInfo = localStorage.getItem("company");
+      if (!companyInfo) {
+        setCompanyResetLoading(false);
+        return;
+      }
+      companyInfo = JSON.parse(companyInfo);
+
+      const { data } = await API.post("/auth/reset-company", {
+        id: companyInfo.id,
+      });
+      if (data.success) {
+        setCompanyResetLoading(false);
+        localStorage.removeItem("company");
+        setCompanyInfo(null);
+        setStep(1);
+      } else {
+        setCompanyResetLoading(false);
+        console.log("Failed to reset company:", data.error);
+      }
+    } catch (err) {
+      console.log(err.message);
+      setCompanyResetLoading(false);
+      alert(err.message || "Failed to reset company. Please try again.");
+    }
   }
 
   const handleChange = (e) => {
@@ -91,11 +144,24 @@ export default function RegisterUser({ companyInfo, setCompanyInfo }) {
       {companyInfo && (
         <div className="mb-4 flex items-center gap-2 bg-success/20 border-2 border-success justify-between py-2 px-3 rounded-lg ">
           <div className="flex items-center gap-2">
-            <h3 className="font-medium text-gray-600">Company Info :</h3>
+            <h3 className="font-medium text-gray-600">Company :</h3>
             <p className="font-bold text-success">{companyInfo.name}</p>
           </div>
           <div>
-            <Button title="Reset Company" size="sm" />
+            <Button
+              title="Reset Company"
+              size="sm"
+              onClick={resetCompany}
+              disabled={companyResetLoading}
+              afterTitle={() => {
+                if (!companyResetLoading) return null;
+                return (
+                  <span className="animate-spin">
+                    <Loader size={14} />
+                  </span>
+                );
+              }}
+            />
           </div>
         </div>
       )}

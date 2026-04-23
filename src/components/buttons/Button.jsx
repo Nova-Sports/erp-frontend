@@ -51,11 +51,11 @@ export default function Button({
       {type === "icon" ? (
         title()
       ) : (
-        <>
+        <div className="flex items-center gap-2 justify-center">
           {beforeTitle()}
           {title}
           {afterTitle()}
-        </>
+        </div>
       )}
     </button>
   );

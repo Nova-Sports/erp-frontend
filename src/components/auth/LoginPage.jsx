@@ -46,11 +46,13 @@ export default function LoginPage() {
     }
 
     // Artificial delay to mimic async request
-    await new Promise((r) => setTimeout(r, 500));
+    // await new Promise((r) => setTimeout(r, 500));
 
     const result = await login(email, password);
+    console.log("login-result", result);
+
     if (result.success) {
-      navigate("/dashboard", { replace: true });
+      // navigate("/dashboard", { replace: true });
       return { error: null };
     }
     return { error: result.error };

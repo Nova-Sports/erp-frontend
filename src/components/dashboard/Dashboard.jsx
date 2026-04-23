@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./sidebar/Sidebar";
-import TopBar from "./TopBar";
 import { useSidebarContext } from "./sidebar/SidebarContext";
+import TopBar from "./TopBar";
 
 export default function Dashboard() {
   /* ========================= All States ========================= */

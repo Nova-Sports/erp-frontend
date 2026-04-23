@@ -1,12 +1,8 @@
-import { AlertCircle, Phone, User } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
-import { useFormStatus } from "react-dom";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AppLogo from "../../AppLogo";
-import FormInput from "../../form-input/FormInput";
-import RegisterUser from "./RegisterUser";
 import RegisterCompany from "./RegisterCompany";
+import RegisterUser from "./RegisterUser";
 
 const PERKS = [
   "Free to get started — no credit card required",
@@ -26,6 +22,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     const company = localStorage.getItem("company");
+
     if (company) {
       setCompanyInfo(JSON.parse(company));
       setStep(2);
@@ -33,7 +30,7 @@ export default function RegisterPage() {
       setCompanyInfo(null);
       setStep(1);
     }
-  }, [localStorage.getItem("company")]);
+  }, [localStorage]);
 
   return (
     <div className="min-h-screen flex">
@@ -127,11 +124,17 @@ export default function RegisterPage() {
 
             {/* =================== Steps Components ================ */}
             <div className="mt-8">
-              {step === 1 && <RegisterCompany />}
+              {step === 1 && (
+                <RegisterCompany
+                  setCompanyInfo={setCompanyInfo}
+                  setStep={setStep}
+                />
+              )}
               {step === 2 && (
                 <RegisterUser
                   companyInfo={companyInfo}
                   setCompanyInfo={setCompanyInfo}
+                  setStep={setStep}
                 />
               )}
             </div>

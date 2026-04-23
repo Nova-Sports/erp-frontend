@@ -299,7 +299,7 @@ export default function Sidebar({ mode, onRequestExpand }) {
                 {user?.firstName} {user?.lastName}
               </p>
               <p className="text-white/60 text-xs capitalize truncate">
-                {user?.role}
+                {user?.isAdmin ? "Admin" : "User"}
               </p>
             </div>
           </div>

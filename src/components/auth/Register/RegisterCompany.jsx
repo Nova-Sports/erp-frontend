@@ -16,7 +16,7 @@ zip
 country
  */
 
-export default function RegisterCompany({}) {
+export default function RegisterCompany({ setCompanyInfo, setStep }) {
   const { registerCompany } = useAuth();
   /* ========================= All States ========================= */
   const [formData, setFormData] = useState({
@@ -47,31 +47,39 @@ export default function RegisterCompany({}) {
   }
 
   async function registerCompanyAction(_prevState, formData) {
-    const data = {
-      name: formData.get("name") ?? "",
-      address1: formData.get("address1") ?? "",
-      address2: formData.get("address2") ?? "",
-      phone: formData.get("phone") ?? "",
-      email: formData.get("email") ?? "",
-      city: formData.get("city") ?? "",
-      state: formData.get("state") ?? "",
-      zip: formData.get("zip") ?? "",
-      country: formData.get("country") ?? "",
-    };
+    try {
+      const data = {
+        name: formData.get("name") ?? "",
+        address1: formData.get("address1") ?? "",
+        address2: formData.get("address2") ?? "",
+        phone: formData.get("phone") ?? "",
+        email: formData.get("email") ?? "",
+        city: formData.get("city") ?? "",
+        state: formData.get("state") ?? "",
+        zip: formData.get("zip") ?? "",
+        country: formData.get("country") ?? "",
+      };
 
-    const validationError = validate(data);
-    if (validationError) return { error: validationError };
+      const validationError = validate(data);
+      if (validationError) return { error: validationError };
 
-    // Artificial delay to mimic async request
-    await new Promise((r) => setTimeout(r, 500));
+      // Artificial delay to mimic async request
+      // await new Promise((r) => setTimeout(r, 500));
 
-    // const result = await register(data);
-    const result = await registerCompany(data);
-    if (result.success) {
-      // navigate("/dashboard", { replace: true });
-      return { error: null };
+      // const result = await register(data);
+      const result = await registerCompany(data);
+      if (result.success) {
+        setCompanyInfo(result.company);
+        setStep(2);
+        return { error: null };
+      }
+      return {
+        error: result.error || "Registration failed. Please try again.",
+      };
+    } catch (err) {
+      console.log(err.message);
+      return { error: err.message || "An unexpected error occurred." };
     }
-    return { error: result.error || "Registration failed. Please try again." };
   }
 
   // Separate component so useFormStatus can read the pending state of the parent <form>

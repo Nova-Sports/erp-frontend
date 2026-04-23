@@ -1,10 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import {
-  loginUser,
-  registerUser,
-  logoutUser,
-  getCurrentUser,
-} from "../utils/auth";
+import { loginUser, logoutUser, getCurrentUser } from "../utils/auth";
 
 import API from "@/services/axios";
 
@@ -15,9 +10,21 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getCurrentUser());
 
   const login = async (email, password) => {
-    const result = await loginUser(email, password);
-    if (result.success) setUser(result.user);
-    return result;
+    try {
+      const { data } = await API.post("/auth/login", { email, password });
+      console.log("login response: ", data);
+
+      if (data.success && data.employee && data.token) {
+        setUser({ ...data.employee, token: data.token });
+        loginUser({ ...data.employee, token: data.token }); // Persist to localStorage
+        return { success: true };
+      } else {
+        return { error: data.error || "Login failed." };
+      }
+    } catch (err) {
+      console.log(err.message);
+      return { error: err.response?.data?.error || "Login failed." };
+    }
   };
 
   const registerCompany = async (formData) => {
@@ -25,17 +32,34 @@ export function AuthProvider({ children }) {
       const { data } = await API.post("/auth/register-company", formData);
       if (data.success) {
         localStorage.setItem("company", JSON.stringify(data.company));
+        return data;
+      } else {
+        return { error: data.error || "Company registration failed." };
       }
-      return data;
     } catch (err) {
       console.log(err.message);
+      return {
+        error: err.response?.data?.error || "Company registration failed.",
+      };
     }
   };
 
-  const register = async (data) => {
-    const result = await registerUser(data);
-    if (result.success) setUser(result.user);
-    return result;
+  const registerUser = async (formData) => {
+    try {
+      const { data } = await API.post("/auth/register-user", formData);
+      if (data.success && data.employee && data.token) {
+        loginUser({ ...data.employee, token: data.token }); // Persist to localStorage
+        setUser({ ...data.employee, token: data.token });
+        return { success: true };
+      } else {
+        return { error: data.error || "User registration failed." };
+      }
+    } catch (err) {
+      console.log(err.message);
+      return {
+        error: err.response?.data?.message || "User registration failed.",
+      };
+    }
   };
 
   const logout = () => {
@@ -44,9 +68,11 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext value={{ user, login, register, logout, registerCompany }}>
+    <AuthContext.Provider
+      value={{ user, login, registerUser, logout, registerCompany }}
+    >
       {children}
-    </AuthContext>
+    </AuthContext.Provider>
   );
 }
 
