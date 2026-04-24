@@ -7,10 +7,13 @@ import Table from "@/components/table/Table";
 import { Modal } from "@/components/modal/Modal";
 import FormInput from "@/components/form-input/FormInput";
 import Tabs from "@/components/tabs/Tabs";
+import API from "@/services/axios";
+import authHeader from "@/services/auth-header";
 
 export default function Password() {
   /* ========================= All States ========================= */
   const [limit, setLimit] = useState(20);
+  const { notify } = useNotification();
 
   const [searchBy, setSearchBy] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -29,7 +32,6 @@ export default function Password() {
   /*  ========================= All Functions ========================= */
 
   /* ========================= All UseEffects ========================= */
-  const { notify } = useNotification();
 
   const [tableData, setTableData] = useState([
     {
@@ -180,6 +182,19 @@ export default function Password() {
     setLimit(newLimit);
     // Update TableData to show new limit of entries
     setTableLimitData(tableData.slice(0, newLimit));
+  };
+
+  const getPasswords = async () => {
+    try {
+      const { data } = await API.post(
+        "/sales/passwords",
+        {},
+        { headers: authHeader() },
+      );
+    } catch (err) {
+      console.log(err.message);
+      notify("Failed to fetch passwords", "error", 3000);
+    }
   };
 
   /* =============================== Actions Filters ======================================= */
