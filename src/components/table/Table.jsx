@@ -2,6 +2,7 @@ import { ArrowDown, ArrowUp, EllipsisVertical, Menu } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Dropdown } from "../dropdown/Dropdown";
+import FormInput from "../form-input/FormInput";
 
 export default function Table({
   headers,
@@ -155,16 +156,16 @@ export default function Table({
                               key={column.label}
                               value={column.label}
                             >
-                              <div className="flex items-center gap-2">
-                                <div className="mb-0">
-                                  <input
+                              <div className="flex items-center gap-4">
+                                <div className="">
+                                  {/* <input
                                     className="h-4 w-4 text-primary focus:ring-primary border-gray-300 "
                                     type="checkbox"
                                     checked={column.enabled}
                                     onChange={() => handleEnableChange(column)}
                                     id={`checkbox-${column.label}`}
-                                  />
-                                  {/* <FormInput
+                                  /> */}
+                                  <FormInput
                                     onChange={(e) => {
                                       handleEnableChange(column);
                                     }}
@@ -174,11 +175,11 @@ export default function Table({
                                     labelContainer="md"
                                     value={column.enabled}
                                     id={`checkbox-${column.label}`}
-                                  /> */}
+                                  />
                                 </div>
                                 <label
                                   htmlFor={`checkbox-${column.label}`}
-                                  className="mb-1 min-w-44 cursor-pointer text-sm py-2"
+                                  className="mb-1.5 min-w-44 cursor-pointer text-sm py-2"
                                 >
                                   {column.label}
                                 </label>

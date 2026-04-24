@@ -1,3 +1,4 @@
+import { logoutUser } from "@/utils/auth";
 import axios from "axios";
 // import { resetCompany } from "features/company/companySlice";
 // import store from "../store"; // Adjust the import path as necessary
@@ -26,9 +27,29 @@ API.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log("intercepted section");
+    if (error.response) {
+      if (error.name === "AxiosError" && error.response.status === 500) {
+        // Handle 500 Internal Server Error
+        return Promise.reject(
+          new Error(error.response.data.message || "Internal Server Error"),
+        );
+      }
+    }
 
-    console.log(error);
+    if (error.response) {
+      if (
+        (error.response.status === 401 || error.response.status === 403) &&
+        (error.response.data.message === "Token Expired!" ||
+          error.response.data.message === "No token provided!")
+      ) {
+        // Logout the user and clear local storage
+        logoutUser();
+
+        // Optionally, redirect the user to the login page
+        // window.location.href = "/app/client-login";
+      }
+    }
+
     return Promise.reject(error);
   },
 );

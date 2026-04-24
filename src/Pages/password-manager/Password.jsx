@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNotification } from "@/contexts/NotificationContext";
 import { Menu, Search } from "lucide-react";
 import { Dropdown } from "@/components/dropdown/Dropdown";
@@ -9,6 +9,8 @@ import FormInput from "@/components/form-input/FormInput";
 import Tabs from "@/components/tabs/Tabs";
 import API from "@/services/axios";
 import authHeader from "@/services/auth-header";
+import PsAddUpdate from "./PsAddUpdate";
+import PsGenerator from "./PsGenerator";
 
 export default function Password() {
   /* ========================= All States ========================= */
@@ -30,8 +32,6 @@ export default function Password() {
   const [currentRowData, setCurrentRowData] = useState(null);
 
   /*  ========================= All Functions ========================= */
-
-  /* ========================= All UseEffects ========================= */
 
   const [tableData, setTableData] = useState([
     {
@@ -184,18 +184,18 @@ export default function Password() {
     setTableLimitData(tableData.slice(0, newLimit));
   };
 
-  const getPasswords = async () => {
+  const getPasswords = useCallback(async () => {
     try {
       const { data } = await API.post(
         "/sales/passwords",
-        {},
+        { type: filterByTab.toLowerCase() },
         { headers: authHeader() },
       );
     } catch (err) {
       console.log(err.message);
-      notify("Failed to fetch passwords", "error", 3000);
+      notify(err.message, "error", 5000);
     }
-  };
+  }, [filterByTab]);
 
   /* =============================== Actions Filters ======================================= */
 
@@ -463,6 +463,18 @@ export default function Password() {
 
   /* =============================== Table Functions ======================================= */
 
+  /* ========================= All UseEffects ========================= */
+  useEffect(() => {
+    if (filterByTab === "Password Generator") {
+      return;
+    }
+
+    let timeout = setTimeout(() => {
+      getPasswords();
+    }, 50);
+    return () => clearTimeout(timeout);
+  }, [filterByTab]);
+
   return (
     <div className="">
       {/*=======================================
@@ -473,19 +485,28 @@ export default function Password() {
       {/*=======================================
           Table Section    
       ========================================= */}
-      <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
-        <Table
-          headers={tableHeaders}
-          data={tableLimitData}
-          handleSortBy={handleSortBy}
-          onClick={() => {
-            notify("Table row clicked", "info", 3000);
-          }}
-          onDoubleClick={() => {
-            notify("Table row double-clicked", "success", 3000);
-          }}
-        />
-      </div>
+      {filterByTab === "Password Generator" ? (
+        <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1  overflow-y-auto ">
+          <div>
+            {/* <div className="bg-white rounded-md py-3 px-3 h-full"> */}
+            <PsGenerator />
+          </div>
+        </div>
+      ) : (
+        <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
+          <Table
+            headers={tableHeaders}
+            data={tableLimitData}
+            handleSortBy={handleSortBy}
+            onClick={() => {
+              notify("Table row clicked", "info", 3000);
+            }}
+            onDoubleClick={() => {
+              notify("Table row double-clicked", "success", 3000);
+            }}
+          />
+        </div>
+      )}
 
       {/*=======================================
           Add / Update Modal    
@@ -500,78 +521,13 @@ export default function Password() {
         position="right"
         size={"full"}
       >
-        <Modal.Header>
-          {isUpdateMode ? "Update Entry" : "Add New Entry"}
-        </Modal.Header>
-        <Modal.Body>
-          {/* Form fields for adding/updating entry go here */}
-          <form>
-            <div className="mb-3 bg-neutral-200 p-3 rounded-md">
-              <label htmlFor="customerName" className="block mb-1 font-medium">
-                Customer Name
-              </label>
-              <FormInput
-                type="text"
-                id={"customerName"}
-                placeholder="Enter Customer Name..."
-                value={currentRowData?.customerName || ""}
-                onChange={(e) => {
-                  setCurrentRowData({
-                    ...currentRowData,
-                    customerName: e.target.value,
-                  });
-                }}
-              />
-            </div>
-            <div className="mb-3 bg-neutral-200 p-3 rounded-md">
-              <label htmlFor="state" className="block mb-1 font-medium">
-                State
-              </label>
-
-              <FormInput
-                type="text"
-                id={"state"}
-                placeholder="Enter State..."
-                value={currentRowData?.state || ""}
-                onChange={(e) => {
-                  setCurrentRowData({
-                    ...currentRowData,
-                    state: e.target.value,
-                  });
-                }}
-              />
-            </div>
-          </form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            title={isUpdateMode ? "Update" : "Add"}
-            variant="primary"
-            onClick={() => {
-              // Handle add/update logic here
-              setShowAddUpdateModal(false);
-              setIsUpdateMode(false);
-              setCurrentRowData(null);
-              notify(
-                isUpdateMode
-                  ? "Entry updated successfully"
-                  : "Entry added successfully",
-                "success",
-                3000,
-              );
-            }}
-          />
-          <Button
-            title="Cancel"
-            variant="secondary"
-            onClick={() => {
-              setShowAddUpdateModal(false);
-              setIsUpdateMode(false);
-              setCurrentRowData(null);
-              notify("Action cancelled", "warning", 3000);
-            }}
-          />
-        </Modal.Footer>
+        <PsAddUpdate
+          isUpdateMode={isUpdateMode}
+          setShowAddUpdateModal={setShowAddUpdateModal}
+          setIsUpdateMode={setIsUpdateMode}
+          currentRowData={currentRowData}
+          setCurrentRowData={setCurrentRowData}
+        />
       </Modal>
     </div>
   );

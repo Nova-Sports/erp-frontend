@@ -33,82 +33,21 @@ export default function FormInput({
 
   /* ******************** All UseEffects ************************* */
 
-  // if (type === "checkbox") {
-  //   return (
-  //     <div className="flex items-center">
-  //       <label className="inline-flex items-center cursor-pointer">
-  //         <input
-  //           className="sr-only "
-  //           checked={value}
-  //           onChange={onChange}
-  //           disabled={disabled}
-  //           id={id || `checkbox-${value}`}
-  //           type="checkbox"
-  //         />
-  //         <div
-  //           className={`relative rounded-full outline-none duration-100 after:duration-500 w-12 h-6 bg-primary `}
-  //         >
-  //           <div
-  //             className={`absolute outline-none rounded-full h-4 w-6 bg-white top-1 left-1 flex justify-center items-center text-sky-800 font-bold duration-300 text-xs ${value ? "translate-x-4" : "left-1"}`}
-  //           >
-  //             {value ? labelTrue : labelFalse}
-  //           </div>
-  //         </div>
-  //       </label>
-  //     </div>
-  //   );
-  // }
   if (type === "checkbox") {
-    const knobVariants = {
-      off: {
-        x: 0,
-        transition: { type: "spring", stiffness: 500, damping: 30 },
-      },
-      on: {
-        x: 24,
-        transition: { type: "spring", stiffness: 500, damping: 30 },
-      },
-    };
-
-    const labelVariants = {
-      off: { opacity: 1 },
-      on: { opacity: 1 },
-    };
-
     return (
-      <div className="flex items-center">
-        <label className="inline-flex items-center cursor-pointer">
-          {/* real input stays intact */}
-          <input
-            className="sr-only"
-            type="checkbox"
-            checked={value}
-            onChange={onChange}
-            disabled={disabled}
-            id={id || `checkbox-${String(value)}`}
-            name={name}
-          />
-
-          {/* switch track */}
-          <div className="relative w-12 h-6 rounded-full bg-primary flex items-center px-1">
-            {/* animated knob */}
-            <motion.div
-              className="h-4 w-6 bg-white rounded text-[10px] flex items-center justify-center font-medium text-sky-800"
-              variants={knobVariants}
-              animate={value ? "on" : "off"}
-            >
-              <motion.span
-                key={value ? "on" : "off"}
-                initial={{ opacity: 0, y: 2 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.15 }}
-              >
-                {value ? labelTrue : labelFalse}
-              </motion.span>
-            </motion.div>
-          </div>
-        </label>
-      </div>
+      <label className="relative inline-block h-4 w-8 cursor-pointer rounded-full bg-gray-400 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+        <input
+          className="peer sr-only"
+          type="checkbox"
+          value=""
+          checked={value}
+          onChange={onChange}
+          id={id || name}
+          name={name}
+          disabled={disabled}
+        />
+        <span className="absolute -inset-y-[1.5px] start-0 m-1 size-2.5 rounded-full bg-white ring-inset ring-white transition-all peer-checked:start-3.5 peer-checked:bg-white peer-checked:ring-transparent"></span>
+      </label>
     );
   }
 
