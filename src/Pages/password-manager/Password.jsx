@@ -35,7 +35,7 @@ export default function Password() {
 
   const [query, setQuery] = useState("");
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Modal States
   const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
@@ -410,7 +410,7 @@ export default function Password() {
     }
 
     let timeout = setTimeout(() => {
-      // getPasswords();
+      getPasswords();
     }, 50);
     return () => clearTimeout(timeout);
   }, [filterByTab, limit, query, page]);
