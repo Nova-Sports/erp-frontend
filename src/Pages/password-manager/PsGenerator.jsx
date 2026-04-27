@@ -1,24 +1,27 @@
 import React, { useState } from "react";
 import { RefreshCw, Copy, Shield } from "lucide-react";
-import { generatePassword } from "./passwordUtils";
+import {
+  generatePassword,
+  getPasswordOptions,
+  savePasswordOptions,
+} from "./passwordUtils";
 import FormInput from "@/components/form-input/FormInput";
+import { useNotification } from "@/contexts/NotificationContext";
 
 export default function PsGenerator() {
-  const [passwordOptions, setPasswordOptions] = useState({
-    lower: true,
-    upper: true,
-    number: true,
-    special: true,
-    length: 15,
-  });
+  const { notify } = useNotification();
+
+  const [passwordOptions, setPasswordOptions] = useState(getPasswordOptions());
 
   const [password, setPassword] = useState("");
 
   const handleToggle = (key) => {
-    setPasswordOptions((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    let newOptions = {
+      ...passwordOptions,
+      [key]: !passwordOptions[key],
+    };
+    savePasswordOptions(newOptions);
+    setPasswordOptions(newOptions);
   };
 
   const handleGenerate = () => {
@@ -27,6 +30,7 @@ export default function PsGenerator() {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(password);
+    notify("Password copied to clipboard", "success", 3000);
   };
 
   return (
@@ -77,12 +81,14 @@ export default function PsGenerator() {
             min="6"
             max="50"
             value={passwordOptions.length}
-            onChange={(e) =>
-              setPasswordOptions((prev) => ({
-                ...prev,
+            onChange={(e) => {
+              const newOptions = {
+                ...passwordOptions,
                 length: Number(e.target.value),
-              }))
-            }
+              };
+              savePasswordOptions(newOptions);
+              setPasswordOptions(newOptions);
+            }}
             className="w-full accent-indigo-500"
           />
         </div>

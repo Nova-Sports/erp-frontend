@@ -11,20 +11,29 @@ import API from "@/services/axios";
 import authHeader from "@/services/auth-header";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
+import TableLoader from "@/components/table-loader/TableLoader";
+
+const getPasswordType = (tab) => {
+  switch (tab) {
+    case "Company":
+      return "company";
+    case "Customer Portal":
+      return "customer_portal";
+    case "Private":
+      return "private";
+    default:
+      return "company";
+  }
+};
 
 export default function Password() {
   /* ========================= All States ========================= */
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(10);
   const { notify } = useNotification();
 
   const [searchBy, setSearchBy] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [locationsList, setLocationsList] = useState([
-    { id: 1, locationName: "Krown Sports" },
-    { id: 2, locationName: "Krown Retails" },
-    { id: 3, locationName: "Krown Resellers" },
-    { id: 4, locationName: "Nova Sports" },
-  ]);
+
+  const [loading, setLoading] = useState(true);
 
   // Modal States
   const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
@@ -33,111 +42,9 @@ export default function Password() {
 
   /*  ========================= All Functions ========================= */
 
-  const [tableData, setTableData] = useState([
-    {
-      id: 11,
-      customerId: 11,
-      customerName: "Customer 11",
-      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
-      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
-      paymentTerm: { id: 2, name: "Payment Term 2" },
-      poRequired: true,
-      state: "GA",
-      locationId: 2,
-      locations: { id: 2, locationName: "Krown Retails" },
-      createdAt: "2024-06-11T10:00:00Z",
-      updatedAt: "2024-06-11T10:00:00Z",
-    },
-  ]);
+  const [tableData, setTableData] = useState([]);
 
   const [filterByTab, setFilterByTab] = useState("Company");
-
-  const [tableLimitData, setTableLimitData] = useState(
-    tableData.slice(0, limit),
-  );
-
-  const [tableHeaders, setTableHeaders] = useState([
-    {
-      id: "customerId",
-      label: "C-ID",
-      sortBy: "customerId",
-      customHClasses: "",
-      customRClasses: "",
-      render: (row) => <span className="text-nowrap">{row.customerId}</span>,
-    },
-    {
-      id: "customerName",
-      label: "Customer Name",
-      sortBy: "customerName",
-      render: (row) => row.customerName,
-    },
-    {
-      id: "insideSalesPerson",
-      label: "Inside Sales Person",
-      sortBy: "insideSalesPerson",
-      render: (row) => row.insideSalesPerson.name,
-    },
-    {
-      id: "outSideSalesPerson",
-      label: "Outside Sales Person",
-      sortBy: "outSideSalesPerson",
-      render: (row) => row.outSideSalesPerson.name,
-    },
-    {
-      id: "paymentTerm",
-      label: "Payment Term",
-      sortBy: "paymentTerm",
-      render: (row) => row.paymentTerm.name,
-    },
-    {
-      id: "poRequired",
-      label: "PO Required",
-      sortBy: "poRequired",
-      customRClasses: "w-8",
-      render: (row) => {
-        return (
-          <div className="text-center flex-center">
-            {row.poRequired ? (
-              <div className="w-10 h-6 flex-center bg-green-100 border-green-300 text-green-800 border text-center rounded-md">
-                <span className="text-xs uppercase font-semibold">Yes</span>
-              </div>
-            ) : (
-              <div className="w-10 h-6 flex-center bg-red-100 border-red-300 text-red-800 border text-center rounded-md">
-                <span className="text-xs uppercase font-semibold">No</span>
-              </div>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      id: "state",
-      label: "State",
-      sortBy: "state",
-      customRClasses: "w-8 text-center",
-      customHClasses: "w-8 text-center",
-      render: (row) => row.state,
-    },
-    {
-      id: "locationId",
-      label: "Location",
-      sortBy: "locationId",
-      render: (row) => row.locations.locationName,
-    },
-    {
-      id: "actions",
-      label: "Actions",
-      sortBy: false,
-
-      render: (row) => {
-        return (
-          <div className="me-4">
-            <Button title="Edit" variant="primary" size="sm" />
-          </div>
-        );
-      },
-    },
-  ]);
 
   const handleSortBy = (sortColumn, sortDirection) => {
     if (
@@ -145,54 +52,60 @@ export default function Password() {
       sortColumn === "outSideSalesPerson" ||
       sortColumn === "paymentTerm"
     ) {
-      const sortedData = [...tableLimitData].sort((a, b) => {
+      const sortedData = [...tableData].sort((a, b) => {
         const aValue = a[sortColumn].name.toLowerCase();
         const bValue = b[sortColumn].name.toLowerCase();
         if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
         if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
         return 0;
       });
-      setTableLimitData(sortedData);
+      setTableData(sortedData);
       return;
     }
 
     if (sortColumn === "locationId") {
-      const sortedData = [...tableLimitData].sort((a, b) => {
+      const sortedData = [...tableData].sort((a, b) => {
         const aValue = a.locations.locationName.toLowerCase();
         const bValue = b.locations.locationName.toLowerCase();
         if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
         if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
         return 0;
       });
-      setTableLimitData(sortedData);
+      setTableData(sortedData);
       return;
     }
 
-    const sortedData = [...tableLimitData].sort((a, b) => {
+    const sortedData = [...tableData].sort((a, b) => {
       if (a[sortColumn] < b[sortColumn])
         return sortDirection === "asc" ? -1 : 1;
       if (a[sortColumn] > b[sortColumn])
         return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
-    setTableLimitData(sortedData);
+    setTableData(sortedData);
   };
 
   const handleLimitChange = (newLimit) => {
     setLimit(newLimit);
-    // Update TableData to show new limit of entries
-    setTableLimitData(tableData.slice(0, newLimit));
   };
 
   const getPasswords = useCallback(async () => {
     try {
+      setLoading(true);
       const { data } = await API.post(
         "/sales/passwords",
-        { type: filterByTab.toLowerCase() },
+        { type: getPasswordType(filterByTab) },
         { headers: authHeader() },
       );
+      if (data?.success) {
+        setTableData(data.data);
+      } else {
+        notify(data.message || "Failed to fetch passwords", "error", 3000);
+      }
+      setLoading(false);
     } catch (err) {
       console.log(err.message);
+      setLoading(false);
       notify(err.message, "error", 5000);
     }
   }, [filterByTab]);
@@ -228,10 +141,10 @@ export default function Password() {
             }}
           />
           <Button
-            title="Bid"
-            appendClasses={`rounded-none border-x-0 ${filterByTab === "Bid" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
+            title="Customer Portal"
+            appendClasses={`rounded-none border-x-0 ${filterByTab === "Customer Portal" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
             onClick={() => {
-              setFilterByTab("Bid");
+              setFilterByTab("Customer Portal");
             }}
           />
           <Button
@@ -275,35 +188,35 @@ export default function Password() {
       );
     };
 
-    const RenderFilterByLocation = () => {
-      return (
-        <Dropdown
-          value={selectedLocation}
-          onChange={(value) => setSelectedLocation(value)}
-        >
-          <Dropdown.Trigger
-            appendClass={"!border-primary !border-1 !bg-primary/10"}
-            // renderIcon={false}
-          >
-            Filter By : {selectedLocation?.locationName || "All Locations"}
-          </Dropdown.Trigger>
-          <Dropdown.Menu>
-            <Dropdown.Item value={{ id: 9999999, locationName: "no-location" }}>
-              Without Location
-            </Dropdown.Item>
-            {locationsList.map((location) => (
-              <Dropdown.Item
-                key={location.id}
-                value={location.id}
-                onClick={() => setSelectedLocation(location)}
-              >
-                {location.locationName}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      );
-    };
+    // const RenderFilterByLocation = () => {
+    //   return (
+    //     <Dropdown
+    //       value={selectedLocation}
+    //       onChange={(value) => setSelectedLocation(value)}
+    //     >
+    //       <Dropdown.Trigger
+    //         appendClass={"!border-primary !border-1 !bg-primary/10"}
+    //         // renderIcon={false}
+    //       >
+    //         Filter By : {selectedLocation?.locationName || "All Locations"}
+    //       </Dropdown.Trigger>
+    //       <Dropdown.Menu>
+    //         <Dropdown.Item value={{ id: 9999999, locationName: "no-location" }}>
+    //           Without Location
+    //         </Dropdown.Item>
+    //         {locationsList.map((location) => (
+    //           <Dropdown.Item
+    //             key={location.id}
+    //             value={location.id}
+    //             onClick={() => setSelectedLocation(location)}
+    //           >
+    //             {location.locationName}
+    //           </Dropdown.Item>
+    //         ))}
+    //       </Dropdown.Menu>
+    //     </Dropdown>
+    //   );
+    // };
 
     const RenderSearchFilters = () => {
       return (
@@ -441,7 +354,7 @@ export default function Password() {
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <RenderLimit />
-                <RenderFilterByLocation />
+                {/* <RenderFilterByLocation /> */}
               </div>
 
               <RenderAfterSearchButtons />
@@ -463,6 +376,53 @@ export default function Password() {
 
   /* =============================== Table Functions ======================================= */
 
+  const tableHeaders = [
+    {
+      id: "ps_title",
+      label: "Title",
+      sortBy: "ps_title",
+      customHClasses: "",
+      customRClasses: "",
+      render: (row) => <span className="text-nowrap">{row.ps_title}</span>,
+    },
+    {
+      id: "ps_username",
+      label: "Username",
+      sortBy: "ps_username",
+      render: (row) => row.ps_username,
+    },
+    {
+      id: "ps_passwordValue",
+      label: "Password",
+      sortBy: "ps_passwordValue",
+      render: (row) => row.ps_passwordValue,
+    },
+    {
+      id: "ps_url",
+      label: "URL",
+      sortBy: "ps_url",
+      render: (row) => row.ps_url,
+    },
+    {
+      id: "updatedAt",
+      label: "Last Updated",
+      sortBy: "updatedAt",
+      render: (row) => row.updatedAt,
+    },
+    {
+      id: "actions",
+      label: "Actions",
+      sortBy: false,
+
+      render: (row) => {
+        return (
+          <div className="me-4">
+            <Button title="Edit" variant="primary" size="sm" />
+          </div>
+        );
+      },
+    },
+  ];
   /* ========================= All UseEffects ========================= */
   useEffect(() => {
     if (filterByTab === "Password Generator") {
@@ -494,17 +454,27 @@ export default function Password() {
         </div>
       ) : (
         <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
-          <Table
-            headers={tableHeaders}
-            data={tableLimitData}
-            handleSortBy={handleSortBy}
-            onClick={() => {
-              notify("Table row clicked", "info", 3000);
-            }}
-            onDoubleClick={() => {
-              notify("Table row double-clicked", "success", 3000);
-            }}
-          />
+          {loading ? (
+            <TableLoader headers={tableHeaders} limit={limit} />
+          ) : !tableData || tableData.length === 0 ? (
+            <div className="bg-white rounded-md h-full flex-center">
+              <div className="text-center text-3xl animate-pulse py-4">
+                No passwords found!
+              </div>
+            </div>
+          ) : (
+            <Table
+              headers={tableHeaders}
+              data={tableData}
+              handleSortBy={handleSortBy}
+              onClick={() => {
+                notify("Table row clicked", "info", 3000);
+              }}
+              onDoubleClick={() => {
+                notify("Table row double-clicked", "success", 3000);
+              }}
+            />
+          )}
         </div>
       )}
 
@@ -527,6 +497,8 @@ export default function Password() {
           setIsUpdateMode={setIsUpdateMode}
           currentRowData={currentRowData}
           setCurrentRowData={setCurrentRowData}
+          filterByTab={filterByTab}
+          getPasswordType={getPasswordType}
         />
       </Modal>
     </div>

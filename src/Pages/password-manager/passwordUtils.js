@@ -6,14 +6,17 @@ const CHAR_SETS = {
 };
 
 export function generatePassword(length, opts) {
+  let useOptions = opts || getPasswordOptions();
+  let useLength = length || useOptions.length || 15;
+
   let chars = "";
-  if (opts.lower) chars += CHAR_SETS.lower;
-  if (opts.upper) chars += CHAR_SETS.upper;
-  if (opts.number) chars += CHAR_SETS.number;
-  if (opts.special) chars += CHAR_SETS.special;
+  if (useOptions.lower) chars += CHAR_SETS.lower;
+  if (useOptions.upper) chars += CHAR_SETS.upper;
+  if (useOptions.number) chars += CHAR_SETS.number;
+  if (useOptions.special) chars += CHAR_SETS.special;
   if (!chars) return "";
   let password = "";
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < useLength; i++) {
     password += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return password;
@@ -33,5 +36,7 @@ export function savePasswordOptions(options) {
  */
 export function getPasswordOptions() {
   const options = localStorage.getItem("passwordOptions");
-  return options ? JSON.parse(options) : null;
+  return options
+    ? JSON.parse(options)
+    : { lower: true, upper: true, number: true, special: true, length: 15 };
 }

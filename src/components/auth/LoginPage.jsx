@@ -1,10 +1,10 @@
-import { useState, useActionState } from "react";
+import { AlertCircle, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, AlertCircle } from "lucide-react";
-import AppLogo from "../AppLogo";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import useVersion from "../../contexts/VersionContext";
+import AppLogo from "../AppLogo";
 
 const MODULE_BULLETS = [
   "HRM",
@@ -35,7 +35,6 @@ export default function LoginPage() {
 
   const { login } = useAuth();
   const { version } = useVersion();
-  const navigate = useNavigate();
 
   async function loginAction(_prevState, formData) {
     const email = formData.get("email")?.trim().toLowerCase() ?? "";

@@ -34,6 +34,7 @@ export function getCurrentUser() {
  */
 export function logoutUser() {
   localStorage.removeItem(STORAGE_USER_KEY);
+  window.location.href = "/login"; // Redirect to login page after logout
 }
 
 /**
