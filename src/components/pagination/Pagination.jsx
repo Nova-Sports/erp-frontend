@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 /**
  * Pagination component styled with Tailwind and custom theme.
+ * Shows 10 pages at a time, arrows go to first/last page.
  * @param {Object} props
  * @param {number} props.page - Current page (1-based)
  * @param {function} props.setPage - Setter for page
@@ -14,35 +15,37 @@ export default function Pagination({
   totalPages,
   totalResults,
 }) {
-  if (totalPages <= 1) return null;
+  const [visiblePages, setVisiblePages] = useState([]);
 
-  // Helper to generate page numbers (with ellipsis for large sets)
-  const getPageNumbers = () => {
-    const pages = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (page <= 4) {
-        pages.push(1, 2, 3, 4, 5, "...", totalPages);
-      } else if (page >= totalPages - 3) {
-        pages.push(
-          1,
-          "...",
-          totalPages - 4,
-          totalPages - 3,
-          totalPages - 2,
-          totalPages - 1,
-          totalPages,
-        );
-      } else {
-        pages.push(1, "...", page - 1, page, page + 1, "...", totalPages);
-      }
+  let totalPageNumToShow = 10; // Show 10 pages at a time
+
+  useEffect(() => {
+    if (!totalPages || totalPages <= 1) {
+      setVisiblePages([]);
+      return;
     }
-    return pages;
-  };
 
-  const handlePageChange = (p) => {
-    if (typeof p === "number" && p !== page && p >= 1 && p <= totalPages) {
+    let pageArr = Array.from({ length: totalPages }, (_, idx) => idx + 1);
+    let currPageAr;
+    if (page > pageArr.length) {
+      currPageAr = pageArr.slice(
+        pageArr.length - totalPageNumToShow,
+        pageArr.length,
+      );
+    } else if (page > Math.floor(totalPageNumToShow / 2)) {
+      const start = Math.max(0, page - Math.floor(totalPageNumToShow / 2) - 1);
+      const end = Math.min(totalPages, start + totalPageNumToShow);
+      currPageAr = pageArr.slice(start, end);
+    } else {
+      currPageAr = pageArr.slice(0, totalPageNumToShow);
+    }
+    setVisiblePages(currPageAr);
+  }, [totalPages, page]);
+
+  if (!totalPages || totalPages <= 1) return null;
+
+  const goToPage = (p) => {
+    if (p !== page && p >= 1 && p <= totalPages) {
       setPage(p);
     }
   };
@@ -68,51 +71,42 @@ export default function Pagination({
         )}
       </div>
       <div className="flex items-center gap-0">
-        {/* Previous Button */}
+        {/* First Page Button */}
         <button
           className="px-3 py-1 rounded-l-md border z-10 border-primary hover:bg-primary hover:text-primary-foreground bg-white text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          onClick={() => handlePageChange(page - 1)}
+          onClick={() => goToPage(1)}
           disabled={page === 1}
-          aria-label="Previous Page"
+          aria-label="First Page"
         >
-          &larr;
+          &laquo;
         </button>
 
         {/* Page Numbers */}
-        {getPageNumbers().map((p, idx) =>
-          p === "..." ? (
-            <span
-              key={"ellipsis-" + idx}
-              className="px-2 text-gray-400 select-none"
-            >
-              …
-            </span>
-          ) : (
-            <button
-              key={p}
-              className={`px-3 py-1 border-y border-primary -ml-px ${
-                p === page
-                  ? "bg-primary text-primary-foreground font-bold z-10"
-                  : "bg-white text-primary hover:bg-primary hover:text-primary-foreground"
-              } transition-colors`}
-              onClick={() => handlePageChange(p)}
-              aria-current={p === page ? "page" : undefined}
-              aria-label={`Page ${p}`}
-              disabled={p === page}
-            >
-              {p}
-            </button>
-          ),
-        )}
+        {visiblePages.map((p) => (
+          <button
+            key={p}
+            className={`px-3 py-1 border-y border-primary -ml-px ${
+              p === page
+                ? "bg-primary text-primary-foreground font-bold z-10"
+                : "bg-white text-primary hover:bg-primary hover:text-primary-foreground"
+            } transition-colors`}
+            onClick={() => goToPage(p)}
+            aria-current={p === page ? "page" : undefined}
+            aria-label={`Page ${p}`}
+            disabled={p === page}
+          >
+            {p}
+          </button>
+        ))}
 
-        {/* Next Button */}
+        {/* Last Page Button */}
         <button
           className="px-3 py-1 z-10 rounded-r-md border border-primary hover:bg-primary hover:text-primary-foreground bg-white text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors -ml-px"
-          onClick={() => handlePageChange(page + 1)}
+          onClick={() => goToPage(totalPages)}
           disabled={page === totalPages}
-          aria-label="Next Page"
+          aria-label="Last Page"
         >
-          &rarr;
+          &raquo;
         </button>
       </div>
     </nav>
