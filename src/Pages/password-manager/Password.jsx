@@ -410,7 +410,7 @@ export default function Password() {
     }
 
     let timeout = setTimeout(() => {
-      getPasswords();
+      // getPasswords();
     }, 50);
     return () => clearTimeout(timeout);
   }, [filterByTab, limit, query, page]);
@@ -435,7 +435,9 @@ export default function Password() {
       ) : (
         <div className="lg:h-[83vh] h-[79dvh]overflow-hidden ">
           {loading ? (
-            <TableLoader headers={tableHeaders} limit={limit} />
+            <div className="px-3 h-full">
+              <TableLoader headers={tableHeaders} limit={limit} />
+            </div>
           ) : !tableData || tableData.length === 0 ? (
             <div className="px-3 h-full">
               <div className="bg-white h-full rounded-xl py-3 px-3">
