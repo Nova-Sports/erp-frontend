@@ -64,6 +64,7 @@ export default function PsAddUpdate({
   currentRowData,
   filterByTab,
   getPasswordType,
+  refreshFunc,
 }) {
   const { notify } = useNotification();
   /* ========================= All States ========================= */
@@ -99,6 +100,7 @@ export default function PsAddUpdate({
           "success",
           3000,
         );
+        if (refreshFunc) refreshFunc();
         return { error: null };
       } else {
         notify(response.message || "An error occurred", "error", 3000);
@@ -158,12 +160,6 @@ export default function PsAddUpdate({
     });
   }, []);
 
-  useEffect(() => {
-    console.log("state", state);
-
-    if (state.error) notify(state.error, "error", 3000);
-  }, [state]);
-
   return (
     <div className="flex flex-col h-full">
       <Modal.Header>
@@ -173,7 +169,7 @@ export default function PsAddUpdate({
         {/* Form fields for adding/updating entry go here */}
         <form onSubmit={formAction} noValidate className="h-full flex flex-col">
           <div className="flex-1  p-5">
-            {inputFields.map((field) => (
+            {inputFields.map((field, index) => (
               <div
                 key={field.id}
                 className="mb-3 bg-neutral-200 p-3 rounded-md"
@@ -201,6 +197,7 @@ export default function PsAddUpdate({
                 </div>
                 <FormInput
                   type={field.type}
+                  {...(index === 0 && { autoFocus: true })}
                   id={field.id}
                   placeholder={field.placeholder}
                   value={form[field.id]}

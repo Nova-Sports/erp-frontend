@@ -24,6 +24,7 @@ export default function FormInput({
   name = undefined,
   iconStart = null,
   iconEnd = null,
+  autoFocus = false,
 }) {
   /* ******************** All States ************************* */
 
@@ -45,6 +46,7 @@ export default function FormInput({
           id={id || name}
           name={name}
           disabled={disabled}
+          autoFocus={autoFocus}
         />
         <span className="absolute -inset-y-[1.5px] start-0 m-1 size-2.5 rounded-full bg-white ring-inset ring-white transition-all peer-checked:start-3.5 peer-checked:bg-white peer-checked:ring-transparent"></span>
       </label>
@@ -68,6 +70,8 @@ export default function FormInput({
           onChange={onChange}
           disabled={disabled}
           regexPattern={regexPattern}
+          id={id}
+          autoFocus={autoFocus}
           // className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
         />
       </div>
@@ -92,6 +96,7 @@ export default function FormInput({
           autoComplete="current-password"
           name={name}
           id={id || name}
+          autoFocus={autoFocus}
 
           // className="w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
         />
@@ -123,6 +128,7 @@ export default function FormInput({
           className={`${customClasses ? customClasses : baseClasses} ${iconStart && "!pl-9 !pr-3"} ${iconEnd && "!pr-9"} ${appendClasses} hide-input-arrow`}
           placeholder={placeholder}
           value={value}
+          autoFocus={autoFocus}
           onChange={onChange}
           disabled={disabled}
           regexPattern={regexPattern}
@@ -155,6 +161,7 @@ export default function FormInput({
         onChange={onChange}
         disabled={disabled}
         regexPattern={regexPattern}
+        autoFocus={autoFocus}
         name={name}
         id={id}
       />

@@ -12,6 +12,7 @@ import authHeader from "@/services/auth-header";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
 import TableLoader from "@/components/table-loader/TableLoader";
+import Pagination from "@/components/pagination/Pagination";
 
 const getPasswordType = (tab) => {
   switch (tab) {
@@ -26,12 +27,13 @@ const getPasswordType = (tab) => {
   }
 };
 
+let limitOptions = [5, 10, 15, 20, 50];
+
 export default function Password() {
   /* ========================= All States ========================= */
-  const [limit, setLimit] = useState(10);
   const { notify } = useNotification();
 
-  const [searchBy, setSearchBy] = useState(null);
+  const [query, setQuery] = useState("");
 
   const [loading, setLoading] = useState(true);
 
@@ -39,6 +41,12 @@ export default function Password() {
   const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [currentRowData, setCurrentRowData] = useState(null);
+
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+  const [limit, setLimit] = useState(10);
 
   /*  ========================= All Functions ========================= */
 
@@ -93,12 +101,14 @@ export default function Password() {
     try {
       setLoading(true);
       const { data } = await API.post(
-        "/sales/passwords",
+        `/sales/passwords?page=${page}&limit=${limit}${query ? `&query=${query}` : ""}`,
         { type: getPasswordType(filterByTab) },
         { headers: authHeader() },
       );
       if (data?.success) {
         setTableData(data.data);
+        setTotalPages(data.totalPages);
+        setTotalResults(data.total);
       } else {
         notify(data.message || "Failed to fetch passwords", "error", 3000);
       }
@@ -108,7 +118,7 @@ export default function Password() {
       setLoading(false);
       notify(err.message, "error", 5000);
     }
-  }, [filterByTab]);
+  }, [filterByTab, limit, page, query]);
 
   /* =============================== Actions Filters ======================================= */
 
@@ -177,7 +187,7 @@ export default function Password() {
               {limit}
             </Dropdown.Trigger>
             <Dropdown.Menu appendClass={"min-w-20"} direction={"left"}>
-              {[5, 10, 20, 50].map((option) => (
+              {limitOptions.map((option) => (
                 <Dropdown.Item key={option} value={option}>
                   {option}
                 </Dropdown.Item>
@@ -188,42 +198,12 @@ export default function Password() {
       );
     };
 
-    // const RenderFilterByLocation = () => {
-    //   return (
-    //     <Dropdown
-    //       value={selectedLocation}
-    //       onChange={(value) => setSelectedLocation(value)}
-    //     >
-    //       <Dropdown.Trigger
-    //         appendClass={"!border-primary !border-1 !bg-primary/10"}
-    //         // renderIcon={false}
-    //       >
-    //         Filter By : {selectedLocation?.locationName || "All Locations"}
-    //       </Dropdown.Trigger>
-    //       <Dropdown.Menu>
-    //         <Dropdown.Item value={{ id: 9999999, locationName: "no-location" }}>
-    //           Without Location
-    //         </Dropdown.Item>
-    //         {locationsList.map((location) => (
-    //           <Dropdown.Item
-    //             key={location.id}
-    //             value={location.id}
-    //             onClick={() => setSelectedLocation(location)}
-    //           >
-    //             {location.locationName}
-    //           </Dropdown.Item>
-    //         ))}
-    //       </Dropdown.Menu>
-    //     </Dropdown>
-    //   );
-    // };
-
     const RenderSearchFilters = () => {
       return (
-        <Dropdown value={searchBy} onChange={(value) => setSearchBy(value)}>
+        <Dropdown value={query} onChange={(value) => setQuery(value)}>
           <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
             <span className="lg:inline">Search By : </span>
-            <span className="text-nowrap">{searchBy || "All"}</span>
+            <span className="text-nowrap">{query || "All"}</span>
           </Dropdown.Trigger>
           <Dropdown.Menu appendClass="w-full">
             {tableHeaders
@@ -433,7 +413,7 @@ export default function Password() {
       getPasswords();
     }, 50);
     return () => clearTimeout(timeout);
-  }, [filterByTab]);
+  }, [filterByTab, limit, query, page]);
 
   return (
     <div className="">
@@ -453,27 +433,42 @@ export default function Password() {
           </div>
         </div>
       ) : (
-        <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
+        <div className="lg:h-[83vh] h-[79dvh]overflow-hidden ">
           {loading ? (
             <TableLoader headers={tableHeaders} limit={limit} />
           ) : !tableData || tableData.length === 0 ? (
-            <div className="bg-white rounded-md h-full flex-center">
-              <div className="text-center text-3xl animate-pulse py-4">
-                No passwords found!
+            <div className="px-3 h-full">
+              <div className="bg-white h-full rounded-xl py-3 px-3">
+                <div className="text-center text-3xl animate-pulse py-4">
+                  No passwords found!
+                </div>
               </div>
             </div>
           ) : (
-            <Table
-              headers={tableHeaders}
-              data={tableData}
-              handleSortBy={handleSortBy}
-              onClick={() => {
-                notify("Table row clicked", "info", 3000);
-              }}
-              onDoubleClick={() => {
-                notify("Table row double-clicked", "success", 3000);
-              }}
-            />
+            <div className="flex flex-col gap-1 h-full px-3">
+              <div className=" pb-2">
+                <Table
+                  headers={tableHeaders}
+                  heightClasses={"lg:h-[76vh] h-[70dvh] overflow-y-auto"}
+                  data={tableData}
+                  handleSortBy={handleSortBy}
+                  onClick={() => {
+                    notify("Table row clicked", "info", 3000);
+                  }}
+                  onDoubleClick={() => {
+                    notify("Table row double-clicked", "success", 3000);
+                  }}
+                />
+              </div>
+              <div className="bg-white shadow-md rounded-xl px-4 py-2">
+                <Pagination
+                  page={page}
+                  setPage={setPage}
+                  totalPages={totalPages}
+                  totalResults={totalResults}
+                />
+              </div>
+            </div>
           )}
         </div>
       )}
@@ -499,6 +494,7 @@ export default function Password() {
           setCurrentRowData={setCurrentRowData}
           filterByTab={filterByTab}
           getPasswordType={getPasswordType}
+          refreshFunc={getPasswords}
         />
       </Modal>
     </div>
