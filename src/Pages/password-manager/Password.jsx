@@ -20,6 +20,7 @@ import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { Menu, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
 
@@ -110,8 +111,8 @@ export default function Password() {
     try {
       setLoading(true);
       const { data } = await API.post(
-        `/sales/passwords?page=${page}&limit=${limit}${query ? `&query=${query}` : ""}`,
-        { type: getPasswordType(filterByTab) },
+        `/sales/passwords?page=${page}&limit=${limit}`,
+        { type: getPasswordType(filterByTab), query },
         { headers: authHeader() },
       );
       if (data?.success) {
@@ -255,13 +256,17 @@ export default function Password() {
 
     const RenderSearch = () => {
       return (
-        <form className="flex items-center  gap-2">
+        <div className="flex items-center  gap-2">
           {/* Search By Filters */}
           <div className="hidden lg:block">
             <RenderSearchFilters />
           </div>
-          <CSearch />
-        </form>
+          <CSearch
+            updateText={(v) => {
+              setQuery(v);
+            }}
+          />
+        </div>
       );
     };
 

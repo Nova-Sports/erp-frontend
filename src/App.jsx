@@ -9,7 +9,7 @@ import RegisterPage from "./components/auth/Register/RegisterPage";
 import Dashboard from "./components/dashboard/Dashboard";
 import Password from "./Pages/password-manager/Password";
 import NotFound from "./components/NotFound";
-import CustomComponents from "./Pages/custom-components/CustomComponents";
+import CustomComponents from "./custom-components/CustomComponents";
 import { SidebarProvider } from "./components/dashboard/sidebar/SidebarContext";
 import TestComponent from "./components/test/TestComponent";
 

@@ -2,6 +2,7 @@ import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Button from "../buttons/Button";
 import FormInput from "../form-input/FormInput";
+import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 
 let hoverClasses =
   "bg-white !text-primary  hover:!bg-primary-hover hover:!text-white";
@@ -24,6 +25,8 @@ export default function Pagination({
   totalPages,
   totalResults,
 }) {
+  const updateParam = useUpdateParams();
+
   const [visiblePages, setVisiblePages] = useState([]);
 
   const [goToPageInput, setGoToPageInput] = useState(null);
@@ -59,6 +62,7 @@ export default function Pagination({
   const goToPage = (p) => {
     if (p !== page && p >= 1 && p <= totalPages) {
       setPage(p);
+      updateParam("page", p);
     }
   };
 
@@ -103,12 +107,7 @@ export default function Pagination({
           {visiblePages.map((p) => (
             <Button
               key={p}
-              // className={`px-3 py-1 border-y border-primary -ml-px ${
-              //   p === page
-              //     ? "bg-primary text-primary-foreground font-bold z-10"
-              //     : "bg-white text-primary hover:bg-primary hover:text-primary-foreground"
-              // } transition-colors`}
-              appendClasses={`!border-y-primary border border-x-0 !shadow-none rounded-none disabled:bg-primary disabled:!text-white disabled:opacity-100 ${hoverClasses}`}
+              appendClasses={`!border-y-primary border border-x-0 !shadow-none rounded-none disabled:!bg-primary disabled:!text-white disabled:!fopacity-100 ${hoverClasses}`}
               size="sm"
               onClick={() => goToPage(p)}
               aria-current={p === page ? "page" : undefined}
