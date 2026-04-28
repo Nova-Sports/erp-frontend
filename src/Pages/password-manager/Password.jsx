@@ -27,6 +27,249 @@ import {
   useUpdateParams,
 } from "@/custom-hooks/useUpdateParams";
 
+const ActionItems = ({
+  refreshFunc,
+  filterByTab,
+  setFilterByTab,
+  limit,
+  setQuery,
+  setLimit,
+  filterBy,
+  setFilterBy,
+  tableHeaders,
+  setShowAddUpdateModal,
+  setPage,
+}) => {
+  /* ========================= All States ========================= */
+  const updateParam = useUpdateParams();
+  const batchUpdateParam = useBatchUpdateParams();
+
+  // Modal States
+  const [showMobileActionMenu, setSHowMobileActionMenu] = useState(false);
+
+  /*  ========================= All Functions ========================= */
+
+  const handleSearch = useCallback(
+    (v) => {
+      updateParam("query", v);
+      setQuery(v);
+      // refreshFunc(v);
+    },
+    [updateParam],
+  );
+
+  const handleLimitChange = (newLimit) => {
+    setLimit(newLimit);
+    setPage(1);
+    batchUpdateParam({ limit: newLimit, page: 1 });
+  };
+
+  /* ========================= All UseEffects ========================= */
+
+  /*=======================================
+        Custom Components    
+    ========================================= */
+
+  const RenderFilterTabs = () => {
+    const activeTabClass = "bg-primary text-white";
+    const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
+    const commonTabClasses = "rounded-none border border-primary shadow-none";
+
+    return (
+      <div className="text-nowrap">
+        <Button
+          title="Company"
+          appendClasses={`rounded-none rounded-l ${filterByTab === "Company" ? activeTabClass : inactiveTabClass} ${commonTabClasses} border-r-0`}
+          onClick={() => {
+            setFilterByTab("Company");
+          }}
+        />
+        <Button
+          title="Customer Portal"
+          appendClasses={`rounded-none border-x-0 ${filterByTab === "Customer Portal" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
+          onClick={() => {
+            setFilterByTab("Customer Portal");
+          }}
+        />
+        <Button
+          title="Private"
+          appendClasses={`rounded-none border-x-0 ${filterByTab === "Private" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
+          onClick={() => {
+            setFilterByTab("Private");
+          }}
+        />
+        <Button
+          title="Password Generator"
+          appendClasses={`rounded-none rounded-r border-l-0 ${filterByTab === "Password Generator" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
+          onClick={() => {
+            setFilterByTab("Password Generator");
+          }}
+        />
+      </div>
+    );
+  };
+
+  const RenderLimit = () => {
+    return (
+      <div className="flex items-center gap-2">
+        <span className=" lg:inline">Show</span>
+        <Dropdown value={limit} onChange={(v) => handleLimitChange(v)}>
+          <Dropdown.Trigger
+            appendClass={"w-16 !border-primary !bg-primary-light "}
+            // renderIcon={false}
+          >
+            {limit}
+          </Dropdown.Trigger>
+          <Dropdown.Menu appendClass={"min-w-20"} direction={"left"}>
+            {limitOptions.map((option) => (
+              <Dropdown.Item key={option} value={option}>
+                {option}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+      </div>
+    );
+  };
+
+  const RenderSearchFilters = () => {
+    return (
+      <Dropdown value={filterBy} onChange={(value) => setFilterBy(value)}>
+        <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
+          <span className="hidden xl:inline text-nowrap">Search By : </span>
+          <span className="text-nowrap">{filterBy || "All"}</span>
+        </Dropdown.Trigger>
+        <Dropdown.Menu appendClass="w-full">
+          {tableHeaders
+            ?.filter((header) => header.sortBy)
+            .map((header) => (
+              <Dropdown.Item
+                appendClass={"py-0"}
+                key={header.id}
+                value={header.id}
+              >
+                {header.label}
+              </Dropdown.Item>
+            ))}
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  };
+
+  const RenderSearch = () => {
+    return (
+      <div className="flex items-center  gap-2">
+        {/* Search By Filters */}
+        <div className="hidden lg:block">
+          <RenderSearchFilters />
+        </div>
+        <CSearch updateText={handleSearch} />
+      </div>
+    );
+  };
+
+  const RenderAfterSearchButtons = () => {
+    return (
+      <>
+        {/* Add New Entry */}
+        <Button
+          title="Add"
+          onClick={(e) => {
+            setShowAddUpdateModal(true);
+          }}
+        />
+      </>
+    );
+  };
+
+  return (
+    <>
+      {/*=======================================
+          Desktop Mode    
+      ========================================= */}
+      <div
+        className={`mx-3 my-4 py-3 px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
+      >
+        <div>
+          <RenderFilterTabs />
+        </div>
+        <div className="">
+          <div className="flex flex-col lg:flex-row items-center gap-5">
+            {/* Render Page Limit */}
+            <RenderLimit />
+            {/* =============== Filter By Locations */}
+            {/* <div>
+                <RenderFilterByLocation />
+              </div> */}
+
+            {/* =============== Search */}
+            <div>
+              <RenderSearch />
+            </div>
+            {/* =============== After Search Buttons */}
+            <div>
+              <RenderAfterSearchButtons />
+            </div>
+          </div>
+        </div>
+      </div>
+      {/*=======================================
+            Mobile View    
+        ========================================= */}
+      <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
+        <div className="flex flex-col gap-2">
+          <div className=" flex items-center justify-between">
+            <div className="">
+              <RenderSearchFilters />
+            </div>
+
+            <Button
+              title=""
+              onClick={() => {
+                setSHowMobileActionMenu(true);
+              }}
+              afterTitle={() => {
+                return <Menu size={18} />;
+              }}
+            />
+          </div>
+          <RenderSearch />
+        </div>
+      </div>
+      <Modal
+        open={showMobileActionMenu}
+        onHide={() => {
+          setSHowMobileActionMenu(false);
+        }}
+        position="bottom"
+        size="full"
+        appendClass={"max-h-[50dvh]"}
+      >
+        <Modal.Header>Actions</Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <RenderLimit />
+              {/* <RenderFilterByLocation /> */}
+            </div>
+
+            <RenderAfterSearchButtons />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            title="Close"
+            variant="secondary"
+            onClick={() => {
+              setSHowMobileActionMenu(false);
+            }}
+          />
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+};
+
 const getPasswordType = (tab) => {
   switch (tab) {
     case "Company":
@@ -45,8 +288,6 @@ let limitOptions = [5, 10, 15, 20, 50];
 export default function Password() {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
-  const updateParam = useUpdateParams();
-  const batchUpdateParam = useBatchUpdateParams();
 
   const [query, setQuery] = useState("");
 
@@ -68,6 +309,7 @@ export default function Password() {
   const [tableData, setTableData] = useState([]);
 
   const [filterByTab, setFilterByTab] = useState("Company");
+  const [filterBy, setFilterBy] = useState(null);
 
   const handleSortBy = (sortColumn, sortDirection) => {
     if (
@@ -108,18 +350,12 @@ export default function Password() {
     setTableData(sortedData);
   };
 
-  const handleLimitChange = (newLimit) => {
-    setLimit(newLimit);
-    setPage(1);
-    batchUpdateParam({ limit: newLimit, page: 1 });
-  };
-
   const getPasswords = useCallback(async () => {
     try {
       setLoading(true);
       const { data } = await API.post(
         `/sales/passwords?page=${page}&limit=${limit}`,
-        { type: getPasswordType(filterByTab), query },
+        { type: getPasswordType(filterByTab), query, filterBy },
         { headers: authHeader() },
       );
       if (data?.success) {
@@ -135,7 +371,7 @@ export default function Password() {
       setLoading(false);
       notify(err.message, "error", 5000);
     }
-  }, [filterByTab, limit, page, query]);
+  }, [filterByTab, limit, page, query, filterBy]);
 
   // Delete Password
   const handleDeletePassword = async (id) => {
@@ -160,224 +396,6 @@ export default function Password() {
   };
 
   /* =============================== Actions Filters ======================================= */
-
-  const ActionItems = () => {
-    /* ========================= All States ========================= */
-
-    // Modal States
-    const [showMobileActionMenu, setSHowMobileActionMenu] = useState(false);
-
-    /*  ========================= All Functions ========================= */
-
-    /* ========================= All UseEffects ========================= */
-
-    /*=======================================
-        Custom Components    
-    ========================================= */
-
-    const RenderFilterTabs = () => {
-      const activeTabClass = "bg-primary text-white";
-      const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
-      const commonTabClasses = "rounded-none border border-primary shadow-none";
-
-      return (
-        <div className="text-nowrap">
-          <Button
-            title="Company"
-            appendClasses={`rounded-none rounded-l ${filterByTab === "Company" ? activeTabClass : inactiveTabClass} ${commonTabClasses} border-r-0`}
-            onClick={() => {
-              setFilterByTab("Company");
-            }}
-          />
-          <Button
-            title="Customer Portal"
-            appendClasses={`rounded-none border-x-0 ${filterByTab === "Customer Portal" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
-            onClick={() => {
-              setFilterByTab("Customer Portal");
-            }}
-          />
-          <Button
-            title="Private"
-            appendClasses={`rounded-none border-x-0 ${filterByTab === "Private" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
-            onClick={() => {
-              setFilterByTab("Private");
-            }}
-          />
-          <Button
-            title="Password Generator"
-            appendClasses={`rounded-none rounded-r border-l-0 ${filterByTab === "Password Generator" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
-            onClick={() => {
-              setFilterByTab("Password Generator");
-            }}
-          />
-        </div>
-      );
-    };
-
-    const RenderLimit = () => {
-      return (
-        <div className="flex items-center gap-2">
-          <span className=" lg:inline">Show</span>
-          <Dropdown value={limit} onChange={(v) => handleLimitChange(v)}>
-            <Dropdown.Trigger
-              appendClass={"w-16 !border-primary !bg-primary-light "}
-              // renderIcon={false}
-            >
-              {limit}
-            </Dropdown.Trigger>
-            <Dropdown.Menu appendClass={"min-w-20"} direction={"left"}>
-              {limitOptions.map((option) => (
-                <Dropdown.Item key={option} value={option}>
-                  {option}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-      );
-    };
-
-    const RenderSearchFilters = () => {
-      return (
-        <Dropdown value={query} onChange={(value) => setQuery(value)}>
-          <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
-            <span className="hidden xl:inline text-nowrap">Search By : </span>
-            <span className="text-nowrap">{query || "All"}</span>
-          </Dropdown.Trigger>
-          <Dropdown.Menu appendClass="w-full">
-            {tableHeaders
-              ?.filter((header) => header.sortBy)
-              .map((header) => (
-                <Dropdown.Item
-                  appendClass={"py-0"}
-                  key={header.id}
-                  value={header.id}
-                >
-                  {header.label}
-                </Dropdown.Item>
-              ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      );
-    };
-
-    const RenderSearch = () => {
-      return (
-        <div className="flex items-center  gap-2">
-          {/* Search By Filters */}
-          <div className="hidden lg:block">
-            <RenderSearchFilters />
-          </div>
-          <CSearch
-            updateText={(v) => {
-              setQuery(v);
-            }}
-          />
-        </div>
-      );
-    };
-
-    const RenderAfterSearchButtons = () => {
-      return (
-        <>
-          {/* Add New Entry */}
-          <Button
-            title="Add"
-            onClick={(e) => {
-              setShowAddUpdateModal(true);
-            }}
-          />
-        </>
-      );
-    };
-
-    return (
-      <>
-        {/*=======================================
-          Desktop Mode    
-      ========================================= */}
-        <div
-          className={`mx-3 my-4 py-3 px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
-        >
-          <div>
-            <RenderFilterTabs />
-          </div>
-          <div className="">
-            <div className="flex flex-col lg:flex-row items-center gap-5">
-              {/* Render Page Limit */}
-              <RenderLimit />
-              {/* =============== Filter By Locations */}
-              {/* <div>
-                <RenderFilterByLocation />
-              </div> */}
-
-              {/* =============== Search */}
-              <div>
-                <RenderSearch />
-              </div>
-              {/* =============== After Search Buttons */}
-              <div>
-                <RenderAfterSearchButtons />
-              </div>
-            </div>
-          </div>
-        </div>
-        {/*=======================================
-            Mobile View    
-        ========================================= */}
-        <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
-          <div className="flex flex-col gap-2">
-            <div className=" flex items-center justify-between">
-              <div className="">
-                <RenderSearchFilters />
-              </div>
-
-              <Button
-                title=""
-                onClick={() => {
-                  setSHowMobileActionMenu(true);
-                }}
-                afterTitle={() => {
-                  return <Menu size={18} />;
-                }}
-              />
-            </div>
-            <RenderSearch />
-          </div>
-        </div>
-        <Modal
-          open={showMobileActionMenu}
-          onHide={() => {
-            setSHowMobileActionMenu(false);
-          }}
-          position="bottom"
-          size="full"
-          appendClass={"max-h-[50dvh]"}
-        >
-          <Modal.Header>Actions</Modal.Header>
-          <Modal.Body>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <RenderLimit />
-                {/* <RenderFilterByLocation /> */}
-              </div>
-
-              <RenderAfterSearchButtons />
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              title="Close"
-              variant="secondary"
-              onClick={() => {
-                setSHowMobileActionMenu(false);
-              }}
-            />
-          </Modal.Footer>
-        </Modal>
-      </>
-    );
-  };
 
   /* =============================== Table Functions ======================================= */
 
@@ -472,7 +490,19 @@ export default function Password() {
       {/*=======================================
             Top Action Row    
         ========================================= */}
-      <ActionItems />
+      <ActionItems
+        refreshFunc={getPasswords}
+        setQuery={setQuery}
+        filterByTab={filterByTab}
+        setFilterByTab={setFilterByTab}
+        limit={limit}
+        setLimit={setLimit}
+        filterBy={filterBy}
+        setFilterBy={setFilterBy}
+        tableHeaders={tableHeaders}
+        setShowAddUpdateModal={setShowAddUpdateModal}
+        setPage={setPage}
+      />
 
       {/*=======================================
           Table Section    
@@ -487,11 +517,19 @@ export default function Password() {
       ) : (
         <div className="lg:h-[83vh] h-[79dvh]overflow-hidden ">
           {!loading && tableData.length === 0 ? (
-            <div className="px-3 h-full ">
-              <div className="bg-white flex-center h-full rounded-xl py-3 px-3">
+            <div className="px-3 h-full flex flex-col gap-4">
+              <div className="bg-white flex-center flex-1 rounded-xl py-3 px-3">
                 <div className="text-center text-gray-500 text-3xl animate-pulse py-4">
                   No passwords found!
                 </div>
+              </div>
+              <div className="bg-white shadow-md rounded-xl px-4 py-2">
+                <Pagination
+                  page={1}
+                  setPage={setPage}
+                  totalPages={1}
+                  totalResults={totalResults}
+                />
               </div>
             </div>
           ) : (

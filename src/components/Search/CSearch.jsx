@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from "react";
-import Button from "../buttons/Button";
 import { Search } from "lucide-react";
-import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
-import { useSearchParams } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
+import Button from "../buttons/Button";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 
-export default function CSearch({
+function CSearch({
   updateText = null,
   placeholder = "Search...",
   customClasses = "",
 }) {
   /* ========================= All States ========================= */
-  const [query, setQuery] = useState(null);
-  const updateParam = useUpdateParams();
-  const [searchParams] = useSearchParams();
+  const [searchParam] = useSearchParams();
+
+  const [query, setQuery] = useState(() => {
+    const q = searchParam.get("query");
+    return q ? decodeURIComponent(q) : "";
+  });
 
   /*  ========================= All Functions ========================= */
 
@@ -27,18 +29,9 @@ export default function CSearch({
     if (updateText) {
       updateText(trimmedQuery);
     }
-    updateParam("query", trimmedQuery);
   };
 
   /* ========================= All UseEffects ========================= */
-
-  useEffect(() => {
-    let _query = searchParams.get("query") || "";
-
-    if (_query) {
-      setQuery(_query);
-    }
-  }, [searchParams]);
 
   return (
     <form onSubmit={handleSubmit} className="flex items-center gap-2">
@@ -65,9 +58,10 @@ export default function CSearch({
         variant="info"
         appendClasses="hidden xl:block"
       />
-      <AnimatePresence>
-        {query && (
+      <AnimatePresence initial={false}>
+        {Boolean(query) && (
           <motion.div
+            key="clear-button"
             initial={{ opacity: 0, scale: 0.2, x: 50 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.2, x: 50 }}
@@ -78,11 +72,10 @@ export default function CSearch({
               type="button"
               variant="outlineDanger"
               onClick={() => {
-                setQuery("");
-                updateParam("query", "");
-                if (updateText) {
-                  updateText("");
-                }
+                setQuery(""); // triggers animation
+                setTimeout(() => {
+                  updateText(""); // triggers parent update AFTER animation
+                }, 200);
               }}
             />
           </motion.div>
@@ -91,3 +84,5 @@ export default function CSearch({
     </form>
   );
 }
+
+export default memo(CSearch);
