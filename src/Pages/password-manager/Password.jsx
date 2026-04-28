@@ -20,7 +20,6 @@ import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { Menu, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
 
@@ -37,7 +36,7 @@ const getPasswordType = (tab) => {
   }
 };
 
-let limitOptions = [1, 5, 10, 15, 20, 50];
+let limitOptions = [5, 10, 15, 20, 50];
 
 export default function Password() {
   /* ========================= All States ========================= */

@@ -107,7 +107,7 @@ export default function Pagination({
           {visiblePages.map((p) => (
             <Button
               key={p}
-              appendClasses={`!border-y-primary border border-x-0 !shadow-none rounded-none disabled:!bg-primary disabled:!text-white disabled:!fopacity-100 ${hoverClasses}`}
+              appendClasses={`!border-y-primary border border-x-0 !shadow-none rounded-none disabled:!bg-primary disabled:!text-white disabled:!opacity-100 ${hoverClasses}`}
               size="sm"
               onClick={() => goToPage(p)}
               aria-current={p === page ? "page" : undefined}
