@@ -1,6 +1,6 @@
 /*=======================================
     Todo:
-      - Create Custom Search Component with clear button
+    
       - Make Search Component mobile friendly with framer motion animation
       - Add Search Functionality to passwords
       - Add Available to password functionality
@@ -22,6 +22,10 @@ import { Menu, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
+import {
+  useBatchUpdateParams,
+  useUpdateParams,
+} from "@/custom-hooks/useUpdateParams";
 
 const getPasswordType = (tab) => {
   switch (tab) {
@@ -41,6 +45,8 @@ let limitOptions = [5, 10, 15, 20, 50];
 export default function Password() {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
+  const updateParam = useUpdateParams();
+  const batchUpdateParam = useBatchUpdateParams();
 
   const [query, setQuery] = useState("");
 
@@ -104,6 +110,8 @@ export default function Password() {
 
   const handleLimitChange = (newLimit) => {
     setLimit(newLimit);
+    setPage(1);
+    batchUpdateParam({ limit: newLimit, page: 1 });
   };
 
   const getPasswords = useCallback(async () => {

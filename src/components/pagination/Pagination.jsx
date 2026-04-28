@@ -153,7 +153,7 @@ export default function Pagination({
             onChange={(e) => setGoToPageInput(e.target.value)}
             appendClasses="form-control-sm"
           />
-          <Button size="sm" title="Go" />
+          <Button type="submit" size="sm" title="Go" />
         </form>
       </div>
     </nav>
