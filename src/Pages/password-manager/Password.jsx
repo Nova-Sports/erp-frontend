@@ -1,13 +1,24 @@
+/*=======================================
+    Todo:
+      - Create Custom Search Component with clear button
+      - Make Search Component mobile friendly with framer motion animation
+      - Add Search Functionality to passwords
+      - Add Available to password functionality
+      - Add mobile friendly action buttons with framer motion animation
+      
+========================================= */
+
 import Button from "@/components/buttons/Button";
+import DeleteModalButton from "@/components/delete-modal/DeleteModalButton";
 import { Dropdown } from "@/components/dropdown/Dropdown";
 import { Modal } from "@/components/modal/Modal";
 import Pagination from "@/components/pagination/Pagination";
-import TableLoader from "@/components/table-loader/TableLoader";
+import CSearch from "@/components/Search/CSearch";
 import Table from "@/components/table/Table";
 import { useNotification } from "@/contexts/NotificationContext";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { Menu, Search } from "lucide-react";
+import { Menu, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
@@ -33,7 +44,7 @@ export default function Password() {
 
   const [query, setQuery] = useState("");
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Modal States
   const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
@@ -118,6 +129,28 @@ export default function Password() {
     }
   }, [filterByTab, limit, page, query]);
 
+  // Delete Password
+  const handleDeletePassword = async (id) => {
+    try {
+      const { data } = await API.delete(`/sales/password/${id}`, {
+        headers: authHeader(),
+      });
+      if (data?.success) {
+        notify(
+          data.message || "Password deleted successfully",
+          "success",
+          3000,
+        );
+        getPasswords();
+      } else {
+        notify(data.message || "Failed to delete password", "error", 3000);
+      }
+    } catch (err) {
+      console.log(err.message);
+      notify(err.message, "error", 5000);
+    }
+  };
+
   /* =============================== Actions Filters ======================================= */
 
   const ActionItems = () => {
@@ -140,7 +173,7 @@ export default function Password() {
       const commonTabClasses = "rounded-none border border-primary shadow-none";
 
       return (
-        <div className="">
+        <div className="text-nowrap">
           <Button
             title="Company"
             appendClasses={`rounded-none rounded-l ${filterByTab === "Company" ? activeTabClass : inactiveTabClass} ${commonTabClasses} border-r-0`}
@@ -200,7 +233,7 @@ export default function Password() {
       return (
         <Dropdown value={query} onChange={(value) => setQuery(value)}>
           <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
-            <span className="lg:inline">Search By : </span>
+            <span className="hidden xl:inline text-nowrap">Search By : </span>
             <span className="text-nowrap">{query || "All"}</span>
           </Dropdown.Trigger>
           <Dropdown.Menu appendClass="w-full">
@@ -227,25 +260,7 @@ export default function Password() {
           <div className="hidden lg:block">
             <RenderSearchFilters />
           </div>
-          <input
-            type="text"
-            placeholder="Search..."
-            className="form-control lg:!w-96 flex-1"
-          />
-
-          <Button
-            title=""
-            afterTitle={() => {
-              return <Search size={18} />;
-            }}
-            variant="info"
-            appendClasses="lg:hidden"
-          />
-          <Button
-            title="Search"
-            variant="info"
-            appendClasses="hidden lg:block"
-          />
+          <CSearch />
         </form>
       );
     };
@@ -255,7 +270,7 @@ export default function Password() {
         <>
           {/* Add New Entry */}
           <Button
-            title="Add New"
+            title="Add"
             onClick={(e) => {
               setShowAddUpdateModal(true);
             }}
@@ -359,43 +374,70 @@ export default function Password() {
       id: "ps_title",
       label: "Title",
       sortBy: "ps_title",
-      customHClasses: "",
-      customRClasses: "",
+      customHClasses: "!max-w-96 !min-w-96",
+      customRClasses: "!max-w-96 !min-w-96",
       render: (row) => <span className="text-nowrap">{row.ps_title}</span>,
     },
     {
       id: "ps_username",
       label: "Username",
       sortBy: "ps_username",
+      customHClasses: "!min-w-40 !max-w-40",
+      customRClasses: "!min-w-40 !max-w-40",
       render: (row) => row.ps_username,
     },
     {
       id: "ps_passwordValue",
       label: "Password",
       sortBy: "ps_passwordValue",
+      customHClasses: "!min-w-40 !max-w-40",
+      customRClasses: "!min-w-40 !max-w-40",
       render: (row) => row.ps_passwordValue,
     },
     {
       id: "ps_url",
       label: "URL",
       sortBy: "ps_url",
+      customHClasses: "!max-w-96 !min-w-96",
+      customRClasses: "!max-w-96 !min-w-96",
       render: (row) => row.ps_url,
     },
     {
       id: "updatedAt",
       label: "Last Updated",
       sortBy: "updatedAt",
+      customHClasses: "!min-w-40 !max-w-40",
+      customRClasses: "!min-w-40 !max-w-40",
       render: (row) => row.updatedAt,
     },
     {
       id: "actions",
+      customHClasses: "!min-w-40 !max-w-40",
+      customRClasses: "!min-w-40 !max-w-40",
       label: "Actions",
       sortBy: false,
 
       render: (row) => {
         return (
-          <div className="me-4">
-            <Button title="Edit" variant="primary" size="sm" />
+          <div className="me-4 flex justify-end items-center gap-2">
+            <Button
+              title="Edit"
+              variant="primary"
+              onClick={() => {
+                setCurrentRowData(row);
+                setIsUpdateMode(true);
+                setShowAddUpdateModal(true);
+              }}
+              appendClasses="flex-center "
+              beforeTitle={() => {
+                return <Pencil size={12} />;
+              }}
+              size="sm"
+            />
+            <DeleteModalButton
+              loading={loading}
+              onDeleteConfirm={() => handleDeletePassword(row.id)}
+            />
           </div>
         );
       },
@@ -432,11 +474,7 @@ export default function Password() {
         </div>
       ) : (
         <div className="lg:h-[83vh] h-[79dvh]overflow-hidden ">
-          {loading ? (
-            <div className="px-3 h-full">
-              <TableLoader headers={tableHeaders} limit={limit} />
-            </div>
-          ) : !tableData || tableData.length === 0 ? (
+          {!loading && tableData.length === 0 ? (
             <div className="px-3 h-full ">
               <div className="bg-white flex-center h-full rounded-xl py-3 px-3">
                 <div className="text-center text-gray-500 text-3xl animate-pulse py-4">
@@ -448,16 +486,12 @@ export default function Password() {
             <div className="flex flex-col gap-1 h-full px-3">
               <div className=" pb-2">
                 <Table
+                  limit={limit}
+                  loading={loading}
                   headers={tableHeaders}
                   heightClasses={"lg:h-[76vh] h-[74dvh] overflow-y-auto"}
                   data={tableData}
                   handleSortBy={handleSortBy}
-                  onClick={() => {
-                    notify("Table row clicked", "info", 3000);
-                  }}
-                  onDoubleClick={() => {
-                    notify("Table row double-clicked", "success", 3000);
-                  }}
                 />
               </div>
               <div className="bg-white shadow-md rounded-xl px-4 py-2">

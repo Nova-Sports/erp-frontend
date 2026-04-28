@@ -6,12 +6,14 @@ import FormInput from "../form-input/FormInput";
 
 export default function Table({
   headers,
+  limit = 10,
   data,
   onClick,
   onDoubleClick,
   handleSortBy,
   appendClass,
   heightClasses,
+  loading,
 }) {
   /* ========================= All States ========================= */
   const [searchParams, setSearchParams] = useSearchParams();
@@ -207,27 +209,54 @@ export default function Table({
             Render Table Row    
         ========================================= */}
         <tbody>
-          {data.map((row, index) => (
-            <tr
-              key={index}
-              onClick={() => onClick && onClick(row)}
-              onDoubleClick={() => onDoubleClick && onDoubleClick(row)}
-              className="hover:bg-primary-light transition-colors duration-150"
-            >
-              {tableData?.map((header) => (
-                <td
-                  className={[
-                    "px-4 py-2 border-b border-blue-gray-50 md:truncate text-nowrap",
-                    header.id === "actions" ? "text-end" : "text-left",
-                    header.customRClasses || "",
-                  ].join(" ")}
-                  key={header.id}
+          {loading ? (
+            <>
+              {/* {JSON.stringify(headers)} */}
+              {[...Array(limit)].map((_, rowIndex) => (
+                <tr
+                  key={rowIndex}
+                  className="hover:bg-primary-light transition-colors duration-150"
                 >
-                  {header.render(row)}
-                </td>
+                  {headers?.map((header) => (
+                    <td
+                      key={header.id}
+                      className={[
+                        "px-5 py-3 w-auto border-b border-blue-gray-50 md:truncate text-nowrap",
+                        header.id === "actions" ? "text-end" : "text-left",
+                        header.customRClasses || "",
+                      ].join(" ")}
+                    >
+                      <div className="h-5 rounded flash-loading"></div>
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
+            </>
+          ) : (
+            <>
+              {data.map((row, index) => (
+                <tr
+                  key={index}
+                  onClick={() => onClick && onClick(row)}
+                  onDoubleClick={() => onDoubleClick && onDoubleClick(row)}
+                  className="hover:bg-primary-light transition-colors duration-150"
+                >
+                  {tableData?.map((header) => (
+                    <td
+                      className={[
+                        "px-4 py-2 border-b border-blue-gray-50 md:truncate text-nowrap",
+                        header.id === "actions" ? "text-end" : "text-left",
+                        header.customRClasses || "",
+                      ].join(" ")}
+                      key={header.id}
+                    >
+                      {header.render(row)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </>
+          )}
         </tbody>
       </table>
     </div>

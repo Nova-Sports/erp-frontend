@@ -21,6 +21,25 @@ const variantClasses = {
   light: "bg-white hover:bg-gray-100 text-gray-800",
   dark: "bg-gray-800 hover:bg-gray-900 text-white",
   none: "",
+  // Outline variants
+  outlineBrand:
+    "border border-brand !text-brand bg-transparent hover:bg-brand hover:!text-white",
+  outlinePrimary:
+    "border border-primary !text-primary bg-transparent hover:bg-primary hover:!text-white",
+  outlineSecondary:
+    "border border-secondary !text-secondary bg-transparent hover:bg-secondary hover:!text-white",
+  outlineInfo:
+    "border border-info !text-info bg-transparent hover:bg-info hover:!text-white",
+  outlineSuccess:
+    "border border-success !text-success bg-transparent hover:bg-success hover:!text-white",
+  outlineWarning:
+    "border border-warning !text-warning bg-transparent hover:bg-warning hover:!text-white",
+  outlineDanger:
+    "border border-danger !text-danger bg-transparent hover:bg-danger hover:!text-white",
+  outlineLight:
+    "border border-gray-200 !text-gray-800 bg-transparent hover:bg-gray-100",
+  outlineDark:
+    "border border-gray-800 !text-gray-800 bg-transparent hover:bg-gray-100",
 };
 
 export default function Button({
@@ -51,7 +70,7 @@ export default function Button({
       {type === "icon" ? (
         title()
       ) : (
-        <div className="flex items-center gap-2 justify-center">
+        <div className="flex items-center gap-1.5 justify-center">
           {beforeTitle()}
           {title}
           {afterTitle()}
