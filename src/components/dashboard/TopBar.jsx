@@ -65,7 +65,7 @@ export default function TopBar({ onMenuToggle }) {
   const MsgIcon = style?.icon;
 
   return (
-    <header className="h-12 flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-5 pe-8 gap-3 z-10 relative">
+    <header className="h-12 flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-5 pe-8 gap-3 z-10 relative shadow-md">
       {/* Left ── hamburger */}
       <button
         onClick={onMenuToggle}

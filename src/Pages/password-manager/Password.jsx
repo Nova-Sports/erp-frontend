@@ -1,18 +1,16 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useNotification } from "@/contexts/NotificationContext";
-import { Menu, Search } from "lucide-react";
-import { Dropdown } from "@/components/dropdown/Dropdown";
 import Button from "@/components/buttons/Button";
-import Table from "@/components/table/Table";
+import { Dropdown } from "@/components/dropdown/Dropdown";
 import { Modal } from "@/components/modal/Modal";
-import FormInput from "@/components/form-input/FormInput";
-import Tabs from "@/components/tabs/Tabs";
-import API from "@/services/axios";
+import Pagination from "@/components/pagination/Pagination";
+import TableLoader from "@/components/table-loader/TableLoader";
+import Table from "@/components/table/Table";
+import { useNotification } from "@/contexts/NotificationContext";
 import authHeader from "@/services/auth-header";
+import API from "@/services/axios";
+import { Menu, Search } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
-import TableLoader from "@/components/table-loader/TableLoader";
-import Pagination from "@/components/pagination/Pagination";
 
 const getPasswordType = (tab) => {
   switch (tab) {
@@ -27,7 +25,7 @@ const getPasswordType = (tab) => {
   }
 };
 
-let limitOptions = [5, 10, 15, 20, 50];
+let limitOptions = [1, 5, 10, 15, 20, 50];
 
 export default function Password() {
   /* ========================= All States ========================= */
@@ -439,9 +437,9 @@ export default function Password() {
               <TableLoader headers={tableHeaders} limit={limit} />
             </div>
           ) : !tableData || tableData.length === 0 ? (
-            <div className="px-3 h-full">
-              <div className="bg-white h-full rounded-xl py-3 px-3">
-                <div className="text-center text-3xl animate-pulse py-4">
+            <div className="px-3 h-full ">
+              <div className="bg-white flex-center h-full rounded-xl py-3 px-3">
+                <div className="text-center text-gray-500 text-3xl animate-pulse py-4">
                   No passwords found!
                 </div>
               </div>
@@ -451,7 +449,7 @@ export default function Password() {
               <div className=" pb-2">
                 <Table
                   headers={tableHeaders}
-                  heightClasses={"lg:h-[76vh] h-[70dvh] overflow-y-auto"}
+                  heightClasses={"lg:h-[76vh] h-[74dvh] overflow-y-auto"}
                   data={tableData}
                   handleSortBy={handleSortBy}
                   onClick={() => {

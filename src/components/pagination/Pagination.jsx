@@ -1,4 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import Button from "../buttons/Button";
+import FormInput from "../form-input/FormInput";
+
+let hoverClasses =
+  "bg-white !text-primary  hover:!bg-primary-hover hover:!text-white";
+
+const LG = 1024;
+const isMobile = () => window.innerWidth < LG;
 
 /**
  * Pagination component styled with Tailwind and custom theme.
@@ -17,10 +26,12 @@ export default function Pagination({
 }) {
   const [visiblePages, setVisiblePages] = useState([]);
 
-  let totalPageNumToShow = 10; // Show 10 pages at a time
+  const [goToPageInput, setGoToPageInput] = useState(null);
+
+  let totalPageNumToShow = isMobile() ? 8 : 10; // Show 10 pages at a time
 
   useEffect(() => {
-    if (!totalPages || totalPages <= 1) {
+    if (!totalPages || totalPages < 1) {
       setVisiblePages([]);
       return;
     }
@@ -39,10 +50,11 @@ export default function Pagination({
     } else {
       currPageAr = pageArr.slice(0, totalPageNumToShow);
     }
+
     setVisiblePages(currPageAr);
   }, [totalPages, page]);
 
-  if (!totalPages || totalPages <= 1) return null;
+  if (!totalPages || totalPages < 1) return null;
 
   const goToPage = (p) => {
     if (p !== page && p >= 1 && p <= totalPages) {
@@ -70,44 +82,80 @@ export default function Pagination({
           </span>
         )}
       </div>
-      <div className="flex items-center gap-0">
-        {/* First Page Button */}
-        <button
-          className="px-3 py-1 rounded-l-md border z-10 border-primary hover:bg-primary hover:text-primary-foreground bg-white text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          onClick={() => goToPage(1)}
-          disabled={page === 1}
-          aria-label="First Page"
-        >
-          &laquo;
-        </button>
+      <div className="flex items-center gap-5">
+        <div className="flex items-center gap-0">
+          {/* First Page Button */}
+          <Button
+            onClick={() => goToPage(1)}
+            disabled={page === 1}
+            aria-label="First Page"
+            appendClasses={`!border-primary !py-0 !px-2 border !shadow-none rounded-none rounded-l-md bg-white !text-primary ${hoverClasses}`}
+            title={""}
+            size="sm"
+            beforeTitle={(e) => (
+              <div className="w-4 h-7 flex-center">
+                <ChevronsLeft size={20} />
+              </div>
+            )}
+          />
 
-        {/* Page Numbers */}
-        {visiblePages.map((p) => (
-          <button
-            key={p}
-            className={`px-3 py-1 border-y border-primary -ml-px ${
-              p === page
-                ? "bg-primary text-primary-foreground font-bold z-10"
-                : "bg-white text-primary hover:bg-primary hover:text-primary-foreground"
-            } transition-colors`}
-            onClick={() => goToPage(p)}
-            aria-current={p === page ? "page" : undefined}
-            aria-label={`Page ${p}`}
-            disabled={p === page}
-          >
-            {p}
-          </button>
-        ))}
+          {/* Page Numbers */}
+          {visiblePages.map((p) => (
+            <Button
+              key={p}
+              // className={`px-3 py-1 border-y border-primary -ml-px ${
+              //   p === page
+              //     ? "bg-primary text-primary-foreground font-bold z-10"
+              //     : "bg-white text-primary hover:bg-primary hover:text-primary-foreground"
+              // } transition-colors`}
+              appendClasses={`!border-y-primary border border-x-0 !shadow-none rounded-none disabled:bg-primary disabled:!text-white disabled:opacity-100 ${hoverClasses}`}
+              size="sm"
+              onClick={() => goToPage(p)}
+              aria-current={p === page ? "page" : undefined}
+              aria-label={`Page ${p}`}
+              disabled={p === page}
+              title={p}
+            />
+          ))}
 
-        {/* Last Page Button */}
-        <button
-          className="px-3 py-1 z-10 rounded-r-md border border-primary hover:bg-primary hover:text-primary-foreground bg-white text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors -ml-px"
-          onClick={() => goToPage(totalPages)}
-          disabled={page === totalPages}
-          aria-label="Last Page"
+          {/* Last Page Button */}
+          <Button
+            onClick={() => goToPage(totalPages)}
+            disabled={page === totalPages}
+            aria-label="Last Page"
+            appendClasses={`!border-primary !py-0 !px-2 border !shadow-none rounded-none rounded-r-md bg-white !text-primary ${hoverClasses}`}
+            title={""}
+            size="sm"
+            beforeTitle={(e) => (
+              <div className="w-4 h-7 flex-center">
+                <ChevronsRight size={18} />
+              </div>
+            )}
+          />
+        </div>
+        {/* Go to page input */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            goToPage(Number(goToPageInput));
+            setGoToPageInput(null);
+          }}
+          className="hidden md:flex items-center gap-2"
         >
-          &raquo;
-        </button>
+          <label htmlFor="goto-page" className="text-sm text-gray-500">
+            Go to :
+          </label>
+          <FormInput
+            id="goto-page"
+            type="number"
+            min="1"
+            max={totalPages}
+            value={goToPageInput || page}
+            onChange={(e) => setGoToPageInput(e.target.value)}
+            appendClasses="form-control-sm"
+          />
+          <Button size="sm" title="Go" />
+        </form>
       </div>
     </nav>
   );

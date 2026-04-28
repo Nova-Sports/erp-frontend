@@ -15,6 +15,7 @@ import {
   Sparkles,
   MoreHorizontal,
   ChevronDown,
+  SquareChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AppLogo from "../../AppLogo";
@@ -98,18 +99,26 @@ const NAV = [
     icon: MoreHorizontal,
     to: "/dashboard/miscellaneous",
   },
-  // Custom Components Page
+
   {
-    id: "components",
-    label: "Components",
-    icon: MoreHorizontal,
-    to: "/dashboard/components",
-  },
-  {
-    id: "test-component",
-    label: "Test Component",
-    icon: MoreHorizontal,
-    to: "/dashboard/test-component",
+    id: "dev-utils",
+    label: "Dev Utilities",
+    icon: SquareChevronRight,
+    children: [
+      // Custom Components Page
+      {
+        id: "components",
+        label: "Components",
+        icon: MoreHorizontal,
+        to: "/dashboard/components",
+      },
+      {
+        id: "test-component",
+        label: "Test Component",
+        icon: MoreHorizontal,
+        to: "/dashboard/test-component",
+      },
+    ],
   },
 ];
 
