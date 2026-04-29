@@ -19,7 +19,7 @@ import {
 } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { Menu, Pencil } from "lucide-react";
+import { ListOrdered, Menu, Pencil, Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
@@ -113,7 +113,7 @@ const ActionItems = ({
         Custom Components    
     ========================================= */
 
-  const RenderLimit = () => {
+  const RenderLimit = ({ direction = "left" }) => {
     return (
       <div className="flex items-center gap-2">
         <span className=" lg:inline">Show</span>
@@ -126,7 +126,7 @@ const ActionItems = ({
           </Dropdown.Trigger>
           <Dropdown.Menu
             appendClass={"min-w-20"}
-            direction={"left"}
+            direction={direction}
             // floating={false}
           >
             {limitOptions.map((option) => (
@@ -255,17 +255,39 @@ const ActionItems = ({
         }}
         position="bottom"
         size="full"
-        appendClass={"max-h-[50dvh] h-2/5"}
+        appendClass={
+          "max-h-[55dvh] bg-gradient-to-t from-primary/10 via-white to-white rounded-t-2xl shadow-2xl border-t-2 border-primary"
+        }
       >
-        <Modal.Header>Actions</Modal.Header>
+        <Modal.Header>
+          <div className="flex items-center gap-2 text-primary font-bold text-lg">
+            <Menu size={22} className="inline-block" />
+            Quick Actions
+          </div>
+        </Modal.Header>
         <Modal.Body>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <RenderLimit />
-              {/* <RenderFilterByLocation /> */}
+          <div className="flex flex-col gap-5 px-1 py-2">
+            <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 shadow-sm">
+              <span className="font-medium text-gray-700 flex items-center gap-2">
+                <ListOrdered size={18} className="inline-block" />
+                Show
+              </span>
+              <RenderLimit direction="right" />
             </div>
-
-            <RenderAfterSearchButtons />
+            {/* <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 shadow-sm">
+              <span className="font-medium text-gray-700 flex items-center gap-2">
+                <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
+                Filter
+              </span>
+              <RenderFilterByLocation />
+            </div> */}
+            <div className="flex flex-col gap-2 bg-primary/5 rounded-lg px-3 py-3 shadow-sm">
+              <span className="font-medium text-gray-700 flex items-center gap-2 mb-1">
+                <Plus size={18} className="inline-block" />
+                Add New
+              </span>
+              <RenderAfterSearchButtons />
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -275,6 +297,7 @@ const ActionItems = ({
             onClick={() => {
               setSHowMobileActionMenu(false);
             }}
+            appendClasses="w-full py-2 text-lg font-semibold rounded-lg "
           />
         </Modal.Footer>
       </Modal>
@@ -469,8 +492,8 @@ export default function Password() {
       id: "ps_title",
       label: "Title",
       sortBy: "ps_title",
-      customHClasses: "!max-w-96 !min-w-96",
-      customRClasses: "!max-w-96 !min-w-96",
+      customHClasses: "!max-w-96 !min-w-80",
+      customRClasses: "!max-w-96 !min-w-80",
       render: (row) => <span className="text-nowrap">{row.ps_title}</span>,
     },
     {
