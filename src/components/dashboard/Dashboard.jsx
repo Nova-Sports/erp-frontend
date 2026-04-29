@@ -26,7 +26,7 @@ export default function Dashboard() {
 
       <div className="flex flex-col h-screen flex-1 min-w-0 overflow-hidden">
         <TopBar onMenuToggle={toggle} />
-        <main className="flex-1 overflow-y-auto ">
+        <main className="flex-1 ">
           <Outlet />
         </main>
       </div>

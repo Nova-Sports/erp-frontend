@@ -1,10 +1,7 @@
 /*=======================================
     Todo:
-    
-      - Make Search Component mobile friendly with framer motion animation
-      - Add Search Functionality to passwords
-      - Add Available to password functionality
       - Add mobile friendly action buttons with framer motion animation
+      - Add Available to password functionality
       
 ========================================= */
 
@@ -16,19 +13,65 @@ import Pagination from "@/components/pagination/Pagination";
 import CSearch from "@/components/Search/CSearch";
 import Table from "@/components/table/Table";
 import { useNotification } from "@/contexts/NotificationContext";
+import {
+  useBatchUpdateParams,
+  useUpdateParams,
+} from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { Menu, Pencil } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
-import {
-  useBatchUpdateParams,
-  useUpdateParams,
-} from "@/custom-hooks/useUpdateParams";
+
+const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
+  const activeTabClass = "bg-primary text-white";
+  const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
+  const commonTabClasses = "rounded-none border border-primary shadow-none";
+
+  return (
+    <div className="text-nowrap">
+      {/* Desktop Version */}
+      <div className="hidden lg:flex items-center border border-primary rounded">
+        {filterTabs.map((tab, index) => (
+          <Button
+            key={tab.id}
+            title={tab.label}
+            appendClasses={`${
+              index === 0
+                ? "rounded-l"
+                : index === filterTabs.length - 1
+                  ? "rounded-r"
+                  : "border-x-0"
+            } ${filterByTab === tab.id ? activeTabClass : inactiveTabClass} ${commonTabClasses}`}
+            onClick={tab.onClick}
+          />
+        ))}
+      </div>
+      {/* Mobile Version */}
+      <div className="lg:hidden h-[6dvh] bg-white flex-center">
+        {/* Horizontal scrollable tabs */}
+        <div className="flex items-center gap-4 px-3 h-full overflow-x-auto">
+          {filterTabs.map((tab, index) => (
+            <div
+              key={tab.id}
+              className={`px-3 py-1 flex-center rounded  ${
+                filterByTab === tab.id ? "bg-primary text-white" : ""
+              } whitespace-nowrap flex-shrink-0 cursor-pointer`}
+              onClick={tab.onClick}
+            >
+              {tab.label}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const ActionItems = ({
   refreshFunc,
+  filterTabs,
   filterByTab,
   setFilterByTab,
   limit,
@@ -70,45 +113,6 @@ const ActionItems = ({
         Custom Components    
     ========================================= */
 
-  const RenderFilterTabs = () => {
-    const activeTabClass = "bg-primary text-white";
-    const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
-    const commonTabClasses = "rounded-none border border-primary shadow-none";
-
-    return (
-      <div className="text-nowrap">
-        <Button
-          title="Company"
-          appendClasses={`rounded-none rounded-l ${filterByTab === "Company" ? activeTabClass : inactiveTabClass} ${commonTabClasses} border-r-0`}
-          onClick={() => {
-            setFilterByTab("Company");
-          }}
-        />
-        <Button
-          title="Customer Portal"
-          appendClasses={`rounded-none border-x-0 ${filterByTab === "Customer Portal" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
-          onClick={() => {
-            setFilterByTab("Customer Portal");
-          }}
-        />
-        <Button
-          title="Private"
-          appendClasses={`rounded-none border-x-0 ${filterByTab === "Private" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
-          onClick={() => {
-            setFilterByTab("Private");
-          }}
-        />
-        <Button
-          title="Password Generator"
-          appendClasses={`rounded-none rounded-r border-l-0 ${filterByTab === "Password Generator" ? activeTabClass : inactiveTabClass} ${commonTabClasses} `}
-          onClick={() => {
-            setFilterByTab("Password Generator");
-          }}
-        />
-      </div>
-    );
-  };
-
   const RenderLimit = () => {
     return (
       <div className="flex items-center gap-2">
@@ -120,7 +124,11 @@ const ActionItems = ({
           >
             {limit}
           </Dropdown.Trigger>
-          <Dropdown.Menu appendClass={"min-w-20"} direction={"left"}>
+          <Dropdown.Menu
+            appendClass={"min-w-20"}
+            direction={"left"}
+            // floating={false}
+          >
             {limitOptions.map((option) => (
               <Dropdown.Item key={option} value={option}>
                 {option}
@@ -188,10 +196,14 @@ const ActionItems = ({
           Desktop Mode    
       ========================================= */}
       <div
-        className={`mx-3 my-4 py-3 px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
+        className={`mx-3 my-4 py-3 h-[8dvh] px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
       >
         <div>
-          <RenderFilterTabs />
+          <RenderFilterTabs
+            filterTabs={filterTabs}
+            filterByTab={filterByTab}
+            setFilterByTab={setFilterByTab}
+          />
         </div>
         <div className="">
           <div className="flex flex-col lg:flex-row items-center gap-5">
@@ -243,7 +255,7 @@ const ActionItems = ({
         }}
         position="bottom"
         size="full"
-        appendClass={"max-h-[50dvh]"}
+        appendClass={"max-h-[50dvh] h-2/5"}
       >
         <Modal.Header>Actions</Modal.Header>
         <Modal.Body>
@@ -297,12 +309,40 @@ export default function Password() {
   const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [currentRowData, setCurrentRowData] = useState(null);
+  // Notes Modal States
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [notesValue, setNotesValue] = useState("");
+  const [notesRowData, setNotesRowData] = useState(null);
+  const [notesLoading, setNotesLoading] = useState(false);
 
   // Pagination States
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [limit, setLimit] = useState(10);
+
+  let filterTabs = [
+    {
+      id: "Company",
+      label: "Company",
+      onClick: () => setFilterByTab("Company"),
+    },
+    {
+      id: "Customer Portal",
+      label: "Customer Portal",
+      onClick: () => setFilterByTab("Customer Portal"),
+    },
+    {
+      id: "Private",
+      label: "Private",
+      onClick: () => setFilterByTab("Private"),
+    },
+    {
+      id: "Password Generator",
+      label: "Password Generator",
+      onClick: () => setFilterByTab("Password Generator"),
+    },
+  ];
 
   /*  ========================= All Functions ========================= */
 
@@ -395,6 +435,31 @@ export default function Password() {
     }
   };
 
+  // Update Notes
+  const handleSaveNotes = async () => {
+    if (!notesRowData) return;
+    setNotesLoading(true);
+    try {
+      const { data } = await API.patch(
+        "/sales/password",
+        { ...notesRowData, ps_notes: notesValue, id: notesRowData.id },
+        { headers: authHeader() },
+      );
+      if (data?.success) {
+        notify("Notes updated successfully", "success", 3000);
+        setShowNotesModal(false);
+        setNotesRowData(null);
+        setNotesValue("");
+        getPasswords();
+      } else {
+        notify(data.message || "Failed to update notes", "error", 3000);
+      }
+    } catch (err) {
+      notify(err.message, "error", 5000);
+    }
+    setNotesLoading(false);
+  };
+
   /* =============================== Actions Filters ======================================= */
 
   /* =============================== Table Functions ======================================= */
@@ -450,6 +515,19 @@ export default function Password() {
       render: (row) => {
         return (
           <div className="me-4 flex justify-end items-center gap-2">
+            {/* Notes Button */}
+            <Button
+              title="Notes"
+              variant={row.ps_notes ? "success" : "secondary"}
+              onClick={() => {
+                setNotesRowData(row);
+                setNotesValue(row.ps_notes || "");
+                setShowNotesModal(true);
+              }}
+              appendClasses="flex-center "
+              size="sm"
+            />
+            {/* Edit Button */}
             <Button
               title="Edit"
               variant="primary"
@@ -486,13 +564,14 @@ export default function Password() {
   }, [filterByTab, limit, query, page]);
 
   return (
-    <div className="">
+    <div className="h-screen overflow-hidden">
       {/*=======================================
             Top Action Row    
         ========================================= */}
       <ActionItems
         refreshFunc={getPasswords}
         setQuery={setQuery}
+        filterTabs={filterTabs}
         filterByTab={filterByTab}
         setFilterByTab={setFilterByTab}
         limit={limit}
@@ -507,55 +586,65 @@ export default function Password() {
       {/*=======================================
           Table Section    
       ========================================= */}
-      {filterByTab === "Password Generator" ? (
-        <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1  overflow-y-auto ">
-          <div>
-            {/* <div className="bg-white rounded-md py-3 px-3 h-full"> */}
-            <PsGenerator />
+      <div className="lg:h-[82vh] h-[100dvh] flex flex-col overflow-hidden ">
+        {filterByTab === "Password Generator" ? (
+          <div className="lg:h-[83vh] h-[73dvh] px-3 pb-1  overflow-y-auto ">
+            <div>
+              {/* <div className="bg-white rounded-md py-3 px-3 h-full"> */}
+              <PsGenerator />
+            </div>
           </div>
-        </div>
-      ) : (
-        <div className="lg:h-[83vh] h-[79dvh]overflow-hidden ">
-          {!loading && tableData.length === 0 ? (
-            <div className="px-3 h-full flex flex-col gap-4">
-              <div className="bg-white flex-center flex-1 rounded-xl py-3 px-3">
-                <div className="text-center text-gray-500 text-3xl animate-pulse py-4">
-                  No passwords found!
+        ) : (
+          <div className="lg:h-full h-[73dvh]  overflow-hidden  flex flex-col ">
+            {!loading && tableData.length === 0 ? (
+              <div className="px-3 h-full flex flex-col gap-2">
+                <div className="bg-white shadow-md flex-center flex-1 rounded-xl py-3 px-3">
+                  <div className="text-center text-gray-500 text-3xl animate-pulse py-4">
+                    No passwords found!
+                  </div>
+                </div>
+                <div className="bg-white shadow-md rounded-xl px-4 py-2 mb-2">
+                  <Pagination
+                    page={1}
+                    setPage={setPage}
+                    totalPages={1}
+                    totalResults={totalResults}
+                  />
                 </div>
               </div>
-              <div className="bg-white shadow-md rounded-xl px-4 py-2">
-                <Pagination
-                  page={1}
-                  setPage={setPage}
-                  totalPages={1}
-                  totalResults={totalResults}
-                />
+            ) : (
+              <div className="flex flex-col gap-2 h-full px-3 ">
+                <div className="flex-1 ">
+                  <Table
+                    limit={limit}
+                    loading={loading}
+                    headers={tableHeaders}
+                    heightClasses={"lg:h-[75vh] h-[66dvh] overflow-y-auto"}
+                    data={tableData}
+                    handleSortBy={handleSortBy}
+                  />
+                </div>
+                <div className="bg-white shadow-md rounded-xl px-4 py-2 mb-2">
+                  <Pagination
+                    page={page}
+                    setPage={setPage}
+                    totalPages={totalPages}
+                    totalResults={totalResults}
+                  />
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-1 h-full px-3">
-              <div className=" pb-2">
-                <Table
-                  limit={limit}
-                  loading={loading}
-                  headers={tableHeaders}
-                  heightClasses={"lg:h-[76vh] h-[74dvh] overflow-y-auto"}
-                  data={tableData}
-                  handleSortBy={handleSortBy}
-                />
-              </div>
-              <div className="bg-white shadow-md rounded-xl px-4 py-2">
-                <Pagination
-                  page={page}
-                  setPage={setPage}
-                  totalPages={totalPages}
-                  totalResults={totalResults}
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
+        )}
+
+        <div className="lg:hidden flex flex-col">
+          <RenderFilterTabs
+            filterTabs={filterTabs}
+            filterByTab={filterByTab}
+            setFilterByTab={setFilterByTab}
+          />
         </div>
-      )}
+      </div>
 
       {/*=======================================
           Add / Update Modal    
@@ -580,6 +669,55 @@ export default function Password() {
           getPasswordType={getPasswordType}
           refreshFunc={getPasswords}
         />
+      </Modal>
+
+      {/*=======================================
+          Notes Modal    
+      ========================================= */}
+      <Modal
+        open={showNotesModal}
+        onHide={() => {
+          setShowNotesModal(false);
+          setNotesRowData(null);
+          setNotesValue("");
+        }}
+        position="right"
+        size={"full"}
+      >
+        <Modal.Header>Notes</Modal.Header>
+        <Modal.Body>
+          <div className="flex flex-col h-1/2 mb-3 bg-neutral-200 p-4 rounded-md flex-1">
+            <div className="">
+              <label className="block mb-1 font-medium">Notes</label>
+            </div>
+            <textarea
+              className="w-full form-control h-full border rounded p-2"
+              value={notesValue}
+              type="text-area"
+              onChange={(e) => setNotesValue(e.target.value)}
+              placeholder="Enter notes..."
+              disabled={notesLoading}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            title="Save"
+            onClick={handleSaveNotes}
+            disabled={notesLoading}
+            variant="primary"
+          />
+          <Button
+            title="Cancel"
+            variant="secondary"
+            onClick={() => {
+              setShowNotesModal(false);
+              setNotesRowData(null);
+              setNotesValue("");
+            }}
+            disabled={notesLoading}
+          />
+        </Modal.Footer>
       </Modal>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { memo, useEffect, useState } from "react";
 import Button from "../buttons/Button";
 
@@ -34,7 +34,7 @@ function CSearch({
   /* ========================= All UseEffects ========================= */
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex items-center gap-2 w-full">
       <input
         type="text"
         value={query || ""}
@@ -71,6 +71,22 @@ function CSearch({
               title="Clear"
               type="button"
               variant="outlineDanger"
+              appendClasses="hidden lg:block"
+              onClick={() => {
+                setQuery(""); // triggers animation
+                setTimeout(() => {
+                  updateText(""); // triggers parent update AFTER animation
+                }, 200);
+              }}
+            />
+            <Button
+              title=""
+              afterTitle={() => {
+                return <Trash2 size={15} />;
+              }}
+              type="button"
+              variant="outlineDanger"
+              appendClasses="lg:hidden !px-2"
               onClick={() => {
                 setQuery(""); // triggers animation
                 setTimeout(() => {

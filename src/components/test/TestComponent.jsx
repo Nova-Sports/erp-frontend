@@ -672,7 +672,7 @@ export default function TestComponent() {
   /* =============================== Table Functions ======================================= */
 
   return (
-    <div className="">
+    <div className="h-screen flex flex-col overflow-auto">
       {/*=======================================
             Top Action Row    
         ========================================= */}
@@ -681,8 +681,9 @@ export default function TestComponent() {
       {/*=======================================
           Table Section    
       ========================================= */}
-      <div className="lg:h-[83vh] h-[79dvh] px-3 pb-1 overflow-y-auto ">
+      <div className="px-3  ">
         <Table
+          heightClasses={"lg:h-[82vh] h-[79dvh] overflow-y-auto"}
           headers={tableHeaders}
           data={tableLimitData}
           handleSortBy={handleSortBy}
