@@ -18,11 +18,13 @@ export function AuthProvider({ children }) {
         loginUser({ ...data.employee, token: data.token }); // Persist to localStorage
         return { success: true };
       } else {
-        return { error: data.error || "Login failed." };
+        return { error: data.message || "Login failed." };
       }
     } catch (err) {
       console.log(err.message);
-      return { error: err.response?.data?.error || "Login failed." };
+      return {
+        error: err.response?.data?.message || err.message || "Login failed.",
+      };
     }
   };
 
@@ -38,7 +40,10 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.log(err.message);
       return {
-        error: err.response?.data?.error || "Company registration failed.",
+        error:
+          err.response?.data?.error ||
+          err.message ||
+          "Company registration failed.",
       };
     }
   };
