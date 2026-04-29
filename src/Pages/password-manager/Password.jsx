@@ -19,18 +19,22 @@ import {
 } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { ListOrdered, Menu, Pencil, Plus } from "lucide-react";
+import { ListOrdered, Menu, Pencil, Plus, PlusCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
+
+import { AnimatePresence, motion } from "framer-motion";
 
 const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
   const activeTabClass = "bg-primary text-white";
   const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
   const commonTabClasses = "rounded-none border border-primary shadow-none";
 
+  const [showMobileTabs, setShowMobileTabs] = useState(false);
+
   return (
-    <div className="text-nowrap">
+    <div className="text-nowrap relative w-full grow">
       {/* Desktop Version */}
       <div className="hidden lg:flex items-center border border-primary rounded">
         {filterTabs.map((tab, index) => (
@@ -49,22 +53,49 @@ const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
         ))}
       </div>
       {/* Mobile Version */}
-      <div className="lg:hidden h-[6dvh] bg-white flex-center">
+      <div className="lg:hidden flex-center ">
         {/* Horizontal scrollable tabs */}
-        <div className="flex items-center gap-4 px-3 h-full overflow-x-auto">
-          {filterTabs.map((tab, index) => (
-            <div
-              key={tab.id}
-              className={`px-3 py-1 flex-center rounded  ${
-                filterByTab === tab.id ? "bg-primary text-white" : ""
-              } whitespace-nowrap flex-shrink-0 cursor-pointer`}
-              onClick={tab.onClick}
-            >
-              {tab.label}
-            </div>
-          ))}
-        </div>
+
+        <button
+          onClick={() => setShowMobileTabs(!showMobileTabs)}
+          className="bg-white size-12 flex-center rounded-full "
+        >
+          <PlusCircle
+            size={30}
+            className={`${showMobileTabs ? "rotate-45" : ""} transition-transform `}
+          />
+        </button>
       </div>
+      <AnimatePresence>
+        {showMobileTabs && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            exit={{
+              opacity: 0,
+              y: 20,
+              transition: { duration: 0.2 },
+            }}
+            onClick={(e) => {
+              setShowMobileTabs(false);
+            }}
+            className="lg:hidden absolute  bg-gradient-to-t  from-neutral-100  h-64 bottom-14 w-96 right-0 flex items-end  justify-end rounded"
+          >
+            <div className="bg-white center-box-shadow h-fit flex flex-col z-50 justify-center items-end rounded-md py-4 w-3/5 gap-2 px-4">
+              {filterTabs?.map((tab) => (
+                <button
+                  onClick={tab.onClick}
+                  key={tab.id}
+                  className={`${filterByTab === tab.id ? "bg-primary text-white " : "bg-page"} w-full  px-3 py-1 rounded`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -196,7 +227,7 @@ const ActionItems = ({
           Desktop Mode    
       ========================================= */}
       <div
-        className={`mx-3 my-4 py-3 h-[8dvh] px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
+        className={`mx-3 my-4 py-3 h-[8svh] px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center justify-between rounded-xl`}
       >
         <div>
           <RenderFilterTabs
@@ -256,7 +287,7 @@ const ActionItems = ({
         position="bottom"
         size="full"
         appendClass={
-          "max-h-[55dvh] bg-gradient-to-t from-primary/10 via-white to-white rounded-t-2xl shadow-2xl border-t-2 border-primary"
+          "max-h-[55svh] bg-gradient-to-t from-primary/10 via-white to-white rounded-t-2xl shadow-2xl border-t-2 border-primary"
         }
       >
         <Modal.Header>
@@ -587,7 +618,7 @@ export default function Password() {
   }, [filterByTab, limit, query, page]);
 
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-full flex flex-col overflow-hidden">
       {/*=======================================
             Top Action Row    
         ========================================= */}
@@ -609,30 +640,47 @@ export default function Password() {
       {/*=======================================
           Table Section    
       ========================================= */}
-      <div className="lg:h-[82vh] h-[100dvh] flex flex-col overflow-hidden ">
+      <div className="flex-1 flex flex-col overflow-hidden ">
         {filterByTab === "Password Generator" ? (
-          <div className="lg:h-[83vh] h-[73dvh] px-3 pb-1  overflow-y-auto ">
-            <div>
+          <div className=" px-3 pb-1 flex flex-col items-end flex-1 overflow-y-auto ">
+            <div className="w-full grow">
               {/* <div className="bg-white rounded-md py-3 px-3 h-full"> */}
               <PsGenerator />
             </div>
+            <div className="lg:hidden w-fit mb-2">
+              <RenderFilterTabs
+                filterTabs={filterTabs}
+                filterByTab={filterByTab}
+                setFilterByTab={setFilterByTab}
+              />
+            </div>
           </div>
         ) : (
-          <div className="lg:h-full h-[73dvh]  overflow-hidden  flex flex-col ">
+          <div className="overflow-hidden flex-1 gap-2 flex flex-col ">
             {!loading && tableData.length === 0 ? (
-              <div className="px-3 h-full flex flex-col gap-2">
-                <div className="bg-white shadow-md flex-center flex-1 rounded-xl py-3 px-3">
+              <div className="flex flex-col flex-1 gap-2 px-3 pb-2">
+                <div className="bg-white grow shadow-md flex-center rounded-xl py-3 px-3">
                   <div className="text-center text-gray-500 text-3xl animate-pulse py-4">
                     No passwords found!
                   </div>
                 </div>
-                <div className="bg-white shadow-md rounded-xl px-4 py-2 mb-2">
-                  <Pagination
-                    page={1}
-                    setPage={setPage}
-                    totalPages={1}
-                    totalResults={totalResults}
-                  />
+
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 ">
+                    <Pagination
+                      page={1}
+                      setPage={setPage}
+                      totalPages={1}
+                      totalResults={totalResults}
+                    />
+                  </div>
+                  <div className="lg:hidden flex items-end grow h-full flex-col">
+                    <RenderFilterTabs
+                      filterTabs={filterTabs}
+                      filterByTab={filterByTab}
+                      setFilterByTab={setFilterByTab}
+                    />
+                  </div>
                 </div>
               </div>
             ) : (
@@ -642,31 +690,32 @@ export default function Password() {
                     limit={limit}
                     loading={loading}
                     headers={tableHeaders}
-                    heightClasses={"lg:h-[75vh] h-[66dvh] overflow-y-auto"}
+                    heightClasses={"lg:h-[75vh] h-[72svh] overflow-y-auto"}
                     data={tableData}
                     handleSortBy={handleSortBy}
                   />
                 </div>
-                <div className="bg-white shadow-md rounded-xl px-4 py-2 mb-2">
-                  <Pagination
-                    page={page}
-                    setPage={setPage}
-                    totalPages={totalPages}
-                    totalResults={totalResults}
-                  />
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 ">
+                    <Pagination
+                      page={page}
+                      setPage={setPage}
+                      totalPages={totalPages}
+                      totalResults={totalResults}
+                    />
+                  </div>
+                  <div className="lg:hidden flex items-end grow h-full flex-col">
+                    <RenderFilterTabs
+                      filterTabs={filterTabs}
+                      filterByTab={filterByTab}
+                      setFilterByTab={setFilterByTab}
+                    />
+                  </div>
                 </div>
               </div>
             )}
           </div>
         )}
-
-        <div className="lg:hidden flex flex-col">
-          <RenderFilterTabs
-            filterTabs={filterTabs}
-            filterByTab={filterByTab}
-            setFilterByTab={setFilterByTab}
-          />
-        </div>
       </div>
 
       {/*=======================================

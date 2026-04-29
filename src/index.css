@@ -59,6 +59,10 @@
     Custom Animations End    
 ========================================= */
 
+.center-box-shadow {
+  box-shadow: 0 0px 50px rgba(0, 0, 0, 0.5);
+}
+
 .flex-center {
   @apply flex items-center justify-center;
 }
