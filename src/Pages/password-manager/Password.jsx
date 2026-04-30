@@ -31,7 +31,7 @@ import {
   Plus,
   PlusCircle,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
 
@@ -451,7 +451,94 @@ let searchFilters = [
   { label: "URL", value: "ps_url" },
 ];
 
+function LockScreen({ onUnlock }) {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
+  const inputRef = useRef();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleUnlock = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await API.post(
+        "/sales/password-verify",
+        { password: input },
+        {
+          headers: authHeader(),
+        },
+      );
+      if (data?.success) {
+        onUnlock();
+      } else {
+        setError("Incorrect password. Please try again.");
+      }
+    } catch (error) {
+      setError("An error occurred. Please try again.");
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center h-full w-full bg-primary/10  top-0 left-0 z-50">
+      <div className="bg-white shadow-lg rounded-xl p-8 flex flex-col items-center min-w-80">
+        <div className="text-2xl font-bold mb-4 text-primary">
+          Password Manager Locked
+        </div>
+        <form
+          onSubmit={handleUnlock}
+          className="w-full flex flex-col items-center"
+        >
+          <input
+            ref={inputRef}
+            type="password"
+            className="form-control border px-3 py-2 rounded mb-2 w-full"
+            placeholder="Enter password"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            autoFocus
+          />
+          {error && <div className="text-red-500 mb-2">{error}</div>}
+          <button
+            type="submit"
+            className="bg-primary text-white px-4 py-2 rounded w-full"
+          >
+            Unlock
+          </button>
+        </form>
+        <div className="mt-3 text-xs text-gray-400">(Demo password: 123)</div>
+      </div>
+    </div>
+  );
+}
+
 export default function Password() {
+  // Lock system state
+  const [locked, setLocked] = useState(true);
+  const inactivityTimer = useRef(null);
+
+  // Reset inactivity timer and relock after 5 seconds
+  const resetInactivityTimer = useCallback(() => {
+    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+    inactivityTimer.current = setTimeout(() => {
+      setLocked(true);
+    }, 5 * 60000); // 5 minutes
+  }, []);
+
+  // Attach listeners to reset timer on user activity
+  useEffect(() => {
+    if (!locked) {
+      const events = ["mousemove", "keydown", "mousedown", "touchstart"];
+      const handler = () => resetInactivityTimer();
+      events.forEach((evt) => window.addEventListener(evt, handler));
+      resetInactivityTimer();
+      return () => {
+        events.forEach((evt) => window.removeEventListener(evt, handler));
+        if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+      };
+    }
+  }, [locked, resetInactivityTimer]);
   /* ========================= All States ========================= */
   const { notify } = useNotification();
 
@@ -691,6 +778,10 @@ export default function Password() {
     }, 50);
     return () => clearTimeout(timeout);
   }, [filterByTab, limit, query, page, filterBy]);
+
+  if (locked) {
+    return <LockScreen onUnlock={() => setLocked(false)} />;
+  }
 
   return (
     <div className="h-full flex flex-col overflow-hidden">

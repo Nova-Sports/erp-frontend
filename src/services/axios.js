@@ -40,9 +40,11 @@ API.interceptors.response.use(
       console.log(error.response);
 
       if (
-        (error.response.status === 401 || error.response.status === 403) &&
-        (error.response.data.message === "Token Expired!" ||
-          error.response.data.message === "No token provided!")
+        error.response.status === 401 &&
+        //  || error.response.status === 403
+        error.response.data.message === "Token Expired!"
+
+        // || error.response.data.message === "No token provided!"
       ) {
         // Logout the user and clear local storage
         logoutUser();
