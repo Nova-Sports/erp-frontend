@@ -25,10 +25,10 @@ const defaultTriggerClass =
   "flex items-center justify-between w-full text-sm border border-secondary rounded-lg bg-white cursor-pointer hover:border-primary transition-colors px-3 py-2";
 
 const defaultMenuClass =
-  "z-40 mt-1 w-full bg-white border border-secondary rounded-lg shadow-lg overflow-hidden";
+  "z-[9999] mt-1 w-full bg-white border border-secondary rounded-lg shadow-lg overflow-hidden";
 
 const defaultMenuFloatingClass =
-  "z-40 mt-1 min-w-40 text-start bg-white border border-secondary rounded-lg shadow-lg overflow-hidden absolute top-full";
+  "z-[9999] mt-1 min-w-40 text-start bg-white border border-secondary rounded-lg shadow-lg overflow-hidden absolute top-full";
 
 const defaultItemClass =
   "px-3 py-2 text-sm cursor-pointer h-9 flex items-center transition-colors hover:bg-primary-light";
@@ -246,6 +246,7 @@ function Menu({
   appendClass,
   direction = "left",
   floating = true,
+  appendMenuWrapperClass,
 }) {
   const { isOpen, search, setSearch, searchable, loading } =
     useDropdownContext();
@@ -288,7 +289,9 @@ function Menu({
               />
             </div>
           )}
-          <div className="max-h-60 overflow-y-auto overflow-x-hidden py-1">
+          <div
+            className={`max-h-60 overflow-y-auto overflow-x-hidden py-1 ${appendMenuWrapperClass || ""}`}
+          >
             {loading ? (
               <div className="flex items-center justify-center py-4">
                 <Loader2 size={18} className="animate-spin text-primary" />
@@ -338,6 +341,7 @@ function Item({
         selectItem(itemValue);
         if (onClick) onClick(e);
       }}
+      style={{ zIndex: 9999 }}
       className={`${customClass ? customClass : active ? defaultItemActiveClass : defaultItemClass} ${appendClass}`}
     >
       {children}

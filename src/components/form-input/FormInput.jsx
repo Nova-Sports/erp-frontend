@@ -17,9 +17,6 @@ export default function FormInput({
   disabled = false,
   min = undefined,
   max = undefined,
-  regexPattern = undefined,
-  labelTrue = "Yes",
-  labelFalse = "No",
   id = undefined,
   name = undefined,
   iconStart = null,
@@ -36,7 +33,7 @@ export default function FormInput({
 
   if (type === "checkbox") {
     return (
-      <label className="relative inline-block h-4 w-8 cursor-pointer rounded-full bg-gray-400 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500">
+      <label className="relative inline-block h-4 w-8 cursor-pointer rounded-full bg-gray-400 transition duration-300 [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500 flex-center">
         <input
           className="peer sr-only"
           type="checkbox"
@@ -48,7 +45,7 @@ export default function FormInput({
           disabled={disabled}
           autoFocus={autoFocus}
         />
-        <span className="absolute -inset-y-[1.5px] start-0 m-1 size-2.5 rounded-full bg-white ring-inset ring-white transition-all peer-checked:start-3.5 peer-checked:bg-white peer-checked:ring-transparent"></span>
+        <span className="absolute inset-y-[3px] start-1 size-2.5 rounded-full bg-white ring-inset ring-white duration-300 transition-all peer-checked:start-4 peer-checked:bg-white peer-checked:ring-transparent"></span>
       </label>
     );
   }
@@ -69,7 +66,6 @@ export default function FormInput({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          regexPattern={regexPattern}
           id={id}
           autoFocus={autoFocus}
           // className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-colors"
@@ -92,7 +88,6 @@ export default function FormInput({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          regexPattern={regexPattern}
           autoComplete="current-password"
           name={name}
           id={id || name}
@@ -131,7 +126,6 @@ export default function FormInput({
           autoFocus={autoFocus}
           onChange={onChange}
           disabled={disabled}
-          regexPattern={regexPattern}
           min={min}
           max={max}
           name={name}
@@ -160,7 +154,6 @@ export default function FormInput({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        regexPattern={regexPattern}
         autoFocus={autoFocus}
         name={name}
         id={id}

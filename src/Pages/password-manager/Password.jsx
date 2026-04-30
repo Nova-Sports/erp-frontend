@@ -1,7 +1,9 @@
 /*=======================================
-    Todo:
-      - Add mobile friendly action buttons with framer motion animation
-      - Add Available to password functionality
+  Todo:
+    - Add Password Encryption and Decryption
+    - Add Sort Functionality to table
+    - Add Available to password functionality
+    - Lock Password
       
 ========================================= */
 
@@ -24,6 +26,7 @@ import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
 
+import { getDateTimeFromTimeStamp } from "@/utils/dateUtils";
 import { AnimatePresence, motion } from "framer-motion";
 
 const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
@@ -173,23 +176,26 @@ const ActionItems = ({
 
   const RenderSearchFilters = () => {
     return (
-      <Dropdown value={filterBy} onChange={(value) => setFilterBy(value)}>
+      <Dropdown
+        value={filterBy}
+        onChange={(value) => {
+          setFilterBy(searchFilters.find((filter) => filter.value === value));
+        }}
+      >
         <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
           <span className="hidden xl:inline text-nowrap">Search By : </span>
-          <span className="text-nowrap">{filterBy || "All"}</span>
+          <span className="text-nowrap">{filterBy?.label || "All"}</span>
         </Dropdown.Trigger>
         <Dropdown.Menu appendClass="w-full">
-          {tableHeaders
-            ?.filter((header) => header.sortBy)
-            .map((header) => (
-              <Dropdown.Item
-                appendClass={"py-0"}
-                key={header.id}
-                value={header.id}
-              >
-                {header.label}
-              </Dropdown.Item>
-            ))}
+          {searchFilters.map((filter) => (
+            <Dropdown.Item
+              appendClass={"py-0"}
+              key={filter.value}
+              value={filter.value}
+            >
+              {filter.label}
+            </Dropdown.Item>
+          ))}
         </Dropdown.Menu>
       </Dropdown>
     );
@@ -351,6 +357,13 @@ const getPasswordType = (tab) => {
 
 let limitOptions = [5, 10, 15, 20, 50];
 
+let searchFilters = [
+  { label: "All", value: null },
+  { label: "Title", value: "ps_title" },
+  { label: "Username", value: "ps_username" },
+  { label: "URL", value: "ps_url" },
+];
+
 export default function Password() {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
@@ -403,7 +416,7 @@ export default function Password() {
   const [tableData, setTableData] = useState([]);
 
   const [filterByTab, setFilterByTab] = useState("Company");
-  const [filterBy, setFilterBy] = useState(null);
+  const [filterBy, setFilterBy] = useState({ label: "All", value: null });
 
   const handleSortBy = (sortColumn, sortDirection) => {
     if (
@@ -444,28 +457,37 @@ export default function Password() {
     setTableData(sortedData);
   };
 
-  const getPasswords = useCallback(async () => {
-    try {
-      setLoading(true);
-      const { data } = await API.post(
-        `/sales/passwords?page=${page}&limit=${limit}`,
-        { type: getPasswordType(filterByTab), query, filterBy },
-        { headers: authHeader() },
-      );
-      if (data?.success) {
-        setTableData(data.data);
-        setTotalPages(data.totalPages);
-        setTotalResults(data.total);
-      } else {
-        notify(data.message || "Failed to fetch passwords", "error", 3000);
+  const getPasswords = useCallback(
+    async (sortBy = null, sortDirection = null) => {
+      try {
+        setLoading(true);
+        const { data } = await API.post(
+          `/sales/passwords?page=${page}&limit=${limit}`,
+          {
+            type: getPasswordType(filterByTab),
+            query,
+            filterBy: filterBy?.value,
+            sortBy,
+            sortDirection,
+          },
+          { headers: authHeader() },
+        );
+        if (data?.success) {
+          setTableData(data.data);
+          setTotalPages(data.totalPages);
+          setTotalResults(data.total);
+        } else {
+          notify(data.message || "Failed to fetch passwords", "error", 3000);
+        }
+        setLoading(false);
+      } catch (err) {
+        console.log(err.message);
+        setLoading(false);
+        notify(err.message, "error", 5000);
       }
-      setLoading(false);
-    } catch (err) {
-      console.log(err.message);
-      setLoading(false);
-      notify(err.message, "error", 5000);
-    }
-  }, [filterByTab, limit, page, query, filterBy]);
+    },
+    [filterByTab, limit, page, query, filterBy],
+  );
 
   // Delete Password
   const handleDeletePassword = async (id) => {
@@ -514,6 +536,33 @@ export default function Password() {
     setNotesLoading(false);
   };
 
+  const decryptPassword = async (id) => {
+    try {
+      const { data } = await API.post(
+        `/sales/password-decrypt`,
+        { id },
+        {
+          headers: authHeader(),
+        },
+      );
+      if (data?.success) {
+        notify(
+          "Password decrypted successfully. You can now see the decrypted password in the table.",
+          "success",
+          3000,
+        );
+        return data.decryptedPassword;
+      } else {
+        notify(data.message || "Failed to decrypt password", "error", 3000);
+        return null;
+      }
+    } catch (err) {
+      console.log(err.message);
+      notify(err.message, "error", 5000);
+      return null;
+    }
+  };
+
   /* =============================== Actions Filters ======================================= */
 
   /* =============================== Table Functions ======================================= */
@@ -541,7 +590,18 @@ export default function Password() {
       sortBy: "ps_passwordValue",
       customHClasses: "!min-w-40 truncate !max-w-40",
       customRClasses: "!min-w-40 truncate  !max-w-40",
-      render: (row) => row.ps_passwordValue,
+
+      render: (row) => {
+        return (
+          <div
+            onDoubleClick={() => {
+              decryptPassword(row.id);
+            }}
+          >
+            {row.ps_passwordValue}
+          </div>
+        );
+      },
     },
     {
       id: "ps_url",
@@ -557,12 +617,12 @@ export default function Password() {
       sortBy: "updatedAt",
       customHClasses: "!min-w-40 truncate !max-w-40",
       customRClasses: "!min-w-20 truncate !max-w-20",
-      render: (row) => row.updatedAt,
+      render: (row) => getDateTimeFromTimeStamp(row.updatedAt, " - "),
     },
     {
       id: "actions",
-      customHClasses: "!min-w-64 truncate !max-w-40",
-      customRClasses: "!min-w-64 truncate !max-w-40",
+      customHClasses: "!min-w-64 !max-w-40",
+      customRClasses: "!min-w-64 !max-w-40",
       label: "Actions",
       sortBy: false,
 

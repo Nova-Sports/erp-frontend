@@ -148,48 +148,45 @@ export default function Table({
                         <EllipsisVertical size={18} />
                       </Dropdown.Trigger>
                       <Dropdown.Menu direction="right">
-                        <h4 className="text-sm text-center py-2 px-2">
-                          Toggle Columns
-                        </h4>
-                        <hr />
-                        {tableColumnsList?.map((column) => {
-                          // if (column.label === "Actions") return null;
-                          return (
-                            <Dropdown.Item
-                              key={column.label}
-                              value={column.label}
-                            >
-                              <div className="flex items-center gap-4">
-                                <div className="">
-                                  {/* <input
-                                    className="h-4 w-4 text-primary focus:ring-primary border-gray-300 "
-                                    type="checkbox"
-                                    checked={column.enabled}
-                                    onChange={() => handleEnableChange(column)}
-                                    id={`checkbox-${column.label}`}
-                                  /> */}
-                                  <FormInput
-                                    onChange={(e) => {
-                                      handleEnableChange(column);
-                                    }}
-                                    labelTrue={"Show"}
-                                    labelFalse={"Hide"}
-                                    type="checkbox"
-                                    labelContainer="md"
-                                    value={column.enabled}
-                                    id={`checkbox-${column.label}`}
-                                  />
-                                </div>
-                                <label
-                                  htmlFor={`checkbox-${column.label}`}
-                                  className="mb-1.5 min-w-44 cursor-pointer text-sm py-2"
+                        <div>
+                          <h4 className="text-sm text-center py-2 px-2">
+                            Toggle Columns
+                          </h4>
+                          <hr />
+                          <div className="divide-y">
+                            {tableColumnsList?.map((column) => {
+                              // if (column.label === "Actions") return null;
+                              return (
+                                <Dropdown.Item
+                                  key={column.label}
+                                  value={column.label}
                                 >
-                                  {column.label}
-                                </label>
-                              </div>
-                            </Dropdown.Item>
-                          );
-                        })}
+                                  <div className="flex items-center gap-3">
+                                    <div className="">
+                                      <FormInput
+                                        onChange={(e) => {
+                                          handleEnableChange(column);
+                                        }}
+                                        labelTrue={"Show"}
+                                        labelFalse={"Hide"}
+                                        type="checkbox"
+                                        labelContainer="md"
+                                        value={column.enabled}
+                                        id={`checkbox-${column.label}`}
+                                      />
+                                    </div>
+                                    <label
+                                      htmlFor={`checkbox-${column.label}`}
+                                      className=" min-w-44 cursor-pointer text-sm py-2"
+                                    >
+                                      {column.label}
+                                    </label>
+                                  </div>
+                                </Dropdown.Item>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </Dropdown.Menu>
                     </Dropdown>
                   </div>
