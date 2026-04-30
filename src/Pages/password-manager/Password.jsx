@@ -26,6 +26,7 @@ import {
   EyeIcon,
   EyeOff,
   ListOrdered,
+  Lock,
   Menu,
   Pencil,
   Plus,
@@ -483,8 +484,17 @@ function LockScreen({ onUnlock }) {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full bg-primary/10  top-0 left-0 z-50">
       <div className="bg-white shadow-lg rounded-xl p-8 flex flex-col items-center min-w-80">
-        <div className="text-2xl font-bold mb-4 text-primary">
-          Password Manager Locked
+        <div className="flex flex-col items-center mb-6">
+          <div className="bg-primary/10 rounded-full p-4 mb-2">
+            <Lock size={48} className="text-primary" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-primary mb-1 tracking-tight">
+            Password Manager Locked
+          </h2>
+          <p className="text-gray-600 text-center text-base max-w-xs">
+            For your security, please enter your sign-in password to access
+            passwords.
+          </p>
         </div>
         <form
           onSubmit={handleUnlock}
@@ -507,7 +517,6 @@ function LockScreen({ onUnlock }) {
             Unlock
           </button>
         </form>
-        <div className="mt-3 text-xs text-gray-400">(Demo password: 123)</div>
       </div>
     </div>
   );
