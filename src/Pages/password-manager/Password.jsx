@@ -21,13 +21,23 @@ import {
 } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { ListOrdered, Menu, Pencil, Plus, PlusCircle } from "lucide-react";
+import {
+  EyeClosed,
+  EyeIcon,
+  EyeOff,
+  ListOrdered,
+  Menu,
+  Pencil,
+  Plus,
+  PlusCircle,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import PsAddUpdate from "./PsAddUpdate";
 import PsGenerator from "./PsGenerator";
 
 import { getDateTimeFromTimeStamp } from "@/utils/dateUtils";
 import { AnimatePresence, motion } from "framer-motion";
+import { truncateString } from "@/utils/utilityFunc";
 
 const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
   const activeTabClass = "bg-primary text-white";
@@ -355,6 +365,80 @@ const getPasswordType = (tab) => {
   }
 };
 
+const ShowHidePassword = ({ password }) => {
+  const { notify } = useNotification();
+  const [showPassword, setShowPassword] = useState(false);
+  const [decryptedPassword, setDecryptedPassword] = useState(null);
+
+  const decryptPassword = async (id) => {
+    try {
+      const { data } = await API.post(
+        `/sales/password-decrypt`,
+        { id },
+        {
+          headers: authHeader(),
+        },
+      );
+      if (data?.success) {
+        return data.data;
+      } else {
+        notify(data.message || "Failed to decrypt password", "error", 3000);
+        return null;
+      }
+    } catch (err) {
+      console.log(err.message);
+      notify(err.message, "error", 5000);
+      return null;
+    }
+  };
+
+  // Double click to copy password
+  const handleDoubleClick = async () => {
+    if (!decryptedPassword) {
+      const decrypted = await decryptPassword(password.id);
+      if (decrypted) {
+        navigator.clipboard.writeText(decrypted);
+        notify("Password copied to clipboard", "success", 2000);
+      }
+    } else {
+      navigator.clipboard.writeText(decryptedPassword);
+      notify("Password copied to clipboard", "success", 2000);
+    }
+  };
+
+  return (
+    <>
+      <div
+        className="flex items-center gap-2"
+        onDoubleClick={handleDoubleClick}
+      >
+        {decryptedPassword ? truncateString(decryptedPassword, 15) : "********"}
+        <Button
+          title={""}
+          afterTitle={() => {
+            return (
+              <>{showPassword ? <EyeIcon size={18} /> : <EyeOff size={18} />}</>
+            );
+          }}
+          customClasses="!bg-white/0 flex !text-primary"
+          onClick={async () => {
+            if (!showPassword) {
+              let decrypted = await decryptPassword(password.id);
+              setDecryptedPassword(decrypted);
+              setShowPassword(true);
+            } else {
+              setDecryptedPassword(null);
+              setShowPassword(false);
+            }
+          }}
+          appendClasses="ml-2 flex-center "
+          size="xs"
+        />
+      </div>
+    </>
+  );
+};
+
 let limitOptions = [5, 10, 15, 20, 50];
 
 let searchFilters = [
@@ -536,33 +620,6 @@ export default function Password() {
     setNotesLoading(false);
   };
 
-  const decryptPassword = async (id) => {
-    try {
-      const { data } = await API.post(
-        `/sales/password-decrypt`,
-        { id },
-        {
-          headers: authHeader(),
-        },
-      );
-      if (data?.success) {
-        notify(
-          "Password decrypted successfully. You can now see the decrypted password in the table.",
-          "success",
-          3000,
-        );
-        return data.decryptedPassword;
-      } else {
-        notify(data.message || "Failed to decrypt password", "error", 3000);
-        return null;
-      }
-    } catch (err) {
-      console.log(err.message);
-      notify(err.message, "error", 5000);
-      return null;
-    }
-  };
-
   /* =============================== Actions Filters ======================================= */
 
   /* =============================== Table Functions ======================================= */
@@ -591,17 +648,7 @@ export default function Password() {
       customHClasses: "!min-w-40 truncate !max-w-40",
       customRClasses: "!min-w-40 truncate  !max-w-40",
 
-      render: (row) => {
-        return (
-          <div
-            onDoubleClick={() => {
-              decryptPassword(row.id);
-            }}
-          >
-            {row.ps_passwordValue}
-          </div>
-        );
-      },
+      render: (row) => <ShowHidePassword password={row} />,
     },
     {
       id: "ps_url",
