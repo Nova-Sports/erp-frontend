@@ -50,13 +50,13 @@ function CSearch({
           return <Search size={18} />;
         }}
         variant="info"
-        appendClasses="xl:hidden"
+        appendClasses="xl:hidden disabled:bg-opacity-50"
       />
       <Button
         title="Search"
         type="submit"
         variant="info"
-        appendClasses="hidden xl:block"
+        appendClasses="hidden xl:block disabled:bg-opacity-50"
       />
       <AnimatePresence initial={false}>
         {Boolean(query) && (

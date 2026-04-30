@@ -100,7 +100,7 @@ export default function Table({
 
   return (
     <div
-      className={`relative flex flex-col w-full h-full text-gray-700 bg-white shadow-lg py-3 px-3 rounded-xl max-md:overflow-x-auto ${appendClass || ""} ${heightClasses || ""}`}
+      className={`relative flex flex-col w-full  text-gray-700 bg-white shadow-lg py-3 px-3 rounded-xl max-md:overflow-x-auto overflow-y-auto ${appendClass || ""} ${heightClasses || ""}`}
     >
       <table className="w-full table-auto">
         <thead className="">

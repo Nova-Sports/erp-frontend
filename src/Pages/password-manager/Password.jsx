@@ -142,7 +142,7 @@ const ActionItems = ({
       setQuery(v);
       // refreshFunc(v);
     },
-    [updateParam],
+    [updateParam, filterBy],
   );
 
   const handleLimitChange = (newLimit) => {
@@ -189,7 +189,10 @@ const ActionItems = ({
       <Dropdown
         value={filterBy}
         onChange={(value) => {
-          setFilterBy(searchFilters.find((filter) => filter.value === value));
+          let selectedFilter = searchFilters.find(
+            (filter) => filter.value === value,
+          );
+          setFilterBy(selectedFilter);
         }}
       >
         <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
@@ -687,7 +690,7 @@ export default function Password() {
       getPasswords();
     }, 50);
     return () => clearTimeout(timeout);
-  }, [filterByTab, limit, query, page]);
+  }, [filterByTab, limit, query, page, filterBy]);
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
@@ -762,7 +765,7 @@ export default function Password() {
                     limit={limit}
                     loading={loading}
                     headers={tableHeaders}
-                    heightClasses={"lg:h-[75vh] h-[72svh] overflow-y-auto"}
+                    heightClasses={"lg:h-[75svh] h-[72svh] overflow-y-auto"}
                     data={tableData}
                     handleSortBy={handleSortBy}
                   />
@@ -830,7 +833,7 @@ export default function Password() {
       >
         <Modal.Header>Notes</Modal.Header>
         <Modal.Body>
-          <div className="flex flex-col h-1/2 mb-3 bg-neutral-200 p-4 rounded-md flex-1">
+          <div className="flex flex-col h-full mb-3 bg-neutral-200 px-4 py-2 pb-4 rounded-md flex-1">
             <div className="">
               <label className="block mb-1 font-medium">Notes</label>
             </div>
