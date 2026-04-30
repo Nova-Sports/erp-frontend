@@ -98,6 +98,7 @@ export const Modal = ({
   appendClass,
   position = "center",
   size = "md",
+  disableBackdropClose = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -140,12 +141,12 @@ export const Modal = ({
 
     // ESC key listener for closing modal only when it's open
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") closeModal();
+      if (e.key === "Escape" && !disableBackdropClose) closeModal();
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open]);
+  }, [open, disableBackdropClose]);
 
   return createPortal(
     <AnimatePresence>
@@ -155,7 +156,7 @@ export const Modal = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className={`${customBackDropClass ? customBackDropClass : backdropClass} ${marginLeft} ${appendBackdropClass || ""}`}
-          onClick={closeModal}
+          onClick={disableBackdropClose ? undefined : closeModal}
         >
           <ModalContext value={contextValue}>
             <motion.div

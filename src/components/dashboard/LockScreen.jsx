@@ -1,9 +1,8 @@
+import authHeader from "@/services/auth-header";
+import API from "@/services/axios";
 import { Lock } from "lucide-react";
 import { useState } from "react";
 import { Modal } from "../modal/Modal";
-import { Dropdown } from "../dropdown/Dropdown";
-import API from "@/services/axios";
-import authHeader from "@/services/auth-header";
 
 export default function LockScreen({ showLockScreen, setShowLockScreen }) {
   /* ========================= All States ========================= */
@@ -16,6 +15,7 @@ export default function LockScreen({ showLockScreen, setShowLockScreen }) {
   const handleUnlock = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const { data } = await API.post(
         "/sales/password-verify",
         { password },
@@ -33,6 +33,8 @@ export default function LockScreen({ showLockScreen, setShowLockScreen }) {
       }
     } catch (error) {
       setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,6 +50,7 @@ export default function LockScreen({ showLockScreen, setShowLockScreen }) {
         onHide={() => setShowLockScreen(false)}
         position="center"
         size="sm"
+        disableBackdropClose={true}
         fullscreen={true}
         customBackDropClass="fixed inset-0 flex-center z-50 bg-gradient-to-br from-primary/80 via-white/90 to-primary/80 backdrop-blur-sm"
         appendClass={"center-box-shadow"}
