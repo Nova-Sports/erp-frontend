@@ -24,6 +24,7 @@ export default function Pagination({
   setPage,
   totalPages,
   totalResults,
+  updateParams = true,
 }) {
   const updateParam = useUpdateParams();
 
@@ -62,7 +63,9 @@ export default function Pagination({
   const goToPage = (p) => {
     if (p !== page && p >= 1 && p <= totalPages) {
       setPage(p);
-      updateParam("page", p);
+      if (updateParams) {
+        updateParam("page", p);
+      }
     }
   };
 

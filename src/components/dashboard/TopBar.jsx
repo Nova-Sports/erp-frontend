@@ -7,6 +7,7 @@ import {
   LogOut,
   Menu,
   Settings,
+  UserCog,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -71,26 +72,26 @@ export default function TopBar({ onMenuToggle }) {
   const MsgIcon = style?.icon;
 
   // Reset inactivity timer and relock after 5 minutes of inactivity
-  const resetInactivityTimer = useCallback(() => {
-    if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-    inactivityTimer.current = setTimeout(() => {
-      setShowLockScreen(true);
-    }, 5 * 60000); // 5 * 60000 = 5 minutes
-  }, []);
+  // const resetInactivityTimer = useCallback(() => {
+  //   if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+  //   inactivityTimer.current = setTimeout(() => {
+  //     setShowLockScreen(true);
+  //   }, 5 * 60000); // 5 * 60000 = 5 minutes
+  // }, []);
 
   // Attach listeners to reset timer on user activity
-  useEffect(() => {
-    if (!showLockScreen) {
-      const events = ["mousemove", "keydown", "mousedown", "touchstart"];
-      const handler = () => resetInactivityTimer();
-      events.forEach((evt) => window.addEventListener(evt, handler));
-      resetInactivityTimer();
-      return () => {
-        events.forEach((evt) => window.removeEventListener(evt, handler));
-        if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
-      };
-    }
-  }, [showLockScreen, resetInactivityTimer]);
+  // useEffect(() => {
+  //   if (!showLockScreen) {
+  //     const events = ["mousemove", "keydown", "mousedown", "touchstart"];
+  //     const handler = () => resetInactivityTimer();
+  //     events.forEach((evt) => window.addEventListener(evt, handler));
+  //     resetInactivityTimer();
+  //     return () => {
+  //       events.forEach((evt) => window.removeEventListener(evt, handler));
+  //       if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
+  //     };
+  //   }
+  // }, [showLockScreen, resetInactivityTimer]);
 
   return (
     <header className="h-[6dvh] flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-5 pe-8 gap-3 z-10 relative shadow-md">
@@ -171,8 +172,18 @@ export default function TopBar({ onMenuToggle }) {
                 setAccountsSettingsModal(true);
               }}
             >
+              <UserCog size={14} className="mr-2" />
+              User Settings
+            </Dropdown.Item>
+            <Dropdown.Item
+              appendClass={"p-0"}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/dashboard/settings", { replace: true });
+              }}
+            >
               <Settings size={14} className="mr-2" />
-              Account Settings
+              App Settings
             </Dropdown.Item>
             <Dropdown.Item
               appendClass={"p-0"}
@@ -183,7 +194,6 @@ export default function TopBar({ onMenuToggle }) {
             >
               <Lock size={14} className="mr-2" />
               Lock
-              {/* <LockScreen /> */}
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>

@@ -12,6 +12,7 @@ import NotFound from "./components/NotFound";
 import CustomComponents from "./Pages/custom-components/CustomComponents";
 import { SidebarProvider } from "./components/dashboard/sidebar/SidebarContext";
 import TestComponent from "./components/test/TestComponent";
+import SettingsLayout from "./Pages/settings/SettingsLayout";
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -57,6 +58,7 @@ function AppRoutes() {
         {/* =========== Sales Routes =============== */}
         {/* =========== Manufacturing Routes =============== */}
         {/* =========== Miscellaneous Routes =============== */}
+        <Route path="settings" element={<SettingsLayout />} />
 
         {/* =========== Components Routes =============== */}
         <Route path="components" element={<CustomComponents />} />

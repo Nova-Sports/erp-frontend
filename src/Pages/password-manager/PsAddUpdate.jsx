@@ -3,6 +3,25 @@ import FormInput from "@/components/form-input/FormInput";
 import { Modal } from "@/components/modal/Modal";
 import { useNotification } from "@/contexts/NotificationContext";
 import React, { useActionState, useEffect, useState } from "react";
+// Helper to fetch decrypted password
+const fetchDecryptedPassword = async (id) => {
+  try {
+    const { data } = await API.post(
+      "/sales/password-decrypt",
+      { id },
+      { headers: authHeader() },
+    );
+    if (data?.success) {
+      return data.data;
+    } else {
+      notify(data.message || "Failed to decrypt password", "error", 3000);
+      return "";
+    }
+  } catch (err) {
+    notify(err.message, "error", 3000);
+    return "";
+  }
+};
 import { generatePassword } from "./passwordUtils";
 import { Shuffle } from "lucide-react";
 import { useFormStatus } from "react-dom";
@@ -152,12 +171,27 @@ export default function PsAddUpdate({
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
-    setForm({
-      ps_title: currentRowData?.ps_title || "",
-      ps_url: currentRowData?.ps_url || "",
-      ps_username: currentRowData?.ps_username || "",
-      ps_passwordValue: currentRowData?.ps_passwordValue || "",
-    });
+    const setInitialForm = async () => {
+      if (isUpdateMode && currentRowData?.id) {
+        // Fetch decrypted password for editing
+        const decrypted = await fetchDecryptedPassword(currentRowData.id);
+        setForm({
+          ps_title: currentRowData?.ps_title || "",
+          ps_url: currentRowData?.ps_url || "",
+          ps_username: currentRowData?.ps_username || "",
+          ps_passwordValue: decrypted || "",
+        });
+      } else {
+        setForm({
+          ps_title: currentRowData?.ps_title || "",
+          ps_url: currentRowData?.ps_url || "",
+          ps_username: currentRowData?.ps_username || "",
+          ps_passwordValue: currentRowData?.ps_passwordValue || "",
+        });
+      }
+    };
+    setInitialForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
