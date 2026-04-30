@@ -1,19 +1,20 @@
 import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  Lock,
+  LogOut,
   Menu,
   Settings,
-  LogOut,
   X,
-  CheckCircle,
-  AlertCircle,
-  Info,
-  AlertTriangle,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import { Dropdown } from "../dropdown/Dropdown";
 import { Modal } from "../modal/Modal";
-import { useState } from "react";
 import LockScreen from "./LockScreen";
 
 const TYPE_STYLES = {
@@ -51,6 +52,8 @@ export default function TopBar({ onMenuToggle }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { notification, dismiss } = useNotification();
+
+  const [showLockScreen, setShowLockScreen] = useState(false);
 
   const [accountsSettingsModal, setAccountsSettingsModal] = useState(false);
 
@@ -111,7 +114,11 @@ export default function TopBar({ onMenuToggle }) {
 
       {/* Right ── settings + logout */}
       <div className="flex items-center gap-1 flex-shrink-0">
-        <Dropdown value={"settings"} onChange={() => {}}>
+        <Dropdown
+          value={"settings"}
+          onChange={() => {}}
+          autoCloseOnChange={false}
+        >
           <Dropdown.Trigger
             customClass={"border-0 flex-center"}
             renderIcon={false}
@@ -142,8 +149,16 @@ export default function TopBar({ onMenuToggle }) {
               <Settings size={14} className="mr-2" />
               Account Settings
             </Dropdown.Item>
-            <Dropdown.Item appendClass={"p-0"}>
-              <LockScreen />
+            <Dropdown.Item
+              appendClass={"p-0"}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowLockScreen(true);
+              }}
+            >
+              <Lock size={14} className="mr-2" />
+              Lock
+              {/* <LockScreen /> */}
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
@@ -177,6 +192,14 @@ export default function TopBar({ onMenuToggle }) {
           </button>
         </Modal.Footer>
       </Modal>
+
+      {/*=======================================
+          Lock Screen Modal    
+      ========================================= */}
+      <LockScreen
+        showLockScreen={showLockScreen}
+        setShowLockScreen={setShowLockScreen}
+      />
     </header>
   );
 }

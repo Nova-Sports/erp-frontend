@@ -12,7 +12,7 @@ export default function Dashboard() {
   /* ========================= All UseEffects ========================= */
 
   return (
-    <div className="flex h-screen bg-page overflow-hidden">
+    <div className="flex h-screen bg-page overflow-hidden relative">
       {/* Mobile backdrop — tap to close sidebar */}
       {mode === "expanded" && (
         <div
@@ -26,7 +26,7 @@ export default function Dashboard() {
 
       <div className="flex flex-col h-screen flex-1 min-w-0 overflow-hidden">
         <TopBar onMenuToggle={toggle} />
-        <main className="flex-1 ">
+        <main className="flex-1 relative">
           <Outlet />
         </main>
       </div>

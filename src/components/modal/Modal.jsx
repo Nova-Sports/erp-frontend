@@ -88,6 +88,9 @@ const defaultFooterClass =
 // Modal Provider Component
 export const Modal = ({
   children,
+  fullscreen = false,
+  appendBackdropClass = "",
+  customBackDropClass = "",
   type = "standard",
   open,
   onHide,
@@ -102,9 +105,13 @@ export const Modal = ({
 
   const marginLeft =
     mode === "expanded"
-      ? "ml-[240px]"
+      ? fullscreen
+        ? "ml-0"
+        : "ml-[240px]"
       : mode === "icons"
-        ? "ml-[56px]"
+        ? fullscreen
+          ? "ml-0"
+          : "ml-[56px]"
         : "ml-0";
 
   // Parse position into [y, x] and build classes
@@ -147,7 +154,7 @@ export const Modal = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`${backdropClass} ${marginLeft}`}
+          className={`${customBackDropClass ? customBackDropClass : backdropClass} ${marginLeft} ${appendBackdropClass || ""}`}
           onClick={closeModal}
         >
           <ModalContext value={contextValue}>
