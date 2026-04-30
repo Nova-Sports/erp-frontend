@@ -1,6 +1,6 @@
 /*=======================================
   Todo:
-    - Add Password Encryption and Decryption
+    
     - Add Sort Functionality to table
     - Add Available to password functionality
     - Lock Password
@@ -503,42 +503,7 @@ export default function Password() {
   const [filterBy, setFilterBy] = useState({ label: "All", value: null });
 
   const handleSortBy = (sortColumn, sortDirection) => {
-    if (
-      sortColumn === "insideSalesPerson" ||
-      sortColumn === "outSideSalesPerson" ||
-      sortColumn === "paymentTerm"
-    ) {
-      const sortedData = [...tableData].sort((a, b) => {
-        const aValue = a[sortColumn].name.toLowerCase();
-        const bValue = b[sortColumn].name.toLowerCase();
-        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
-        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      });
-      setTableData(sortedData);
-      return;
-    }
-
-    if (sortColumn === "locationId") {
-      const sortedData = [...tableData].sort((a, b) => {
-        const aValue = a.locations.locationName.toLowerCase();
-        const bValue = b.locations.locationName.toLowerCase();
-        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
-        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      });
-      setTableData(sortedData);
-      return;
-    }
-
-    const sortedData = [...tableData].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn])
-        return sortDirection === "asc" ? -1 : 1;
-      if (a[sortColumn] > b[sortColumn])
-        return sortDirection === "asc" ? 1 : -1;
-      return 0;
-    });
-    setTableData(sortedData);
+    getPasswords(sortColumn, sortDirection);
   };
 
   const getPasswords = useCallback(
@@ -644,7 +609,7 @@ export default function Password() {
     {
       id: "ps_passwordValue",
       label: "Password",
-      sortBy: "ps_passwordValue",
+      // sortBy: "ps_passwordValue",
       customHClasses: "!min-w-40 truncate !max-w-40",
       customRClasses: "!min-w-40 truncate  !max-w-40",
 
