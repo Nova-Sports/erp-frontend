@@ -240,6 +240,8 @@ export default function UserForm({
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
+    console.log(userData);
+
     const setInitialForm = async () => {
       if (isUpdateMode && userData?.id) {
         setFormData({
@@ -257,7 +259,7 @@ export default function UserForm({
     };
     setInitialForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userData]);
 
   return (
     <form action={formAction} noValidate className="">

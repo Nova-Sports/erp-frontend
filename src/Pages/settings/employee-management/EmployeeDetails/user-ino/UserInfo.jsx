@@ -7,6 +7,8 @@ export default function UserInfo({
   setIsUpdateMode,
   refreshFunc,
   handleBack,
+  userData,
+  setUserData,
 }) {
   /* ========================= All States ========================= */
 
@@ -22,6 +24,8 @@ export default function UserInfo({
         setIsUpdateMode={setIsUpdateMode}
         refreshFunc={refreshFunc}
         handleBack={handleBack}
+        userData={userData}
+        setUserData={setUserData}
       />
 
       {/* <div className=""></div> */}

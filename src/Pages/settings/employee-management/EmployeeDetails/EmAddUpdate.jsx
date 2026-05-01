@@ -1,9 +1,12 @@
 import Button from "@/components/buttons/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserInfo from "./user-ino/UserInfo";
 import UserSmtp from "./user-smtp/UserSmtp";
 import { useSearchParams } from "react-router-dom";
 import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
+import API from "@/services/axios";
+import authHeader from "@/services/auth-header";
+import { useNotification } from "@/contexts/NotificationContext";
 
 let Tabs = [
   { id: 1, name: "User Info" },
@@ -17,6 +20,7 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
   /* ========================= All States ========================= */
   const [searchParam] = useSearchParams();
   const updateParam = useUpdateParams();
+  const { notify } = useNotification();
 
   const [isUpdateMode, setIsUpdateMode] = useState(
     searchParam.get("user-id") ? true : false,
@@ -24,7 +28,26 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
 
   const [selectedTab, setSelectedTab] = useState(1);
 
+  const [userData, setUserData] = useState(null);
+
   /*  ========================= All Functions ========================= */
+
+  const getUserById = async () => {
+    try {
+      const id = searchParam.get("user-id");
+      const { data } = await API.get(`/employee/${id}`, {
+        headers: authHeader(),
+      });
+      if (data?.success) {
+        setUserData(data.data);
+      } else {
+        notify(data.message || "Failed to fetch employee data", "error", 3000);
+      }
+    } catch (error) {
+      console.log("Get Employee By Id Error: ", error);
+      notify(error.message || "Failed to fetch employee data", "error", 3000);
+    }
+  };
 
   const handleBack = () => {
     setShowAddUpdatePage(false);
@@ -32,6 +55,12 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
   };
 
   /* ========================= All UseEffects ========================= */
+
+  useEffect(() => {
+    if (isUpdateMode) {
+      getUserById();
+    }
+  }, [isUpdateMode]);
 
   return (
     <div className="h-full flex flex-col">
@@ -79,6 +108,8 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
             setIsUpdateMode={setIsUpdateMode}
             refreshFunc={refreshFunc}
             handleBack={handleBack}
+            userData={userData}
+            setUserData={setUserData}
           />
         )}
         {selectedTab === 2 && (
