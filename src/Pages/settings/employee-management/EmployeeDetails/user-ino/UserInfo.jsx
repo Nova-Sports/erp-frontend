@@ -2,7 +2,12 @@ import React from "react";
 import UserForm from "./UserForm";
 import UserPermissions from "./UserPermissions";
 
-export default function UserInfo({ isUpdateMode }) {
+export default function UserInfo({
+  isUpdateMode,
+  setIsUpdateMode,
+  refreshFunc,
+  handleBack,
+}) {
   /* ========================= All States ========================= */
 
   /*  ========================= All Functions ========================= */
@@ -12,12 +17,21 @@ export default function UserInfo({ isUpdateMode }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-l-lg h-full">
       {/* User Form */}
-      <UserForm isUpdateMode={isUpdateMode} />
+      <UserForm
+        isUpdateMode={isUpdateMode}
+        setIsUpdateMode={setIsUpdateMode}
+        refreshFunc={refreshFunc}
+        handleBack={handleBack}
+      />
 
       {/* <div className=""></div> */}
 
       {/* Permissions */}
-      <UserPermissions isUpdateMode={isUpdateMode} />
+      <UserPermissions
+        isUpdateMode={isUpdateMode}
+        setIsUpdateMode={setIsUpdateMode}
+        refreshFunc={refreshFunc}
+      />
     </div>
   );
 }

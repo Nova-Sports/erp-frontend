@@ -2,7 +2,11 @@ import Button from "@/components/buttons/Button";
 import { Dropdown } from "@/components/dropdown/Dropdown";
 import FormInput from "@/components/form-input/FormInput";
 import FormLabel from "@/components/form-label/FormLabel";
-import React, { useState } from "react";
+import { useNotification } from "@/contexts/NotificationContext";
+import authHeader from "@/services/auth-header";
+import API from "@/services/axios";
+import React, { useActionState, useEffect, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 function AllowedIps({ ips = [], onChange }) {
   const [inputValue, setInputValue] = useState("");
@@ -93,6 +97,21 @@ function AllowedIps({ ips = [], onChange }) {
   );
 }
 
+const SubmitButton = ({ isUpdateMode = false }) => {
+  const { pending } = useFormStatus();
+
+  let title = isUpdateMode ? "Save User" : "Add User";
+  if (pending) {
+    title = isUpdateMode ? "Saving..." : "Adding...";
+  }
+
+  return (
+    <>
+      <Button type="submit" title={title} size="sm" disabled={pending} />
+    </>
+  );
+};
+
 /**
  * User Information Component
     em_firstName
@@ -114,8 +133,17 @@ let locations = [
   { id: 3, name: "Location 3" },
 ];
 
-export default function UserForm({ isUpdateMode }) {
+export default function UserForm({
+  isUpdateMode,
+  setIsUpdateMode,
+  userData,
+  setUserData,
+  refreshFunc,
+  handleBack,
+}) {
   /* ========================= All States ========================= */
+  const { notify } = useNotification();
+
   const [formData, setFormData] = useState({});
 
   /*  ========================= All Functions ========================= */
@@ -124,19 +152,123 @@ export default function UserForm({ isUpdateMode }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const extractLocationIds = (locations) => {
+    return locations.map((loc) => loc.split("-")[0]);
+  };
+
+  const attachLocationNames = (locationIds) => {
+    return locationIds
+      .map((id) => {
+        const loc = locations.find((l) => l.id === parseInt(id));
+        return loc ? `${loc.id}-${loc.name}` : null;
+      })
+      .filter(Boolean);
+  };
+
+  const handleSubmit = async (_prevState, e) => {
+    // return;
+
+    try {
+      let response;
+      if (isUpdateMode) {
+        response = await updatePassword();
+      } else {
+        response = await addPassword();
+      }
+
+      if (response.success) {
+        handleBack();
+        notify(
+          isUpdateMode
+            ? "User updated successfully"
+            : "User added successfully",
+          "success",
+          3000,
+        );
+        if (refreshFunc) refreshFunc();
+        return { error: null };
+      } else {
+        notify(response.message || "An error occurred", "error", 3000);
+        return { error: response.message || "An error occurred" };
+      }
+    } catch (err) {
+      notify(err.message, "error", 3000);
+      return { error: err.message };
+    }
+  };
+
+  const addPassword = async () => {
+    try {
+      let payload = {
+        ...formData,
+        em_allowedLocations: extractLocationIds(
+          formData.em_allowedLocations || [],
+        ),
+      };
+      const { data } = await API.post(
+        "/employee",
+        { ...payload },
+        { headers: authHeader() },
+      );
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const updatePassword = async () => {
+    try {
+      let payload = {
+        ...formData,
+        em_allowedLocations: extractLocationIds(
+          formData.em_allowedLocations || [],
+        ),
+      };
+      const { data } = await API.patch(
+        "/employee",
+        { ...payload, id: userData.id },
+        { headers: authHeader() },
+      );
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const [state, formAction] = useActionState(handleSubmit, { error: null });
+
   /* ========================= All UseEffects ========================= */
 
+  useEffect(() => {
+    const setInitialForm = async () => {
+      if (isUpdateMode && userData?.id) {
+        setFormData({
+          em_firstName: userData?.em_firstName || "",
+          em_lastName: userData?.em_lastName || "",
+          em_phone: userData?.em_phone || "",
+          em_email: userData?.em_email || "",
+          em_password: userData?.em_password || "",
+          em_allowedLocations: attachLocationNames(
+            userData?.em_allowedLocations || [],
+          ),
+          em_allowIps: userData?.em_allowIps || [],
+        });
+      }
+    };
+    setInitialForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <form className="">
+    <form action={formAction} noValidate className="">
+      {state && state.error && (
+        <p className="text-sm text-red-500 mb-3">{state.error}</p>
+      )}
       <div className="border-b-2 flex items-baseline justify-between">
         <h3 className="text-lg font-bold  uppercase tracking-wider text-gray-600   mb-2">
           {isUpdateMode ? "Update User" : "Add User"}
         </h3>
-        <Button
-          title={isUpdateMode ? "Save User" : "Add User"}
-          size="sm"
-          variant="outlinePrimary"
-        />
+        <SubmitButton isUpdateMode={isUpdateMode} />
       </div>
       <div className="my-3">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

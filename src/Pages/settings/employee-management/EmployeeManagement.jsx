@@ -322,7 +322,7 @@ export default function EmployeeManagement() {
       try {
         setLoading(true);
         const { data } = await API.post(
-          `/sales/employees?page=${page}&limit=${limit}`,
+          `/employees?page=${page}&limit=${limit}`,
           {
             query,
             filterBy: filterBy?.value,
@@ -351,7 +351,7 @@ export default function EmployeeManagement() {
   // Delete Employee
   const handleDeleteEmployee = async (id) => {
     try {
-      const { data } = await API.delete(`/sales/employee/${id}`, {
+      const { data } = await API.delete(`/employee/${id}`, {
         headers: authHeader(),
       });
       if (data?.success) {
@@ -391,7 +391,10 @@ export default function EmployeeManagement() {
             transition={{ duration: 0.13 }}
             className="h-full"
           >
-            <EmAddUpdate setShowAddUpdatePage={setShowAddUpdatePage} />
+            <EmAddUpdate
+              setShowAddUpdatePage={setShowAddUpdatePage}
+              refreshFunc={getEmployees}
+            />
           </motion.div>
         </AnimatePresence>
       ) : (

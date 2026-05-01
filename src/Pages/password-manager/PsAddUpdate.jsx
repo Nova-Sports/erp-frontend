@@ -97,6 +97,15 @@ export default function PsAddUpdate({
 
   /*  ========================= All Functions ========================= */
 
+  const generateRandomPassword = () => {
+    let randomPassword = generatePassword();
+    setForm({
+      ...form,
+      ps_passwordValue: randomPassword,
+    });
+    notify("Random password generated", "success", 3000);
+  };
+
   const handleSubmit = async (_prevState, e) => {
     e.preventDefault();
 
@@ -129,15 +138,6 @@ export default function PsAddUpdate({
       notify(err.message, "error", 3000);
       return { error: err.message };
     }
-  };
-
-  const generateRandomPassword = () => {
-    let randomPassword = generatePassword();
-    setForm({
-      ...form,
-      ps_passwordValue: randomPassword,
-    });
-    notify("Random password generated", "success", 3000);
   };
 
   const addPassword = async () => {

@@ -13,7 +13,7 @@ const activeTabClass = "bg-primary text-white";
 const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
 const commonTabClasses = "rounded-none border border-primary shadow-none";
 
-export default function EmAddUpdate({ setShowAddUpdatePage }) {
+export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
   /* ========================= All States ========================= */
   const [searchParam] = useSearchParams();
   const updateParam = useUpdateParams();
@@ -73,8 +73,21 @@ export default function EmAddUpdate({ setShowAddUpdatePage }) {
           Content Tabs    
       ========================================= */}
       <div className="flex-1">
-        {selectedTab === 1 && <UserInfo isUpdateMode={isUpdateMode} />}
-        {selectedTab === 2 && <UserSmtp isUpdateMode={isUpdateMode} />}
+        {selectedTab === 1 && (
+          <UserInfo
+            isUpdateMode={isUpdateMode}
+            setIsUpdateMode={setIsUpdateMode}
+            refreshFunc={refreshFunc}
+            handleBack={handleBack}
+          />
+        )}
+        {selectedTab === 2 && (
+          <UserSmtp
+            isUpdateMode={isUpdateMode}
+            setIsUpdateMode={setIsUpdateMode}
+            handleBack={handleBack}
+          />
+        )}
       </div>
     </div>
   );
