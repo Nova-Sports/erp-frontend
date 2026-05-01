@@ -1,25 +1,49 @@
 import Button from "@/components/buttons/Button";
+import DeleteModalButton from "@/components/delete-modal/DeleteModalButton";
 import { Dropdown } from "@/components/dropdown/Dropdown";
 import { Modal } from "@/components/modal/Modal";
 import Pagination from "@/components/pagination/Pagination";
+import CSearch from "@/components/Search/CSearch";
 import Table from "@/components/table/Table";
-import { Menu, Search } from "lucide-react";
-import React, { useState } from "react";
+import { useNotification } from "@/contexts/NotificationContext";
+import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
+import authHeader from "@/services/auth-header";
+import API from "@/services/axios";
+import { Menu } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import EmAddUpdate from "./EmployeeDetails/EmAddUpdate";
+import { AnimatePresence } from "framer-motion";
+
+import { motion } from "framer-motion";
 
 const ActionItems = ({
   limit,
   handleLimitChange,
   searchBy,
+  searchFilters,
   setSearchBy,
   tableHeaders,
-  setShowAddUpdateModal,
+  filterBy,
+  setFilterBy,
+  setQuery,
+  setShowAddUpdatePage,
 }) => {
   /* ========================= All States ========================= */
+  const updateParam = useUpdateParams();
 
   // Modal States
   const [showMobileActionMenu, setShowMobileActionMenu] = useState(false);
 
   /*  ========================= All Functions ========================= */
+
+  const handleSearch = useCallback(
+    (v) => {
+      setQuery(v);
+      updateParam("query", v);
+      // refreshFunc(v);
+    },
+    [filterBy],
+  );
 
   /* ========================= All UseEffects ========================= */
 
@@ -52,23 +76,29 @@ const ActionItems = ({
 
   const RenderSearchFilters = () => {
     return (
-      <Dropdown value={searchBy} onChange={(value) => setSearchBy(value)}>
+      <Dropdown
+        value={filterBy}
+        onChange={(value) => {
+          let selectedFilter = searchFilters.find(
+            (filter) => filter.value === value,
+          );
+          setFilterBy(selectedFilter);
+        }}
+      >
         <Dropdown.Trigger appendClass={"!border-info !border-1 !bg-info/10"}>
-          <span className="lg:inline">Search By : </span>
-          <span className="text-nowrap">{searchBy || "All"}</span>
+          <span className="hidden xl:inline text-nowrap">Search By : </span>
+          <span className="text-nowrap">{filterBy?.label || "All"}</span>
         </Dropdown.Trigger>
         <Dropdown.Menu appendClass="w-full">
-          {tableHeaders
-            ?.filter((header) => header.sortBy)
-            .map((header) => (
-              <Dropdown.Item
-                appendClass={"py-0"}
-                key={header.id}
-                value={header.id}
-              >
-                {header.label}
-              </Dropdown.Item>
-            ))}
+          {searchFilters.map((filter) => (
+            <Dropdown.Item
+              appendClass={"py-0"}
+              key={filter.value}
+              value={filter.value}
+            >
+              {filter.label}
+            </Dropdown.Item>
+          ))}
         </Dropdown.Menu>
       </Dropdown>
     );
@@ -76,27 +106,13 @@ const ActionItems = ({
 
   const RenderSearch = () => {
     return (
-      <form className="flex items-center  gap-2">
+      <div className="flex items-center  gap-2">
         {/* Search By Filters */}
         <div className="hidden lg:block">
           <RenderSearchFilters />
         </div>
-        <input
-          type="text"
-          placeholder="Search..."
-          className="form-control lg:!w-96 flex-1"
-        />
-
-        <Button
-          title=""
-          afterTitle={() => {
-            return <Search size={18} />;
-          }}
-          variant="info"
-          appendClasses="lg:hidden"
-        />
-        <Button title="Search" variant="info" appendClasses="hidden lg:block" />
-      </form>
+        <CSearch updateText={handleSearch} />
+      </div>
     );
   };
 
@@ -105,9 +121,9 @@ const ActionItems = ({
       <>
         {/* Add New Entry */}
         <Button
-          title="Add New"
+          title="Add"
           onClick={(e) => {
-            setShowAddUpdateModal(true);
+            setShowAddUpdatePage(true);
           }}
         />
       </>
@@ -120,7 +136,7 @@ const ActionItems = ({
           Desktop Mode    
       ========================================= */}
       <div
-        className={`mb-2 py-2 px-4 ${true && "bg-white shadow-sm"} hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
+        className={`mb-2 py-2 px-4 bg-white shadow-sm hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
       >
         <div>
           <RenderLimit />
@@ -196,101 +212,73 @@ const ActionItems = ({
   );
 };
 
+let searchFilters = [
+  { label: "All", value: null },
+  { label: "First Name", value: "em_firstName" },
+  { label: "Last Name", value: "em_lastName" },
+  { label: "Phone", value: "em_phone" },
+  { label: "Email", value: "em_email" },
+];
+
 export default function EmployeeManagement() {
   /* ========================= All States ========================= */
+  const { notify } = useNotification();
+  const updateParam = useUpdateParams();
+
+  const [query, setQuery] = useState(null);
+  const [filterBy, setFilterBy] = useState(null);
+
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [limit, setLimit] = useState(10);
   const [searchBy, setSearchBy] = useState("");
 
+  const [loading, setLoading] = useState(true);
+
   // Modal States
-  const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
+  const [showAddUpdatePage, setShowAddUpdatePage] = useState(false);
 
-  const [tableData, setTableData] = useState([
-    {
-      id: 11,
-      customerId: 11,
-      customerName: "Customer 11",
-      insideSalesPerson: { id: 3, name: "Inside Sales Person 3" },
-      outSideSalesPerson: { id: 1, name: "Outside Sales Person 1" },
-      paymentTerm: { id: 2, name: "Payment Term 2" },
-      poRequired: true,
-      state: "GA",
-      locationId: 2,
-      locations: { id: 2, locationName: "Krown Retails" },
-      createdAt: "2024-06-11T10:00:00Z",
-      updatedAt: "2024-06-11T10:00:00Z",
-    },
-  ]);
+  const [tableData, setTableData] = useState([]);
 
-  const [tableHeaders, setTableHeaders] = useState([
+  const tableHeaders = [
     {
-      id: "customerId",
-      label: "C-ID",
-      sortBy: "customerId",
+      id: "em_firstName",
+      label: "First Name",
+      sortBy: "em_firstName",
       customHClasses: "",
       customRClasses: "",
-      render: (row) => <span className="text-nowrap">{row.customerId}</span>,
+      render: (row) => <span className="text-nowrap">{row.em_firstName}</span>,
     },
     {
-      id: "customerName",
-      label: "Customer Name",
-      sortBy: "customerName",
-      render: (row) => row.customerName,
+      id: "em_lastName",
+      label: "Last Name",
+      sortBy: "em_lastName",
+      render: (row) => <span className="text-nowrap">{row.em_lastName}</span>,
     },
     {
-      id: "insideSalesPerson",
-      label: "Inside Sales Person",
-      sortBy: "insideSalesPerson",
-      render: (row) => row.insideSalesPerson.name,
+      id: "em_phone",
+      label: "Phone",
+      sortBy: "em_phone",
+      render: (row) => <span className="text-nowrap">{row.em_phone}</span>,
     },
     {
-      id: "outSideSalesPerson",
-      label: "Outside Sales Person",
-      sortBy: "outSideSalesPerson",
-      render: (row) => row.outSideSalesPerson.name,
+      id: "em_email",
+      label: "Email",
+      sortBy: "em_email",
+      render: (row) => <span className="text-nowrap">{row.em_email}</span>,
     },
     {
-      id: "paymentTerm",
-      label: "Payment Term",
-      sortBy: "paymentTerm",
-      render: (row) => row.paymentTerm.name,
+      id: "em_isAdmin",
+      label: "Role",
+      sortBy: "em_isAdmin",
+      render: (row) => (
+        <span className="text-nowrap">
+          {row.em_isAdmin ? "Admin" : "Employee"}
+        </span>
+      ),
     },
-    {
-      id: "poRequired",
-      label: "PO Required",
-      sortBy: "poRequired",
-      customRClasses: "w-8",
-      render: (row) => {
-        return (
-          <div className="text-center flex-center">
-            {row.poRequired ? (
-              <div className="w-10 h-6 flex-center bg-green-100 border-green-300 text-green-800 border text-center rounded-md">
-                <span className="text-xs uppercase font-semibold">Yes</span>
-              </div>
-            ) : (
-              <div className="w-10 h-6 flex-center bg-red-100 border-red-300 text-red-800 border text-center rounded-md">
-                <span className="text-xs uppercase font-semibold">No</span>
-              </div>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      id: "state",
-      label: "State",
-      sortBy: "state",
-      customRClasses: "w-8 text-center",
-      customHClasses: "w-8 text-center",
-      render: (row) => row.state,
-    },
-    {
-      id: "locationId",
-      label: "Location",
-      sortBy: "locationId",
-      render: (row) => row.locations.locationName,
-    },
+
     {
       id: "actions",
       label: "Actions",
@@ -298,13 +286,26 @@ export default function EmployeeManagement() {
 
       render: (row) => {
         return (
-          <div className="me-4">
-            <Button title="Edit" variant="primary" size="sm" />
+          <div className="me-4 flex justify-end items-center gap-2">
+            <Button
+              title="Edit"
+              variant="primary"
+              size="sm"
+              onClick={() => {
+                updateParam("user-id", row.id);
+                setShowAddUpdatePage(true);
+              }}
+            />
+            <DeleteModalButton
+              loading={loading}
+              disabled={loading || row.em_isAdmin}
+              onDeleteConfirm={() => handleDeleteEmployee(row.id)}
+            />
           </div>
         );
       },
     },
-  ]);
+  ];
 
   /*  ========================= All Functions ========================= */
   const handleLimitChange = (value) => {
@@ -312,32 +313,128 @@ export default function EmployeeManagement() {
     setPage(1);
   };
 
+  const handleSortBy = (sortColumn, sortDirection) => {
+    getEmployees(sortColumn, sortDirection);
+  };
+
+  const getEmployees = useCallback(
+    async (sortBy = null, sortDirection = null) => {
+      try {
+        setLoading(true);
+        const { data } = await API.post(
+          `/sales/employees?page=${page}&limit=${limit}`,
+          {
+            query,
+            filterBy: filterBy?.value,
+            sortBy,
+            sortDirection,
+          },
+          { headers: authHeader() },
+        );
+        if (data?.success) {
+          setTableData(data.data);
+          setTotalPages(data.totalPages);
+          setTotalResults(data.total);
+        } else {
+          notify(data.message || "Failed to fetch employees", "error", 3000);
+        }
+        setLoading(false);
+      } catch (err) {
+        console.log(err.message);
+        setLoading(false);
+        notify(err.message, "error", 5000);
+      }
+    },
+    [limit, page, query, filterBy],
+  );
+
+  // Delete Employee
+  const handleDeleteEmployee = async (id) => {
+    try {
+      const { data } = await API.delete(`/sales/employee/${id}`, {
+        headers: authHeader(),
+      });
+      if (data?.success) {
+        notify(
+          data.message || "Employee deleted successfully",
+          "success",
+          3000,
+        );
+        getEmployees();
+      } else {
+        notify(data.message || "Failed to delete employee", "error", 3000);
+      }
+    } catch (err) {
+      console.log(err.message);
+      notify(err.message, "error", 5000);
+    }
+  };
+
   /* ========================= All UseEffects ========================= */
+
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      getEmployees();
+    }, 50);
+    return () => clearTimeout(timeout);
+  }, [limit, query, page, filterBy]);
 
   return (
     <div className="h-full">
-      <ActionItems
-        limit={limit}
-        handleLimitChange={handleLimitChange}
-        searchBy={searchBy}
-        setSearchBy={setSearchBy}
-        tableHeaders={tableHeaders}
-        setShowAddUpdateModal={setShowAddUpdateModal}
-      />
+      {showAddUpdatePage ? (
+        <AnimatePresence mode="wait">
+          <motion.div
+            key="add-update-page"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 50 }}
+            transition={{ duration: 0.13 }}
+            className="h-full"
+          >
+            <EmAddUpdate setShowAddUpdatePage={setShowAddUpdatePage} />
+          </motion.div>
+        </AnimatePresence>
+      ) : (
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key="main-table"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.13 }}
+            className="h-full flex flex-col"
+          >
+            <ActionItems
+              limit={limit}
+              searchFilters={searchFilters}
+              filterBy={filterBy}
+              setFilterBy={setFilterBy}
+              setQuery={setQuery}
+              handleLimitChange={handleLimitChange}
+              searchBy={searchBy}
+              setSearchBy={setSearchBy}
+              tableHeaders={tableHeaders}
+              setShowAddUpdatePage={setShowAddUpdatePage}
+            />
 
-      <Table
-        heightClasses={"lg:h-[79vh] h-[79dvh] overflow-y-auto"}
-        headers={tableHeaders}
-        data={tableData}
-      />
-      <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 mt-2">
-        <Pagination
-          page={1}
-          setPage={setPage}
-          totalPages={1}
-          totalResults={totalResults}
-        />
-      </div>
+            <Table
+              heightClasses={"lg:h-[79vh] h-[79dvh] overflow-y-auto"}
+              headers={tableHeaders}
+              data={tableData}
+              handleSortBy={handleSortBy}
+              loading={loading}
+            />
+            <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 mt-2">
+              <Pagination
+                page={page}
+                setPage={setPage}
+                totalPages={totalPages}
+                totalResults={totalResults}
+              />
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      )}
     </div>
   );
 }

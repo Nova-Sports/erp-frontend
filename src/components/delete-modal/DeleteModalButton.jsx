@@ -5,6 +5,8 @@ import { Modal } from "../modal/Modal";
 
 export default function DeleteModalButton({
   onDeleteConfirm = async () => {},
+  loading: externalLoading = false,
+  disabled: externalDisabled = false,
 }) {
   /* ========================= All States ========================= */
 
@@ -28,7 +30,7 @@ export default function DeleteModalButton({
         title=""
         variant="outlineDanger"
         size="sm"
-        disabled={loading}
+        disabled={loading || externalDisabled}
         onClick={() => {
           setShowDeleteModal(true);
         }}

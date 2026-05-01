@@ -512,7 +512,7 @@ function LockScreen({ onUnlock }) {
           {error && <div className="text-red-500 mb-2">{error}</div>}
           <button
             type="submit"
-            className="bg-primary text-white px-4 py-2 rounded w-full"
+            className="bg-primary text-white px-4 py-2 rounded w-full mt-2"
           >
             Unlock
           </button>
@@ -548,6 +548,7 @@ export default function Password() {
       };
     }
   }, [locked, resetInactivityTimer]);
+
   /* ========================= All States ========================= */
   const { notify } = useNotification();
 
@@ -559,6 +560,7 @@ export default function Password() {
   const [showAddUpdateModal, setShowAddUpdateModal] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [currentRowData, setCurrentRowData] = useState(null);
+
   // Notes Modal States
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [notesValue, setNotesValue] = useState("");
@@ -570,6 +572,11 @@ export default function Password() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const [limit, setLimit] = useState(10);
+
+  const [tableData, setTableData] = useState([]);
+
+  const [filterByTab, setFilterByTab] = useState("Company");
+  const [filterBy, setFilterBy] = useState({ label: "All", value: null });
 
   let filterTabs = [
     {
@@ -595,11 +602,6 @@ export default function Password() {
   ];
 
   /*  ========================= All Functions ========================= */
-
-  const [tableData, setTableData] = useState([]);
-
-  const [filterByTab, setFilterByTab] = useState("Company");
-  const [filterBy, setFilterBy] = useState({ label: "All", value: null });
 
   const handleSortBy = (sortColumn, sortDirection) => {
     getPasswords(sortColumn, sortDirection);
@@ -776,7 +778,9 @@ export default function Password() {
       },
     },
   ];
+
   /* ========================= All UseEffects ========================= */
+
   useEffect(() => {
     if (filterByTab === "Password Generator") {
       return;
