@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import LocationForm from "./LocationForm";
 import LocationEmailTemplateFields from "./LocationEmailTemplateFields";
+import LocationEmailTemplates from "./LocationEmailTemplates";
 
 export default function LocationAddUpdate({
   setShowAddUpdatePage,
@@ -22,7 +23,6 @@ export default function LocationAddUpdate({
   let isUpdateMode = searchParam.get("location-id") ? true : false;
 
   const [locationData, setLocationData] = useState(null);
-  const [templateFormData, setTemplateFormData] = useState({});
 
   /*  ========================= All Functions ========================= */
 
@@ -94,17 +94,7 @@ export default function LocationAddUpdate({
           />
         </div>
         <div className="flex-1 flex flex-col ">
-          <div className="border-b-2 flex items-baseline justify-between">
-            <h3 className="text-lg font-bold uppercase tracking-wider text-gray-600 mb-2">
-              Email Template Fields
-            </h3>
-          </div>
-          <div className="flex-1">
-            <LocationEmailTemplateFields
-              formData={templateFormData}
-              setFormData={setTemplateFormData}
-            />
-          </div>
+          <LocationEmailTemplates />
         </div>
       </div>
     </div>

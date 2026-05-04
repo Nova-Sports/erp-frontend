@@ -2,6 +2,7 @@ import Button from "@/components/buttons/Button";
 import FormInput from "@/components/form-input/FormInput";
 import FormLabel from "@/components/form-label/FormLabel";
 import { useNotification } from "@/contexts/NotificationContext";
+import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import React, { useActionState, useEffect, useState } from "react";
@@ -38,6 +39,8 @@ export default function LocationForm({
 }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
+
+  const updateParam = useUpdateParams();
 
   const [formData, setFormData] = useState({
     name: "",

@@ -368,6 +368,12 @@ export default function Locations({ RenderFilterTabs }) {
     return () => clearTimeout(timeout);
   }, [limit, query, page, filterBy]);
 
+  useEffect(() => {
+    return () => {
+      updateParam("location-id", null);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col h-full overflow-y-auto  overflow-auto">
       {showAddUpdatePage ? (

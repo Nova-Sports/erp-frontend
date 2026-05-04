@@ -18,6 +18,8 @@ import {
   $getRoot,
   $getSelection,
   $isRangeSelection,
+  $setSelection,
+  $isTextNode,
   $createParagraphNode,
   $insertNodes,
 } from "lexical";
@@ -98,21 +100,29 @@ const editorTheme = {
    Plugin: load initial HTML into the editor
    ══════════════════════════════════════════════════════════════════ */
 
-function InitialHtmlPlugin({ html }) {
+function InitialHtmlPlugin({ html, isInitLoadRef }) {
   const [editor] = useLexicalComposerContext();
   const didInit = useRef(false);
 
   useEffect(() => {
     if (didInit.current || !html) return;
     didInit.current = true;
-    editor.update(() => {
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(html, "text/html");
-      const nodes = $generateNodesFromDOM(editor, dom);
-      const root = $getRoot();
-      root.clear();
-      root.append(...nodes);
-    });
+    if (isInitLoadRef) isInitLoadRef.current = true;
+    editor.update(
+      () => {
+        const parser = new DOMParser();
+        const dom = parser.parseFromString(html, "text/html");
+        const nodes = $generateNodesFromDOM(editor, dom);
+        const root = $getRoot();
+        root.clear();
+        root.append(...nodes);
+      },
+      {
+        onUpdate: () => {
+          if (isInitLoadRef) isInitLoadRef.current = false;
+        },
+      },
+    );
   }, [editor, html]);
 
   return null;
@@ -154,6 +164,7 @@ const HEADINGS = [
 
 function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
+  const savedSelectionRef = useRef(null);
   const [state, setState] = useState({
     bold: false,
     italic: false,
@@ -228,8 +239,19 @@ function ToolbarPlugin() {
     });
   };
 
+  const saveSelection = () => {
+    editor.getEditorState().read(() => {
+      const sel = $getSelection();
+      savedSelectionRef.current = sel ? sel.clone() : null;
+    });
+  };
+
   const applyStyle = (style, value) => {
     editor.update(() => {
+      if (savedSelectionRef.current) {
+        $setSelection(savedSelectionRef.current);
+        savedSelectionRef.current = null;
+      }
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
         $patchStyleText(selection, { [style]: value });
@@ -322,6 +344,7 @@ function ToolbarPlugin() {
       <label
         title="Font color"
         className="flex items-center gap-0.5 cursor-pointer"
+        onMouseDown={saveSelection}
       >
         <span className="text-xs text-gray-600">A</span>
         <input
@@ -334,6 +357,7 @@ function ToolbarPlugin() {
       <label
         title="Background color"
         className="flex items-center gap-0.5 cursor-pointer"
+        onMouseDown={saveSelection}
       >
         <span className="text-xs text-gray-600 bg-yellow-200 px-0.5 rounded">
           A
@@ -373,16 +397,93 @@ function ToolbarPlugin() {
    RichEditor — single Lexical editor instance
    ══════════════════════════════════════════════════════════════════ */
 
+/**
+ * Custom span → TextNode converter that preserves color, background-color,
+ * and font-family (Lexical's built-in converter ignores these).
+ */
+function convertSpanWithInlineStyles(domNode) {
+  const style = domNode.style;
+  const color = style.color;
+  const bgColor = style.backgroundColor;
+  const fontFamily = style.fontFamily;
+  const fontWeight = style.fontWeight;
+  const textDecoration = style.textDecoration
+    ? style.textDecoration.split(" ")
+    : [];
+  const fontStyle = style.fontStyle;
+  const verticalAlign = style.verticalAlign;
+
+  const hasBold = fontWeight === "700" || fontWeight === "bold";
+  const hasStrikethrough = textDecoration.includes("line-through");
+  const hasItalic = fontStyle === "italic";
+  const hasUnderline = textDecoration.includes("underline");
+  const hasInlineStyle = Boolean(color || bgColor || fontFamily);
+
+  if (
+    !hasBold &&
+    !hasStrikethrough &&
+    !hasItalic &&
+    !hasUnderline &&
+    !hasInlineStyle &&
+    verticalAlign !== "sub" &&
+    verticalAlign !== "super"
+  ) {
+    return null;
+  }
+
+  return {
+    conversion: () => ({
+      forChild: (lexicalNode) => {
+        if (!$isTextNode(lexicalNode)) return lexicalNode;
+        if (hasBold && !lexicalNode.hasFormat("bold"))
+          lexicalNode.toggleFormat("bold");
+        if (hasStrikethrough && !lexicalNode.hasFormat("strikethrough"))
+          lexicalNode.toggleFormat("strikethrough");
+        if (hasItalic && !lexicalNode.hasFormat("italic"))
+          lexicalNode.toggleFormat("italic");
+        if (hasUnderline && !lexicalNode.hasFormat("underline"))
+          lexicalNode.toggleFormat("underline");
+        if (verticalAlign === "sub" && !lexicalNode.hasFormat("subscript"))
+          lexicalNode.toggleFormat("subscript");
+        if (verticalAlign === "super" && !lexicalNode.hasFormat("superscript"))
+          lexicalNode.toggleFormat("superscript");
+        if (hasInlineStyle) {
+          const parts = [];
+          if (color) parts.push(`color: ${color}`);
+          if (bgColor) parts.push(`background-color: ${bgColor}`);
+          if (fontFamily) parts.push(`font-family: ${fontFamily}`);
+          const styleStr = parts.join("; ");
+          const existing = lexicalNode.getStyle();
+          lexicalNode.setStyle(
+            existing ? `${existing}; ${styleStr}` : styleStr,
+          );
+        }
+        return lexicalNode;
+      },
+      node: null,
+    }),
+    priority: 1, // Override TextNode's default priority-0 span converter
+  };
+}
+
 const makeLexicalConfig = () => ({
   namespace: "LocationEmailEditor",
   theme: editorTheme,
   onError: (err) => console.error("Lexical error:", err),
   nodes: [HeadingNode, ListNode, ListItemNode, LinkNode],
+  html: {
+    import: {
+      span: convertSpanWithInlineStyles,
+    },
+  },
 });
 
 function RichEditor({ initialHtml, onChange, editorRef, minHeight = 200 }) {
+  const isInitLoadRef = useRef(false);
+
   const handleChange = useCallback(
     (editorState, editor) => {
+      if (isInitLoadRef.current) return;
       editorState.read(() => {
         const html = $generateHtmlFromNodes(editor, null);
         onChange(html);
@@ -413,7 +514,7 @@ function RichEditor({ initialHtml, onChange, editorRef, minHeight = 200 }) {
         </div>
         <HistoryPlugin />
         <OnChangePlugin onChange={handleChange} ignoreSelectionChange />
-        <InitialHtmlPlugin html={initialHtml} />
+        <InitialHtmlPlugin html={initialHtml} isInitLoadRef={isInitLoadRef} />
         <EditorRefPlugin editorRef={editorRef} />
       </div>
     </LexicalComposer>
@@ -672,7 +773,11 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
     LOCATION_EMAIL_TEMPLATE_MODULES[0].key,
   );
 
-  const emailTemplates = buildLocationEmailTemplates(formData);
+  const internalData = Array.isArray(formData)
+    ? applyApiTemplatesToLocationData({}, formData)
+    : formData;
+
+  const emailTemplates = buildLocationEmailTemplates(internalData);
   const activeModuleConfig = LOCATION_EMAIL_TEMPLATE_MODULES.find(
     (m) => m.key === activeModule,
   );
@@ -698,7 +803,10 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
 
   const updateTemplateField = (field, value) => {
     setFormData((prev) => {
-      const cleaned = { ...prev };
+      const isArray = Array.isArray(prev);
+      const base = isArray ? applyApiTemplatesToLocationData({}, prev) : prev;
+
+      const cleaned = { ...base };
       delete cleaned.moduleEmailTemplates;
       delete cleaned.defaultEmailFormats;
       delete cleaned.locationEmailTemplates;
@@ -719,9 +827,11 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
       };
 
       const fieldKey = fieldKeyMap[field];
-      return fieldKey
+      const updated = fieldKey
         ? { ...cleaned, [fieldKey]: value }
         : { ...cleaned, [field]: value };
+
+      return isArray ? getTemplateApiPayloadList(updated) : updated;
     });
   };
 
