@@ -12,9 +12,9 @@ import API from "@/services/axios";
 import { AnimatePresence } from "framer-motion";
 import { Menu } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import EmAddUpdate from "./EmployeeDetails/EmAddUpdate";
 
 import { motion } from "framer-motion";
+import TemplateAddUpdate from "./templateDetails/TemplateAddUpdate";
 
 const ActionItems = ({
   limit,
@@ -214,13 +214,18 @@ const ActionItems = ({
 
 let searchFilters = [
   { label: "All", value: null },
-  { label: "First Name", value: "em_firstName" },
-  { label: "Last Name", value: "em_lastName" },
-  { label: "Phone", value: "em_phone" },
-  { label: "Email", value: "em_email" },
+  { label: "Col1", value: "em_firstName" },
+  { label: "Col2", value: "em_lastName" },
+  { label: "Col3", value: "em_phone" },
 ];
 
-export default function EmployeeManagement({ RenderFilterTabs }) {
+let getDataApi = "/templates";
+let getDataByIdApi = "/template";
+let addDataApi = "/template";
+let updateDataApi = "/template";
+let deleteDataApi = "/template";
+
+export default function SettingsTemplate({ RenderFilterTabs }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
   const updateParam = useUpdateParams();
@@ -243,40 +248,24 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
 
   const tableHeaders = [
     {
-      id: "em_firstName",
-      label: "First Name",
-      sortBy: "em_firstName",
+      id: "col_1",
+      label: "Column1",
+      sortBy: "col_1",
       customHClasses: "",
       customRClasses: "",
       render: (row) => <span className="text-nowrap">{row.em_firstName}</span>,
     },
     {
-      id: "em_lastName",
-      label: "Last Name",
-      sortBy: "em_lastName",
+      id: "col_2",
+      label: "Column2",
+      sortBy: "col_2",
       render: (row) => <span className="text-nowrap">{row.em_lastName}</span>,
     },
     {
-      id: "em_phone",
-      label: "Phone",
-      sortBy: "em_phone",
+      id: "col_3",
+      label: "Column3",
+      sortBy: "col_3",
       render: (row) => <span className="text-nowrap">{row.em_phone}</span>,
-    },
-    {
-      id: "em_email",
-      label: "Email",
-      sortBy: "em_email",
-      render: (row) => <span className="text-nowrap">{row.em_email}</span>,
-    },
-    {
-      id: "em_isAdmin",
-      label: "Role",
-      sortBy: "em_isAdmin",
-      render: (row) => (
-        <span className="text-nowrap">
-          {row.em_isAdmin ? "Admin" : "Employee"}
-        </span>
-      ),
     },
 
     {
@@ -292,14 +281,14 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
               variant="primary"
               size="sm"
               onClick={() => {
-                updateParam("user-id", row.id);
+                updateParam("template-id", row.id);
                 setShowAddUpdatePage(true);
               }}
             />
             <DeleteModalButton
               loading={loading}
               disabled={loading || row.em_isAdmin}
-              onDeleteConfirm={() => handleDeleteEmployee(row.id)}
+              onDeleteConfirm={() => handleDeleteTemplate(row.id)}
             />
           </div>
         );
@@ -314,15 +303,15 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
   };
 
   const handleSortBy = (sortColumn, sortDirection) => {
-    getEmployees(sortColumn, sortDirection);
+    getTemplates(sortColumn, sortDirection);
   };
 
-  const getEmployees = useCallback(
+  const getTemplates = useCallback(
     async (sortBy = null, sortDirection = null) => {
       try {
         setLoading(true);
         const { data } = await API.post(
-          `/employees?page=${page}&limit=${limit}`,
+          `${getDataApi}?page=${page}&limit=${limit}`,
           {
             query,
             filterBy: filterBy?.value,
@@ -336,7 +325,7 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
           setTotalPages(data.totalPages);
           setTotalResults(data.total);
         } else {
-          notify(data.message || "Failed to fetch employees", "error", 3000);
+          notify(data.message || "Failed to fetch templates", "error", 3000);
         }
         setLoading(false);
       } catch (err) {
@@ -348,21 +337,21 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
     [limit, page, query, filterBy],
   );
 
-  // Delete Employee
-  const handleDeleteEmployee = async (id) => {
+  // Delete Template
+  const handleDeleteTemplate = async (id) => {
     try {
-      const { data } = await API.delete(`/employee/${id}`, {
+      const { data } = await API.delete(`${deleteDataApi}/${id}`, {
         headers: authHeader(),
       });
       if (data?.success) {
         notify(
-          data.message || "Employee deleted successfully",
+          data.message || "Template deleted successfully",
           "success",
           3000,
         );
-        getEmployees();
+        getTemplates();
       } else {
-        notify(data.message || "Failed to delete employee", "error", 3000);
+        notify(data.message || "Failed to delete template", "error", 3000);
       }
     } catch (err) {
       console.log(err.message);
@@ -374,7 +363,7 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
 
   useEffect(() => {
     let timeout = setTimeout(() => {
-      getEmployees();
+      getTemplates();
     }, 50);
     return () => clearTimeout(timeout);
   }, [limit, query, page, filterBy]);
@@ -391,9 +380,12 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
             transition={{ duration: 0.13 }}
             className="h-full"
           >
-            <EmAddUpdate
+            <TemplateAddUpdate
               setShowAddUpdatePage={setShowAddUpdatePage}
-              refreshFunc={getEmployees}
+              refreshFunc={getTemplates}
+              getDataByIdApi={getDataByIdApi}
+              addDataApi={addDataApi}
+              updateDataApi={updateDataApi}
             />
           </motion.div>
         </AnimatePresence>

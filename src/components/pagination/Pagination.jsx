@@ -105,7 +105,6 @@ export default function Pagination({
               </div>
             )}
           />
-
           {/* Page Numbers */}
           {visiblePages.map((p) => (
             <Button
@@ -119,7 +118,6 @@ export default function Pagination({
               title={p}
             />
           ))}
-
           {/* Last Page Button */}
           <Button
             onClick={() => goToPage(totalPages)}
@@ -144,6 +142,7 @@ export default function Pagination({
           }}
           className="hidden md:flex items-center gap-2"
         >
+          totalPages
           <label htmlFor="goto-page" className="text-sm text-gray-500">
             Go to :
           </label>

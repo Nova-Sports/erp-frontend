@@ -3,6 +3,8 @@ import EmployeeManagement from "./employee-management/EmployeeManagement";
 import { Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SettingsProvider, useSettingsContext } from "./SettingsContext";
+import SettingsTemplate from "./setttingsTemplate/SettingsTemplate";
+import Locations from "./locations/Locations";
 
 let settingsNavItems = [
   {
@@ -12,6 +14,10 @@ let settingsNavItems = [
   {
     id: "locations",
     label: "Locations",
+  },
+  {
+    id: "templates",
+    label: "Settings Templates",
   },
 ];
 
@@ -90,15 +96,13 @@ let ContentById = () => {
   switch (selected) {
     case "employee":
       return <EmployeeManagement RenderFilterTabs={RenderFilterTabs} />;
-
     case "locations":
-      return <DefaultContent message="Locations Settings Coming Soon!" />;
-
+      return <Locations RenderFilterTabs={RenderFilterTabs} />;
+    case "templates":
+      return <SettingsTemplate RenderFilterTabs={RenderFilterTabs} />;
     default:
-      break;
+      return <DefaultContent message={"Select a setting to view details"} />;
   }
-
-  return <DefaultContent message="Select a setting to manage" />;
 };
 
 const SettingsNav = () => {
