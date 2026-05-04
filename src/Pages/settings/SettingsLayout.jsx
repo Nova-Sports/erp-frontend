@@ -3,7 +3,7 @@ import EmployeeManagement from "./employee-management/EmployeeManagement";
 import { Settings } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SettingsProvider, useSettingsContext } from "./SettingsContext";
-import SettingsTemplate from "./setttingsTemplate/SettingsTemplate";
+import SettingsTemplate from "./settingsTemplate/SettingsTemplate";
 import Locations from "./locations/Locations";
 
 let settingsNavItems = [
@@ -143,7 +143,7 @@ export default function SettingsLayout() {
         {/* =============================== Nav ======================================= */}
         <SettingsNav />
         {/* =============================== Content ======================================= */}
-        <div className="flex-1 lg:p-3 overflow-x-auto">
+        <div className="flex-1 lg:p-3  h-full">
           <ContentById />
         </div>
       </div>

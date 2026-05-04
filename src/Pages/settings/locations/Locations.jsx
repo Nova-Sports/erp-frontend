@@ -369,7 +369,7 @@ export default function Locations({ RenderFilterTabs }) {
   }, [limit, query, page, filterBy]);
 
   return (
-    <div className="h-full">
+    <div className="flex flex-col h-full overflow-y-auto  overflow-auto">
       {showAddUpdatePage ? (
         <AnimatePresence mode="wait">
           <motion.div
@@ -378,7 +378,7 @@ export default function Locations({ RenderFilterTabs }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.13 }}
-            className="h-full"
+            className="flex-1 min-h-0 overflow-y-auto"
           >
             <LocationAddUpdate
               setShowAddUpdatePage={setShowAddUpdatePage}

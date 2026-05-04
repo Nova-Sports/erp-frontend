@@ -3,9 +3,10 @@ import { useNotification } from "@/contexts/NotificationContext";
 import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import LocationForm from "../../setttingsTemplate/templateDetails/LocationForm";
+import LocationForm from "./LocationForm";
+import LocationEmailTemplateFields from "./LocationEmailTemplateFields";
 
 export default function LocationAddUpdate({
   setShowAddUpdatePage,
@@ -21,6 +22,7 @@ export default function LocationAddUpdate({
   let isUpdateMode = searchParam.get("location-id") ? true : false;
 
   const [locationData, setLocationData] = useState(null);
+  const [templateFormData, setTemplateFormData] = useState({});
 
   /*  ========================= All Functions ========================= */
 
@@ -55,7 +57,7 @@ export default function LocationAddUpdate({
   }, [isUpdateMode]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-[92svh] flex flex-col overflow-y-auto">
       {/*=======================================
                Location Tabs    
            ========================================= */}
@@ -79,19 +81,30 @@ export default function LocationAddUpdate({
       {/*=======================================
              Content Tabs    
          ========================================= */}
-      <div className="flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-lg h-full">
-          <div>
-            <LocationForm
-              isUpdateMode={isUpdateMode}
-              locationData={locationData}
-              refreshFunc={refreshFunc}
-              handleBack={handleBack}
-              addDataApi={addDataApi}
-              updateDataApi={updateDataApi}
+      {/* <div className="grid h-full grid-cols-1 md:grid-cols-5 gap-8 bg-white p-6 rounded-lg"> */}
+      <div className="flex-1 flex  gap-8 bg-white p-6 rounded-lg ">
+        <div className="lg:w-2/5">
+          <LocationForm
+            isUpdateMode={isUpdateMode}
+            locationData={locationData}
+            refreshFunc={refreshFunc}
+            handleBack={handleBack}
+            addDataApi={addDataApi}
+            updateDataApi={updateDataApi}
+          />
+        </div>
+        <div className="flex-1 flex flex-col ">
+          <div className="border-b-2 flex items-baseline justify-between">
+            <h3 className="text-lg font-bold uppercase tracking-wider text-gray-600 mb-2">
+              Email Template Fields
+            </h3>
+          </div>
+          <div className="flex-1">
+            <LocationEmailTemplateFields
+              formData={templateFormData}
+              setFormData={setTemplateFormData}
             />
           </div>
-          <div>Templates</div>
         </div>
       </div>
     </div>
