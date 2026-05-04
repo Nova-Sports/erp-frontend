@@ -740,22 +740,22 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
   /* ---- render ---- */
   return (
     <div className="mt-4">
-      <div className="border rounded-xl p-4 bg-gray-50/60">
+      <div className="border rounded-xl p-4 bg-gray-100">
         {/* Module tabs */}
         <div className="mb-4">
           <label className="block font-bold text-sm text-gray-700 mb-2">
             Default Module Email Templates
           </label>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-0">
             {LOCATION_EMAIL_TEMPLATE_MODULES.map((m) => (
               <button
                 key={m.key}
                 type="button"
                 onClick={() => setActiveModule(m.key)}
-                className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium first:rounded-l last:rounded-r transition-colors ${
                   activeModule === m.key
                     ? "bg-primary text-white"
-                    : "text-gray-600 hover:text-primary hover:bg-primary-light border border-gray-300"
+                    : "text-gray-600 hover:text-primary bg-white hover:bg-primary-light border border-gray-300"
                 }`}
               >
                 {m.label}
@@ -784,9 +784,9 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
 
         {/* Checkboxes */}
         {(showSendPdf || showCcSalesPerson || showSendConfirmation) && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-2 mb-4">
             {showSendPdf && (
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer col-span-2">
                 <input
                   type="checkbox"
                   className="w-4 h-4 accent-primary"
@@ -799,7 +799,7 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
               </label>
             )}
             {showCcSalesPerson && (
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 col-span-3 text-sm text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
                   className="w-4 h-4 accent-primary"
@@ -812,7 +812,7 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
               </label>
             )}
             {showSendConfirmation && (
-              <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <label className="flex items-center gap-2 col-span-3 text-sm text-gray-700 cursor-pointer">
                 <input
                   type="checkbox"
                   className="w-4 h-4 accent-primary"
@@ -831,7 +831,7 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
 
         {/* Variables bar */}
         <div className="flex items-start gap-3 bg-gray-200/70 rounded-lg p-2 px-3 mb-3">
-          <span className="text-sm font-bold text-gray-700 self-center whitespace-nowrap">
+          <span className="text-sm font-bold text-gray-700 whitespace-nowrap">
             Variables
           </span>
           <div className="flex flex-wrap gap-1 pt-0.5">
