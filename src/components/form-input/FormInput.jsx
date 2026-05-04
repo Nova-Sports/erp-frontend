@@ -13,6 +13,7 @@ export default function FormInput({
   type = "text",
   placeholder = "Enter text",
   value = "",
+  autoComplete = null,
   onChange = () => {},
   disabled = false,
   min = undefined,
@@ -88,7 +89,7 @@ export default function FormInput({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          autoComplete="current-password"
+          autoComplete={autoComplete || ""}
           name={name}
           id={id || name}
           autoFocus={autoFocus}

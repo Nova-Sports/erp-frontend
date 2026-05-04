@@ -40,6 +40,17 @@ API.interceptors.response.use(
       console.log(error.response);
 
       if (
+        error.response.status === 403 &&
+        error.response.data.message === "Require Admin Role!"
+      ) {
+        return Promise.reject(
+          new Error(
+            "Required Admin Role! You do not have permission to perform this action.",
+          ),
+        );
+      }
+
+      if (
         error.response.status === 401 &&
         //  || error.response.status === 403
         error.response.data.message === "Token Expired!"

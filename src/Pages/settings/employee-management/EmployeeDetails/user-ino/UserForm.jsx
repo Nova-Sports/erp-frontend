@@ -5,6 +5,7 @@ import FormLabel from "@/components/form-label/FormLabel";
 import { useNotification } from "@/contexts/NotificationContext";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
+import { parseJsonSafe } from "@/utils/utilityFunc";
 import React, { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
@@ -157,7 +158,12 @@ export default function UserForm({
   };
 
   const attachLocationNames = (locationIds) => {
-    return locationIds
+    let parsedLocationIds = parseJsonSafe(locationIds);
+    if (!Array.isArray(parsedLocationIds)) {
+      parsedLocationIds = [];
+    }
+
+    return parsedLocationIds
       .map((id) => {
         const loc = locations.find((l) => l.id === parseInt(id));
         return loc ? `${loc.id}-${loc.name}` : null;
@@ -224,6 +230,11 @@ export default function UserForm({
           formData.em_allowedLocations || [],
         ),
       };
+
+      if (!formData.em_password || formData.em_password.trim() === "") {
+        delete payload.em_password;
+      }
+
       const { data } = await API.patch(
         "/employee",
         { ...payload, id: userData.id },
@@ -240,8 +251,6 @@ export default function UserForm({
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
-    console.log(userData);
-
     const setInitialForm = async () => {
       if (isUpdateMode && userData?.id) {
         setFormData({
@@ -249,11 +258,10 @@ export default function UserForm({
           em_lastName: userData?.em_lastName || "",
           em_phone: userData?.em_phone || "",
           em_email: userData?.em_email || "",
-          em_password: userData?.em_password || "",
           em_allowedLocations: attachLocationNames(
             userData?.em_allowedLocations || [],
           ),
-          em_allowIps: userData?.em_allowIps || [],
+          em_allowIps: parseJsonSafe(userData?.em_allowIps || []),
         });
       }
     };
@@ -262,7 +270,7 @@ export default function UserForm({
   }, [userData]);
 
   return (
-    <form action={formAction} noValidate className="">
+    <form autoComplete="off" action={formAction} noValidate className="">
       {state && state.error && (
         <p className="text-sm text-red-500 mb-3">{state.error}</p>
       )}
@@ -332,6 +340,7 @@ export default function UserForm({
             id="em_password"
             name="em_password"
             type="password"
+            autoComplete={"new-password"}
             value={formData.em_password || ""}
             onChange={onChange}
             placeholder="Enter password"
