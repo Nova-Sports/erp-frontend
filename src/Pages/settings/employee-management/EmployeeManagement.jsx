@@ -9,10 +9,10 @@ import { useNotification } from "@/contexts/NotificationContext";
 import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { Menu } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
+import { Menu, Settings } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import EmAddUpdate from "./EmployeeDetails/EmAddUpdate";
-import { AnimatePresence } from "framer-motion";
 
 import { motion } from "framer-motion";
 
@@ -159,7 +159,7 @@ const ActionItems = ({
       {/*=======================================
             Mobile View    
         ========================================= */}
-      <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
+      <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 my-2">
         <div className="flex flex-col gap-2">
           <div className=" flex items-center justify-between">
             <div className="">
@@ -220,7 +220,7 @@ let searchFilters = [
   { label: "Email", value: "em_email" },
 ];
 
-export default function EmployeeManagement() {
+export default function EmployeeManagement({ RenderFilterTabs }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
   const updateParam = useUpdateParams();
@@ -405,7 +405,7 @@ export default function EmployeeManagement() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ duration: 0.13 }}
-            className="h-full flex flex-col"
+            className="h-full flex flex-col max-lg:px-3"
           >
             <ActionItems
               limit={limit}
@@ -421,19 +421,25 @@ export default function EmployeeManagement() {
             />
 
             <Table
-              heightClasses={"lg:h-[79vh] h-[79dvh] overflow-y-auto"}
+              heightClasses={"lg:h-[79vh] h-[50dvh] overflow-y-auto grow"}
               headers={tableHeaders}
               data={tableData}
               handleSortBy={handleSortBy}
               loading={loading}
             />
-            <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 mt-2">
-              <Pagination
-                page={page}
-                setPage={setPage}
-                totalPages={totalPages}
-                totalResults={totalResults}
-              />
+
+            <div className="flex items-center gap-2 my-2">
+              <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 ">
+                <Pagination
+                  page={page}
+                  setPage={setPage}
+                  totalPages={totalPages}
+                  totalResults={totalResults}
+                />
+              </div>
+              <div className="lg:hidden flex items-end grow h-full flex-col">
+                <RenderFilterTabs />
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
