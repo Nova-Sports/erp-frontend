@@ -1,10 +1,10 @@
-import Button from "@/components/buttons/Button";
-import { ArrowDown01, ArrowUp01 } from "lucide-react";
+import Spinner from "@/components/spinner/Spinner";
+import authHeader from "@/services/auth-header";
+import API from "@/services/axios";
 import React, { useEffect, useState } from "react";
 import MainPermGroup from "./MainPermGroup";
-import API from "@/services/axios";
-import authHeader from "@/services/auth-header";
-import Spinner from "@/components/spinner/Spinner";
+import PermItems from "./PermItems";
+import SubPermGroup from "./SubPermGroup";
 
 // let permissionsList = [
 //   // Main Permission Group
@@ -91,6 +91,7 @@ export default function Permissions({ RenderFilterTabs }) {
 
   const [mainGroups, setMainGroups] = useState([]);
   const [activeGroup, setActiveGroup] = useState(null);
+  const [activeSubGroup, setActiveSubGroup] = useState(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -144,13 +145,27 @@ export default function Permissions({ RenderFilterTabs }) {
   return (
     <div className="flex flex-col h-full">
       <Spinner loading={loading} />
-      <div className="flex-1 bg-white p-4 rounded-xl">
+      <div className="flex-1 bg-white p-4 rounded-xl flex flex-col gap-4">
         <MainPermGroup
           mainGroups={mainGroups}
           activeGroup={activeGroup}
           setActiveGroup={setActiveGroup}
           refreshFunc={getPermissionsList}
         />
+        <div className="grid grid-cols-2 gap-4">
+          <SubPermGroup
+            permissionsList={permissionsList}
+            activeGroup={activeGroup}
+            activeSubGroup={activeSubGroup}
+            setActiveSubGroup={setActiveSubGroup}
+            refreshFunc={getPermissionsList}
+          />
+          <PermItems
+            permissionsList={permissionsList}
+            activeSubGroup={activeSubGroup}
+            refreshFunc={getPermissionsList}
+          />
+        </div>
       </div>
 
       <div className="lg:hidden mb-2 px-3 flex justify-end w-full">

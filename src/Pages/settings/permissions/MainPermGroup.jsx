@@ -110,7 +110,7 @@ export default function MainPermGroup({
   const sortUp = async (group) => {
     try {
       const { data } = await API.post(
-        "/permission-sort-up",
+        "/permissions-sort-up",
         { id: group.id, parentId: group.parentId ?? null },
         { headers: authHeader() },
       );
@@ -135,7 +135,7 @@ export default function MainPermGroup({
   const sortDown = async (group) => {
     try {
       const { data } = await API.post(
-        "/permission-sort-down",
+        "/permissions-sort-down",
         { id: group.id, parentId: group.parentId ?? null },
         { headers: authHeader() },
       );
