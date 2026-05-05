@@ -104,11 +104,13 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
           />
         </div>
       </div>
-      <Spinner loading={loading} />
       {/*=======================================
           Content Tabs    
       ========================================= */}
-      <div className="flex-1">
+
+      <div className="flex-1 relative">
+        <Spinner loading={loading} />
+
         {selectedTab === 1 && (
           <UserInfo
             isUpdateMode={isUpdateMode}
