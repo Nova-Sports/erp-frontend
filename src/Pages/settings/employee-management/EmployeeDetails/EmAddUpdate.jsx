@@ -7,6 +7,7 @@ import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import API from "@/services/axios";
 import authHeader from "@/services/auth-header";
 import { useNotification } from "@/contexts/NotificationContext";
+import Spinner from "@/components/spinner/Spinner";
 
 let Tabs = [
   { id: 1, name: "User Info" },
@@ -26,6 +27,8 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
     searchParam.get("user-id") ? true : false,
   );
 
+  const [loading, setLoading] = useState(false);
+
   const [selectedTab, setSelectedTab] = useState(1);
 
   const [userData, setUserData] = useState(null);
@@ -34,6 +37,7 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
 
   const getUserById = async () => {
     try {
+      setLoading(true);
       const id = searchParam.get("user-id");
       const { data } = await API.get(`/employee/${id}`, {
         headers: authHeader(),
@@ -46,6 +50,8 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
     } catch (error) {
       console.log("Get Employee By Id Error: ", error);
       notify(error.message || "Failed to fetch employee data", "error", 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,6 +104,7 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
           />
         </div>
       </div>
+      <Spinner loading={loading} />
       {/*=======================================
           Content Tabs    
       ========================================= */}
