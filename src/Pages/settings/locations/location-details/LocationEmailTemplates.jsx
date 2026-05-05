@@ -8,7 +8,7 @@ import authHeader from "@/services/auth-header";
 import { useNotification } from "@/contexts/NotificationContext";
 import { useSearchParams } from "react-router-dom";
 
-export default function LocationEmailTemplates({}) {
+export default function LocationEmailTemplates({ isUpdateMode }) {
   const { notify } = useNotification();
 
   const [searchParam] = useSearchParams();
@@ -17,6 +17,7 @@ export default function LocationEmailTemplates({}) {
   const [templateFormData, setTemplateFormData] = useState(() =>
     getTemplateApiPayloadList({}),
   );
+  const [dataKey, setDataKey] = useState(0);
 
   /*  ========================= All Functions ========================= */
 
@@ -33,9 +34,8 @@ export default function LocationEmailTemplates({}) {
         headers: authHeader(),
       });
       if (data?.success) {
-        console.log(data.data);
-
         setTemplateFormData(data.data);
+        setDataKey((k) => k + 1);
       } else {
         notify(data.message || "Failed to fetch template data", "error", 3000);
       }
@@ -78,10 +78,12 @@ export default function LocationEmailTemplates({}) {
 
   useEffect(() => {
     let timeout = setTimeout(() => {
-      getTemplatesByLocationId();
+      if (isUpdateMode) {
+        getTemplatesByLocationId();
+      }
     }, 50);
     return () => clearTimeout(timeout);
-  }, []);
+  }, [isUpdateMode]);
 
   return (
     <div>
@@ -95,6 +97,7 @@ export default function LocationEmailTemplates({}) {
       </div>
       <div className="flex-1">
         <LocationEmailTemplateFields
+          key={dataKey}
           formData={templateFormData}
           setFormData={setTemplateFormData}
         />

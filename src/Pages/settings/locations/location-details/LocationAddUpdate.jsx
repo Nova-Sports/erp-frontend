@@ -29,6 +29,12 @@ export default function LocationAddUpdate({
   const getLocationById = async () => {
     try {
       const id = searchParam.get("location-id");
+
+      if (!id) {
+        notify("Invalid location ID", "error", 3000);
+        return;
+      }
+
       const { data } = await API.get(`${getDataByIdApi}/${id}`, {
         headers: authHeader(),
       });
@@ -94,7 +100,7 @@ export default function LocationAddUpdate({
           />
         </div>
         <div className="flex-1 flex flex-col ">
-          <LocationEmailTemplates />
+          <LocationEmailTemplates isUpdateMode={isUpdateMode} />
         </div>
       </div>
     </div>

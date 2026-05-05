@@ -21,7 +21,6 @@ import {
   $setSelection,
   $isTextNode,
   $createParagraphNode,
-  $insertNodes,
 } from "lexical";
 import { $setBlocksType } from "@lexical/selection";
 import {
@@ -95,38 +94,6 @@ const editorTheme = {
   },
   paragraph: "mb-1",
 };
-
-/* ══════════════════════════════════════════════════════════════════
-   Plugin: load initial HTML into the editor
-   ══════════════════════════════════════════════════════════════════ */
-
-function InitialHtmlPlugin({ html, isInitLoadRef }) {
-  const [editor] = useLexicalComposerContext();
-  const didInit = useRef(false);
-
-  useEffect(() => {
-    if (didInit.current || !html) return;
-    didInit.current = true;
-    if (isInitLoadRef) isInitLoadRef.current = true;
-    editor.update(
-      () => {
-        const parser = new DOMParser();
-        const dom = parser.parseFromString(html, "text/html");
-        const nodes = $generateNodesFromDOM(editor, dom);
-        const root = $getRoot();
-        root.clear();
-        root.append(...nodes);
-      },
-      {
-        onUpdate: () => {
-          if (isInitLoadRef) isInitLoadRef.current = false;
-        },
-      },
-    );
-  }, [editor, html]);
-
-  return null;
-}
 
 /* ══════════════════════════════════════════════════════════════════
    Plugin: expose editor instance via ref
@@ -466,7 +433,7 @@ function convertSpanWithInlineStyles(domNode) {
   };
 }
 
-const makeLexicalConfig = () => ({
+const makeLexicalConfig = (initialHtml) => ({
   namespace: "LocationEmailEditor",
   theme: editorTheme,
   onError: (err) => console.error("Lexical error:", err),
@@ -476,14 +443,19 @@ const makeLexicalConfig = () => ({
       span: convertSpanWithInlineStyles,
     },
   },
+  editorState: initialHtml
+    ? (editor) => {
+        const parser = new DOMParser();
+        const dom = parser.parseFromString(initialHtml, "text/html");
+        const nodes = $generateNodesFromDOM(editor, dom);
+        $getRoot().append(...nodes);
+      }
+    : undefined,
 });
 
 function RichEditor({ initialHtml, onChange, editorRef, minHeight = 200 }) {
-  const isInitLoadRef = useRef(false);
-
   const handleChange = useCallback(
     (editorState, editor) => {
-      if (isInitLoadRef.current) return;
       editorState.read(() => {
         const html = $generateHtmlFromNodes(editor, null);
         onChange(html);
@@ -493,7 +465,7 @@ function RichEditor({ initialHtml, onChange, editorRef, minHeight = 200 }) {
   );
 
   return (
-    <LexicalComposer initialConfig={makeLexicalConfig()}>
+    <LexicalComposer initialConfig={makeLexicalConfig(initialHtml)}>
       <div className="border border-gray-300 rounded-lg overflow-hidden">
         <ToolbarPlugin />
         <div className="relative bg-white" style={{ minHeight }}>
@@ -514,7 +486,6 @@ function RichEditor({ initialHtml, onChange, editorRef, minHeight = 200 }) {
         </div>
         <HistoryPlugin />
         <OnChangePlugin onChange={handleChange} ignoreSelectionChange />
-        <InitialHtmlPlugin html={initialHtml} isInitLoadRef={isInitLoadRef} />
         <EditorRefPlugin editorRef={editorRef} />
       </div>
     </LexicalComposer>
