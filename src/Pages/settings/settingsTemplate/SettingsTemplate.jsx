@@ -10,7 +10,7 @@ import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { AnimatePresence } from "framer-motion";
-import { Menu } from "lucide-react";
+import { ArrowDown01, ArrowUp01, Menu } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
@@ -225,6 +225,9 @@ let addDataApi = "/template";
 let updateDataApi = "/template";
 let deleteDataApi = "/template";
 
+let sortUpApi = "/location-sort-up";
+let sortDownApi = "/location-sort-down";
+
 export default function SettingsTemplate({ RenderFilterTabs }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
@@ -276,6 +279,24 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
       render: (row) => {
         return (
           <div className="me-4 flex justify-end items-center gap-2">
+            <Button
+              title=""
+              size="sm"
+              onClick={() => sortUp(row.id)}
+              appendClasses="!px-1.5 py-1.5 bg-neutral-300/80 text-neutral-600 hover:bg-neutral-200"
+              afterTitle={() => {
+                return <ArrowUp01 className="size-4" />;
+              }}
+            />
+            <Button
+              title=""
+              size="sm"
+              onClick={() => sortDown(row.id)}
+              appendClasses="!px-1.5 py-1.5 bg-neutral-300/80 text-neutral-600 hover:bg-neutral-200"
+              afterTitle={() => {
+                return <ArrowDown01 className="size-4" />;
+              }}
+            />
             <Button
               title="Edit"
               variant="primary"
@@ -356,6 +377,58 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
     } catch (err) {
       console.log(err.message);
       notify(err.message, "error", 5000);
+    }
+  };
+
+  const sortUp = async (id) => {
+    try {
+      setLoading(true);
+      const { data } = await API.post(
+        `${sortUpApi}`,
+        { id },
+        { headers: authHeader() },
+      );
+      if (data?.success) {
+        notify(
+          data.message || "Location moved up successfully",
+          "success",
+          3000,
+        );
+        getLocations();
+      } else {
+        notify(data.message || "Failed to move location up", "error", 3000);
+      }
+    } catch (err) {
+      console.log(err.message);
+      notify(err.message, "error", 5000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sortDown = async (id) => {
+    try {
+      setLoading(true);
+      const { data } = await API.post(
+        `${sortDownApi}`,
+        { id },
+        { headers: authHeader() },
+      );
+      if (data?.success) {
+        notify(
+          data.message || "Location moved down successfully",
+          "success",
+          3000,
+        );
+        getLocations();
+      } else {
+        notify(data.message || "Failed to move location down", "error", 3000);
+      }
+    } catch (err) {
+      console.log(err.message);
+      notify(err.message, "error", 5000);
+    } finally {
+      setLoading(false);
     }
   };
 
