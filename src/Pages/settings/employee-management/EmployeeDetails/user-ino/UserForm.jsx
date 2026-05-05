@@ -144,7 +144,6 @@ export default function UserForm({
 }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
-
   const [formData, setFormData] = useState({});
 
   /*  ========================= All Functions ========================= */
@@ -270,7 +269,7 @@ export default function UserForm({
   }, [userData]);
 
   return (
-    <form autoComplete="off" action={formAction} noValidate className="">
+    <form action={formAction} noValidate className="">
       {state && state.error && (
         <p className="text-sm text-red-500 mb-3">{state.error}</p>
       )}

@@ -3,11 +3,11 @@ import { useNotification } from "@/contexts/NotificationContext";
 import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import LocationForm from "./LocationForm";
-import LocationEmailTemplateFields from "./LocationEmailTemplateFields";
+import { getTemplateApiPayloadList } from "./LocationEmailTemplateFields";
 import LocationEmailTemplates from "./LocationEmailTemplates";
+import LocationForm from "./LocationForm";
 
 export default function LocationAddUpdate({
   setShowAddUpdatePage,
@@ -23,6 +23,15 @@ export default function LocationAddUpdate({
   let isUpdateMode = searchParam.get("location-id") ? true : false;
 
   const [locationData, setLocationData] = useState(null);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    companyName: "",
+    pdfLogo: "",
+  });
+  const [templateFormData, setTemplateFormData] = useState(() =>
+    getTemplateApiPayloadList({}),
+  );
 
   /*  ========================= All Functions ========================= */
 
@@ -54,6 +63,69 @@ export default function LocationAddUpdate({
     updateParam("location-id", null);
   };
 
+  const handleSubmit = async (_prevState, _e) => {
+    try {
+      let response;
+      if (isUpdateMode) {
+        response = await updateLocation();
+      } else {
+        response = await addLocation();
+      }
+
+      if (response.success) {
+        notify(
+          isUpdateMode
+            ? "Location updated successfully"
+            : "Location added successfully",
+          "success",
+          3000,
+        );
+        updateParam("location-id", response.data.id);
+        if (refreshFunc) refreshFunc();
+
+        // if (handleBack) handleBack();
+        return { error: null };
+      } else {
+        notify(response.message || "An error occurred", "error", 3000);
+        return { error: response.message || "An error occurred" };
+      }
+    } catch (err) {
+      notify(err.message, "error", 3000);
+      return { error: err.message };
+    }
+  };
+
+  const [state, formAction] = useActionState(handleSubmit, { error: null });
+
+  const addLocation = async () => {
+    try {
+      const { data } = await API.post(
+        addDataApi,
+        {
+          formData,
+          templateFormData: templateFormData,
+        },
+        { headers: authHeader() },
+      );
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  const updateLocation = async () => {
+    try {
+      const { data } = await API.patch(
+        updateDataApi,
+        { formData, templateFormData, id: locationData.id },
+        { headers: authHeader() },
+      );
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  };
+
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
@@ -75,7 +147,15 @@ export default function LocationAddUpdate({
             Locations
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          <Button
+            title="Save"
+            variant="success"
+            appendClasses="py-1.5"
+            size="sm"
+            onClick={handleSubmit}
+          />
+
           <Button
             onClick={handleBack}
             size="sm"
@@ -89,18 +169,26 @@ export default function LocationAddUpdate({
          ========================================= */}
       {/* <div className="grid h-full grid-cols-1 md:grid-cols-5 gap-8 bg-white p-6 rounded-lg"> */}
       <div className="flex-1 flex  gap-8 bg-white p-6 rounded-lg ">
-        <div className="lg:w-2/5">
+        <form
+          autoComplete="off"
+          action={formAction}
+          noValidate
+          className="lg:w-2/5"
+        >
           <LocationForm
             isUpdateMode={isUpdateMode}
             locationData={locationData}
-            refreshFunc={refreshFunc}
-            handleBack={handleBack}
-            addDataApi={addDataApi}
-            updateDataApi={updateDataApi}
+            formData={formData}
+            state={state}
+            setFormData={setFormData}
           />
-        </div>
+        </form>
         <div className="flex-1 flex flex-col ">
-          <LocationEmailTemplates isUpdateMode={isUpdateMode} />
+          <LocationEmailTemplates
+            isUpdateMode={isUpdateMode}
+            templateFormData={templateFormData}
+            setTemplateFormData={setTemplateFormData}
+          />
         </div>
       </div>
     </div>
