@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SettingsProvider, useSettingsContext } from "./SettingsContext";
 import SettingsTemplate from "./settingsTemplate/SettingsTemplate";
 import Locations from "./locations/Locations";
+import Permissions from "./permissions/Permissions";
 
 let settingsNavItems = [
   {
@@ -15,6 +16,12 @@ let settingsNavItems = [
     id: "locations",
     label: "Locations",
   },
+
+  {
+    id: "permissions",
+    label: "Permissions",
+  },
+
   {
     id: "templates",
     label: "Settings Templates",
@@ -98,6 +105,10 @@ let ContentById = () => {
       return <EmployeeManagement RenderFilterTabs={RenderFilterTabs} />;
     case "locations":
       return <Locations RenderFilterTabs={RenderFilterTabs} />;
+
+    case "permissions":
+      return <Permissions RenderFilterTabs={RenderFilterTabs} />;
+
     case "templates":
       return <SettingsTemplate RenderFilterTabs={RenderFilterTabs} />;
     default:
@@ -143,7 +154,7 @@ export default function SettingsLayout() {
         {/* =============================== Nav ======================================= */}
         <SettingsNav />
         {/* =============================== Content ======================================= */}
-        <div className="flex-1 lg:p-3 overflow-x-auto h-full">
+        <div className="flex-1 lg:p-3 lg:pb-1 overflow-x-auto h-full">
           <ContentById />
         </div>
       </div>
