@@ -143,7 +143,7 @@ export default function SettingsLayout() {
         {/* =============================== Nav ======================================= */}
         <SettingsNav />
         {/* =============================== Content ======================================= */}
-        <div className="flex-1 lg:p-3  h-full">
+        <div className="flex-1 lg:p-3 overflow-x-auto h-full">
           <ContentById />
         </div>
       </div>

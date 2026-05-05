@@ -17,7 +17,11 @@ const activeTabClass = "bg-primary text-white";
 const inactiveTabClass = "bg-white !text-gray-600 hover:!text-white";
 const commonTabClasses = "rounded-none border border-primary shadow-none";
 
-export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
+export default function EmAddUpdate({
+  setShowAddUpdatePage,
+  refreshFunc,
+  RenderFilterTabs,
+}) {
   /* ========================= All States ========================= */
   const [searchParam] = useSearchParams();
   const updateParam = useUpdateParams();
@@ -32,8 +36,24 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
   const [selectedTab, setSelectedTab] = useState(1);
 
   const [userData, setUserData] = useState(null);
+  const [locations, setLocations] = useState(null);
 
   /*  ========================= All Functions ========================= */
+
+  const getLocations = async () => {
+    try {
+      const { data } = await API.post(
+        "/locations?page=1&limit=1000",
+        {},
+        { headers: authHeader() },
+      );
+      if (data?.success) {
+        setLocations(data.data || []);
+      }
+    } catch (err) {
+      console.log("Get Locations Error: ", err);
+    }
+  };
 
   const getUserById = async () => {
     try {
@@ -63,6 +83,10 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
+    getLocations();
+  }, []);
+
+  useEffect(() => {
     if (isUpdateMode) {
       getUserById();
     }
@@ -77,7 +101,7 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
         className={`mb-3 hidden lg:flex lg:flex-row flex-col items-center  justify-between rounded-xl`}
       >
         <div>
-          <div className="hidden lg:flex items-center border border-primary rounded">
+          <div className=" lg:flex items-center border border-primary rounded">
             {Tabs.map((tab, index) => (
               <Button
                 key={tab.id}
@@ -108,7 +132,7 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
           Content Tabs    
       ========================================= */}
 
-      <div className="flex-1 relative">
+      <div className="h-[85svh] shadow-sm lg:h-full max-md:mb-4 max-md:p-3 flex flex-col overflow-y-auto relative">
         <Spinner loading={loading} />
 
         {selectedTab === 1 && (
@@ -119,15 +143,48 @@ export default function EmAddUpdate({ setShowAddUpdatePage, refreshFunc }) {
             handleBack={handleBack}
             userData={userData}
             setUserData={setUserData}
+            locations={locations}
           />
         )}
         {selectedTab === 2 && (
           <UserSmtp
-            isUpdateMode={isUpdateMode}
-            setIsUpdateMode={setIsUpdateMode}
-            handleBack={handleBack}
+            locationsList={locations}
+            selectedUser={userData}
+            selectedLocation={userData?.em_defaultLocation}
           />
         )}
+      </div>
+      <div className="lg:hidden flex justify-between items-center px-4 gap-3">
+        <div className="bg-white shadow-sm py-2 rounded-xl flex-1 px-3 flex items-center justify-between">
+          <div>
+            {Tabs.map((tab, index) => (
+              <Button
+                key={tab.id}
+                size="sm"
+                title={tab.name}
+                appendClasses={`${
+                  index === 0
+                    ? "rounded-l"
+                    : index === Tabs.length - 1
+                      ? "rounded-r"
+                      : "border-x-0"
+                } ${selectedTab === tab.id ? activeTabClass : inactiveTabClass} ${commonTabClasses}`}
+                onClick={() => setSelectedTab(tab.id)}
+              />
+            ))}
+          </div>
+          <div>
+            <Button
+              onClick={handleBack}
+              size="sm"
+              title="Back"
+              variant="outlineDanger"
+            />
+          </div>
+        </div>
+        <div className="bg-white shadow-sm rounded-xl w-fit">
+          <RenderFilterTabs />
+        </div>
       </div>
     </div>
   );

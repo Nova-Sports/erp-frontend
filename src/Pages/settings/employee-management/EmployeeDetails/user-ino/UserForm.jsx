@@ -6,7 +6,7 @@ import { useNotification } from "@/contexts/NotificationContext";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { parseJsonSafe } from "@/utils/utilityFunc";
-import React, { useActionState, useEffect, useState, useCallback } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 function AllowedIps({ ips = [], onChange }) {
@@ -135,28 +135,13 @@ export default function UserForm({
   setUserData,
   refreshFunc,
   handleBack,
+  locations = [],
 }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
   const [formData, setFormData] = useState({});
-  const [locations, setLocations] = useState([]);
 
   /*  ========================= All Functions ========================= */
-
-  const getLocations = useCallback(async () => {
-    try {
-      const { data } = await API.post(
-        "/locations?page=1&limit=1000",
-        {},
-        { headers: authHeader() },
-      );
-      if (data?.success) {
-        setLocations(data.data || []);
-      }
-    } catch (err) {
-      console.log("Get Locations Error: ", err);
-    }
-  }, []);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -261,10 +246,6 @@ export default function UserForm({
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
-    getLocations();
-  }, [getLocations]);
-
-  useEffect(() => {
     const setInitialForm = async () => {
       if (isUpdateMode && userData?.id) {
         setFormData({
@@ -283,7 +264,7 @@ export default function UserForm({
       }
     };
     setInitialForm();
-  }, [userData]);
+  }, [userData, locations]);
 
   return (
     <form action={formAction} noValidate className="">
@@ -381,7 +362,7 @@ export default function UserForm({
             >
               <Dropdown.Trigger />
               <Dropdown.Menu floating={true} appendClass={"!w-full"}>
-                {locations.map((location) => (
+                {locations?.map((location) => (
                   <Dropdown.Item
                     key={location.id}
                     value={`${location.id}-${location.name}`}
@@ -426,7 +407,7 @@ export default function UserForm({
                 : undefined}
             </Dropdown.Trigger>
             <Dropdown.Menu floating={true} appendClass={"!w-full"}>
-              {locations.map((location) => (
+              {locations?.map((location) => (
                 <Dropdown.Item key={location.id} value={String(location.id)}>
                   {location.id} - {location.name}
                 </Dropdown.Item>

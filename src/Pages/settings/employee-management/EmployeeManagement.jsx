@@ -400,6 +400,7 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
             <EmAddUpdate
               setShowAddUpdatePage={setShowAddUpdatePage}
               refreshFunc={getEmployees}
+              RenderFilterTabs={RenderFilterTabs}
             />
           </motion.div>
         </AnimatePresence>

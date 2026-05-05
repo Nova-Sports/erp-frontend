@@ -821,7 +821,7 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
   /* ---- render ---- */
   return (
     <div className="mt-4">
-      <div className="border rounded-xl p-4 bg-gray-100">
+      <div className="border rounded-xl p-4 bg-gray-50">
         {/* Module tabs */}
         <div className="mb-4">
           <label className="block font-bold text-sm text-gray-700 mb-2">
@@ -944,7 +944,7 @@ function LocationEmailTemplateFields({ formData, setFormData }) {
         {showSendConfirmation &&
           emailTemplates[activeModule]?.sendConfirmation &&
           activeModuleConfig?.confirmationFormatKey && (
-            <div className="mt-5 border rounded-xl p-4">
+            <div className="mt-5 border bg-gray-100 rounded-xl p-4">
               <label className="block font-bold text-sm text-gray-700 mb-3">
                 Approval Confirmation Email Template
               </label>

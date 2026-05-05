@@ -9,6 +9,7 @@ export default function UserInfo({
   handleBack,
   userData,
   setUserData,
+  locations = [],
 }) {
   /* ========================= All States ========================= */
 
@@ -17,7 +18,7 @@ export default function UserInfo({
   /* ========================= All UseEffects ========================= */
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-l-lg h-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 rounded-l-lg flex-1">
       {/* User Form */}
       <UserForm
         isUpdateMode={isUpdateMode}
@@ -26,6 +27,7 @@ export default function UserInfo({
         handleBack={handleBack}
         userData={userData}
         setUserData={setUserData}
+        locations={locations}
       />
 
       {/* <div className=""></div> */}

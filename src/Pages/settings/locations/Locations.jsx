@@ -465,6 +465,7 @@ export default function Locations({ RenderFilterTabs }) {
               getDataByIdApi={getDataByIdApi}
               addDataApi={addDataApi}
               updateDataApi={updateDataApi}
+              RenderFilterTabs={RenderFilterTabs}
             />
           </motion.div>
         </AnimatePresence>

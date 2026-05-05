@@ -15,6 +15,7 @@ export default function LocationAddUpdate({
   getDataByIdApi,
   addDataApi,
   updateDataApi,
+  RenderFilterTabs,
 }) {
   const [searchParam] = useSearchParams();
   const updateParam = useUpdateParams();
@@ -135,7 +136,7 @@ export default function LocationAddUpdate({
   }, [isUpdateMode]);
 
   return (
-    <div className="h-[92svh] flex flex-col overflow-y-auto">
+    <div className="flex flex-col overflow-y-hidden  ">
       {/*=======================================
                Location Tabs    
            ========================================= */}
@@ -167,13 +168,12 @@ export default function LocationAddUpdate({
       {/*=======================================
              Content Tabs    
          ========================================= */}
-      {/* <div className="grid h-full grid-cols-1 md:grid-cols-5 gap-8 bg-white p-6 rounded-lg"> */}
-      <div className="flex-1 flex  gap-8 bg-white p-6 rounded-lg ">
+      <div className="bg-white p-4 lg:p-6 max-md:m-3 rounded-lg grid grid-cols-1 lg:grid-cols-5 gap-5 h-[84svh] lg:h-[86svh] overflow-y-auto">
         <form
           autoComplete="off"
           action={formAction}
           noValidate
-          className="lg:w-2/5"
+          className="lg:col-span-2"
         >
           <LocationForm
             isUpdateMode={isUpdateMode}
@@ -183,12 +183,35 @@ export default function LocationAddUpdate({
             setFormData={setFormData}
           />
         </form>
-        <div className="flex-1 flex flex-col ">
+        <div className="flex-1 flex flex-col lg:col-span-3">
           <LocationEmailTemplates
             isUpdateMode={isUpdateMode}
             templateFormData={templateFormData}
             setTemplateFormData={setTemplateFormData}
           />
+        </div>
+      </div>
+      <div className="lg:hidden flex justify-between items-center px-3 h-full gap-3">
+        <div className="bg-white shadow-sm py-2 rounded-lg flex-1 px-3 flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2 w-full">
+            <Button
+              title="Save"
+              variant="success"
+              appendClasses="py-1.5"
+              size="sm"
+              onClick={handleSubmit}
+            />
+
+            <Button
+              onClick={handleBack}
+              size="sm"
+              title="Back"
+              variant="outlineDanger"
+            />
+          </div>
+        </div>
+        <div className="bg-white shadow-sm rounded-lg w-fit">
+          <RenderFilterTabs />
         </div>
       </div>
     </div>
