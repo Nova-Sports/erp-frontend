@@ -6,7 +6,7 @@ import { useNotification } from "@/contexts/NotificationContext";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { parseJsonSafe } from "@/utils/utilityFunc";
-import React, { useActionState, useEffect, useState } from "react";
+import React, { useActionState, useEffect, useState, useCallback } from "react";
 import { useFormStatus } from "react-dom";
 
 function AllowedIps({ ips = [], onChange }) {
@@ -128,12 +128,6 @@ const SubmitButton = ({ isUpdateMode = false }) => {
     em_emailSignature
  */
 
-let locations = [
-  { id: 1, name: "Location 1" },
-  { id: 2, name: "Location 2" },
-  { id: 3, name: "Location 3" },
-];
-
 export default function UserForm({
   isUpdateMode,
   setIsUpdateMode,
@@ -145,8 +139,25 @@ export default function UserForm({
   /* ========================= All States ========================= */
   const { notify } = useNotification();
   const [formData, setFormData] = useState({});
+  const [locations, setLocations] = useState([]);
 
   /*  ========================= All Functions ========================= */
+
+  const getLocations = useCallback(async () => {
+    try {
+      const { data } = await API.post(
+        "/locations?page=1&limit=1000",
+        {},
+        { headers: authHeader() },
+      );
+      if (data?.success) {
+        setLocations(data.data || []);
+      }
+    } catch (err) {
+      console.log("Get Locations Error: ", err);
+    }
+  }, []);
+
   const onChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -250,6 +261,10 @@ export default function UserForm({
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
+    getLocations();
+  }, [getLocations]);
+
+  useEffect(() => {
     const setInitialForm = async () => {
       if (isUpdateMode && userData?.id) {
         setFormData({
@@ -260,12 +275,14 @@ export default function UserForm({
           em_allowedLocations: attachLocationNames(
             userData?.em_allowedLocations || [],
           ),
+          em_defaultLocation: userData?.em_defaultLocation
+            ? String(userData.em_defaultLocation)
+            : "",
           em_allowIps: parseJsonSafe(userData?.em_allowIps || []),
         });
       }
     };
     setInitialForm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]);
 
   return (
@@ -346,7 +363,7 @@ export default function UserForm({
           />
         </div>
         <hr className="my-8" />
-        {/* Default Location */}
+        {/* Allowed Locations */}
         <div>
           <FormLabel htmlFor="em_allowedLocations">Allowed Locations</FormLabel>
           <div className="flex-1">
@@ -383,6 +400,39 @@ export default function UserForm({
                 : "none"}
             </p>
           </div>
+        </div>
+
+        {/* Default Location */}
+        <div className="mb-3 mt-4">
+          <FormLabel htmlFor="em_defaultLocation">Default Location</FormLabel>
+          <Dropdown
+            value={formData?.em_defaultLocation || ""}
+            onChange={(selected) =>
+              setFormData((prev) => ({ ...prev, em_defaultLocation: selected }))
+            }
+            placeholder="Select default location"
+          >
+            <Dropdown.Trigger appendClass={"!w-full"}>
+              {formData?.em_defaultLocation
+                ? (() => {
+                    const loc = locations.find(
+                      (l) =>
+                        String(l.id) === String(formData.em_defaultLocation),
+                    );
+                    return loc
+                      ? `${loc.id} - ${loc.name}`
+                      : formData.em_defaultLocation;
+                  })()
+                : undefined}
+            </Dropdown.Trigger>
+            <Dropdown.Menu floating={true} appendClass={"!w-full"}>
+              {locations.map((location) => (
+                <Dropdown.Item key={location.id} value={String(location.id)}>
+                  {location.id} - {location.name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
 
         {/* Allowed IPs */}
