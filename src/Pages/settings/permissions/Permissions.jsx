@@ -149,6 +149,7 @@ export default function Permissions({ RenderFilterTabs }) {
           mainGroups={mainGroups}
           activeGroup={activeGroup}
           setActiveGroup={setActiveGroup}
+          refreshFunc={getPermissionsList}
         />
       </div>
 
