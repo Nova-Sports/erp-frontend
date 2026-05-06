@@ -781,7 +781,7 @@ export default function Password() {
   /* ========================= All UseEffects ========================= */
 
   useEffect(() => {
-    if (filterByTab === "Password Generator") {
+    if (filterByTab === "Password Generator" || locked) {
       return;
     }
 
@@ -789,7 +789,7 @@ export default function Password() {
       getPasswords();
     }, 50);
     return () => clearTimeout(timeout);
-  }, [filterByTab, limit, query, page, filterBy]);
+  }, [filterByTab, limit, query, page, filterBy, locked]);
 
   if (locked) {
     return <LockScreen onUnlock={() => setLocked(false)} />;
