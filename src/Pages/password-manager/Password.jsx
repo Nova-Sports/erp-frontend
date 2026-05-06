@@ -526,13 +526,32 @@ function LockScreen({ onUnlock }) {
 
 let user = getCurrentUser();
 
+const checkShowPermission = (tab) => {
+  let user = getCurrentUser();
+  if (!user || !user.permissions) return false;
+  if (user.isAdmin || tab === "Private") return true;
+
+  if (tab === "Company") {
+    return user.permissions.includes("s_password_company_show");
+  }
+  if (tab === "Customer Portal") {
+    return user.permissions.includes("s_password_portal_show");
+  }
+  return false;
+};
+
 const checkAddPermission = (tab) => {
   let user = getCurrentUser();
-
-  if (user.isAdmin || tab === "Private") return true;
   if (!user || !user.permissions) return false;
+  if (user.isAdmin || tab === "Private") return true;
 
-  return user.permissions.includes("s_password_add");
+  if (tab === "Company") {
+    return user.permissions.includes("s_password_company_add");
+  }
+  if (tab === "Customer Portal") {
+    return user.permissions.includes("s_password_portal_add");
+  }
+  return false;
 };
 
 const checkUpdatePermission = (tab) => {
@@ -540,15 +559,27 @@ const checkUpdatePermission = (tab) => {
   if (!user || !user.permissions) return false;
   if (user.isAdmin || tab === "Private") return true;
 
-  return user.permissions.includes("s_password_update");
+  if (tab === "Company") {
+    return user.permissions.includes("s_password_company_update");
+  }
+  if (tab === "Customer Portal") {
+    return user.permissions.includes("s_password_portal_update");
+  }
+  return false;
 };
 
 const checkDeletePermission = (tab) => {
   let user = getCurrentUser();
+  if (!user || !user.permissions) return false;
   if (user.isAdmin || tab === "Private") return true;
 
-  if (!user || !user.permissions) return false;
-  return user.permissions.includes("s_password_delete");
+  if (tab === "Company") {
+    return user.permissions.includes("s_password_company_delete");
+  }
+  if (tab === "Customer Portal") {
+    return user.permissions.includes("s_password_portal_delete");
+  }
+  return false;
 };
 
 export default function Password() {

@@ -11,13 +11,15 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNotification } from "../../contexts/NotificationContext";
 import { Dropdown } from "../dropdown/Dropdown";
 import { Modal } from "../modal/Modal";
 import LockScreen from "./LockScreen";
 import { getCurrentUser } from "@/utils/auth";
+import Button from "../buttons/Button";
+import FormLabel from "../form-label/FormLabel";
 
 const TYPE_STYLES = {
   primary: {
@@ -50,9 +52,9 @@ const TYPE_STYLES = {
   },
 };
 
-const user = getCurrentUser();
-
 export default function TopBar({ onMenuToggle }) {
+  const user = getCurrentUser();
+
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { notification, dismiss } = useNotification();
@@ -142,76 +144,86 @@ export default function TopBar({ onMenuToggle }) {
       </div>
 
       {/* Right ── settings + logout */}
-      <div className="flex items-center gap-1 flex-shrink-0">
-        <Dropdown
-          value={"settings"}
-          onChange={() => {}}
-          autoCloseOnChange={false}
-          appendClass={"!mx-0 !px-0"}
-        >
-          <Dropdown.Trigger
-            customClass={"border-0 flex-center"}
-            renderIcon={false}
+      {user && (
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <Button
+            title=""
+            afterTitle={() => {
+              return <Lock size={18} className="" />;
+            }}
+            size="sm"
+            customClasses="w-8 h-8 !bg-white flex items-center justify-center rounded-lg !text-gray-500 hover:!text-gray-100 hover:!bg-secondary/80 transition-colors"
+            onClick={(e) => {
+              setShowLockScreen(true);
+            }}
+          />
+
+          <Dropdown
+            value={"settings"}
+            onChange={() => {}}
+            // autoCloseOnChange={false}
+            appendClass={"!mx-0 !px-0"}
           >
-            <div
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-              aria-label="Settings"
-              title="Settings"
+            <Dropdown.Trigger
+              customClass={"border-0 flex-center"}
+              renderIcon={false}
             >
-              <Settings size={18} />
-            </div>
-          </Dropdown.Trigger>
-          <Dropdown.Menu
-            floating={true}
-            direction="right"
-            appendClass={"w-48  px-2 py-0"}
-          >
-            <h5 className="text-xs border-b font-bold border-light px-3 py-2 mb-1">
-              SETTINGS
-            </h5>
-            <Dropdown.Item
-              appendClass={"py-0 my-0"}
-              onClick={(e) => {
-                e.stopPropagation();
-                setAccountsSettingsModal(true);
-              }}
+              <div
+                className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                aria-label="Settings"
+                title="Settings"
+              >
+                <Settings size={18} />
+              </div>
+            </Dropdown.Trigger>
+            <Dropdown.Menu
+              floating={true}
+              direction="right"
+              appendClass={"w-48 px-2 py-0"}
+              appendMenuWrapperClass={"divide-y my-1"}
             >
-              <UserCog size={14} className="mr-2" />
-              User Settings
-            </Dropdown.Item>
-            {user?.isAdmin && (
+              <h5 className="text-sm font-semibold text-gray-500 border-light px-3 tracking-wide py-1 mb-1">
+                SETTINGS
+              </h5>
+
               <Dropdown.Item
-                appendClass={"p-0"}
+                appendClass={"py-0 my-0"}
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate("/dashboard/settings", { replace: true });
+                  setAccountsSettingsModal(true);
                 }}
               >
-                <Settings size={14} className="mr-2" />
-                App Settings
+                <UserCog size={14} className="mr-2" />
+                User Settings
               </Dropdown.Item>
-            )}
-            <Dropdown.Item
-              appendClass={"p-0"}
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowLockScreen(true);
-              }}
-            >
-              <Lock size={14} className="mr-2" />
-              Lock
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <button
-          onClick={handleLogout}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-danger hover:bg-danger/10 transition-colors"
-          aria-label="Sign out"
-          title="Sign out"
-        >
-          <LogOut size={17} />
-        </button>
-      </div>
+              {user?.isAdmin && (
+                <Dropdown.Item
+                  customClass={"flex"}
+                  onClick={(e) => {
+                    navigate("/dashboard/settings", { replace: true });
+                  }}
+                >
+                  <Link
+                    to="/dashboard/settings"
+                    className="flex text-sm items-center gap-0 px-3 py-2 hover:bg-primary-light rounded w-full"
+                  >
+                    <Settings size={14} className="mr-2" />
+                    App Settings
+                  </Link>
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
+          <button
+            onClick={handleLogout}
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-500 hover:text-danger hover:bg-danger/10 transition-colors"
+            aria-label="Sign out"
+            title="Sign out"
+          >
+            <LogOut size={17} />
+          </button>
+        </div>
+      )}
       {/*=======================================
           Settings Page    
       ========================================= */}
