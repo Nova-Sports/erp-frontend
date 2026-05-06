@@ -23,7 +23,19 @@ export function loginUser(user) {
 export function getCurrentUser() {
   try {
     const raw = localStorage.getItem(STORAGE_USER_KEY);
-    return raw ? JSON.parse(raw) : null;
+
+    let user = raw ? JSON.parse(raw) : null;
+
+    // parse permissions if they exist as a JSON string
+    if (user && typeof user.permissions === "string") {
+      try {
+        user.permissions = JSON.parse(user.permissions);
+      } catch {
+        // If parsing fails, keep it as the original string
+      }
+    }
+
+    return user;
   } catch {
     return null;
   }

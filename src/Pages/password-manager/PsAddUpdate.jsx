@@ -28,6 +28,7 @@ import { Shuffle } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import API from "@/services/axios";
 import authHeader from "@/services/auth-header";
+import { getCurrentUser } from "@/utils/auth";
 
 // ps_title
 // ps_url
@@ -86,6 +87,8 @@ export default function PsAddUpdate({
   getPasswordType,
   refreshFunc,
 }) {
+  const user = getCurrentUser();
+
   const { notify } = useNotification();
   const isPrivate = filterByTab === "Private";
 
@@ -233,7 +236,7 @@ export default function PsAddUpdate({
       }
     };
     setInitialForm();
-    if (!isPrivate) fetchEmployees();
+    if (!isPrivate && user?.isAdmin) fetchEmployees();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -288,7 +291,7 @@ export default function PsAddUpdate({
               </div>
             ))}
             {/* Available To */}
-            {!isPrivate && (
+            {!isPrivate && user?.isAdmin && (
               <div className="mb-3 bg-neutral-200 p-3 rounded-md">
                 <label className="block mb-2 font-medium">Available To</label>
                 <Dropdown

@@ -17,6 +17,7 @@ import { useNotification } from "../../contexts/NotificationContext";
 import { Dropdown } from "../dropdown/Dropdown";
 import { Modal } from "../modal/Modal";
 import LockScreen from "./LockScreen";
+import { getCurrentUser } from "@/utils/auth";
 
 const TYPE_STYLES = {
   primary: {
@@ -48,6 +49,8 @@ const TYPE_STYLES = {
     classes: "bg-info/10 text-info border border-info/25",
   },
 };
+
+const user = getCurrentUser();
 
 export default function TopBar({ onMenuToggle }) {
   const { logout } = useAuth();
@@ -94,7 +97,7 @@ export default function TopBar({ onMenuToggle }) {
   // }, [showLockScreen, resetInactivityTimer]);
 
   return (
-    <header className="h-[6dvh] flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-5 pe-8 gap-3 z-10 relative shadow-md">
+    <header className="h-[6dvh] flex-shrink-0 bg-white border-b border-gray-200 flex items-center px-3 lg:px-5 gap-3 z-10 relative shadow-md">
       {/* Left ── hamburger */}
       <button
         onClick={onMenuToggle}
@@ -144,6 +147,7 @@ export default function TopBar({ onMenuToggle }) {
           value={"settings"}
           onChange={() => {}}
           autoCloseOnChange={false}
+          appendClass={"!mx-0 !px-0"}
         >
           <Dropdown.Trigger
             customClass={"border-0 flex-center"}
@@ -175,16 +179,18 @@ export default function TopBar({ onMenuToggle }) {
               <UserCog size={14} className="mr-2" />
               User Settings
             </Dropdown.Item>
-            <Dropdown.Item
-              appendClass={"p-0"}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate("/dashboard/settings", { replace: true });
-              }}
-            >
-              <Settings size={14} className="mr-2" />
-              App Settings
-            </Dropdown.Item>
+            {user?.isAdmin && (
+              <Dropdown.Item
+                appendClass={"p-0"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/dashboard/settings", { replace: true });
+                }}
+              >
+                <Settings size={14} className="mr-2" />
+                App Settings
+              </Dropdown.Item>
+            )}
             <Dropdown.Item
               appendClass={"p-0"}
               onClick={(e) => {
@@ -231,10 +237,12 @@ export default function TopBar({ onMenuToggle }) {
       {/*=======================================
           Lock Screen Modal    
       ========================================= */}
-      <LockScreen
-        showLockScreen={showLockScreen}
-        setShowLockScreen={setShowLockScreen}
-      />
+      {showLockScreen && (
+        <LockScreen
+          showLockScreen={showLockScreen}
+          setShowLockScreen={setShowLockScreen}
+        />
+      )}
     </header>
   );
 }

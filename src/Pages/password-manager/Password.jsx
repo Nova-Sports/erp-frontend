@@ -39,6 +39,7 @@ import PsGenerator from "./PsGenerator";
 import { getDateTimeFromTimeStamp } from "@/utils/dateUtils";
 import { AnimatePresence, motion } from "framer-motion";
 import { truncateString } from "@/utils/utilityFunc";
+import { getCurrentUser } from "@/utils/auth";
 
 const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
   const activeTabClass = "bg-primary text-white";
@@ -231,12 +232,14 @@ const ActionItems = ({
     return (
       <>
         {/* Add New Entry */}
-        <Button
-          title="Add"
-          onClick={(e) => {
-            setShowAddUpdateModal(true);
-          }}
-        />
+        {checkAddPermission(filterByTab) && (
+          <Button
+            title="Add"
+            onClick={(e) => {
+              setShowAddUpdateModal(true);
+            }}
+          />
+        )}
       </>
     );
   };
@@ -521,6 +524,33 @@ function LockScreen({ onUnlock }) {
   );
 }
 
+let user = getCurrentUser();
+
+const checkAddPermission = (tab) => {
+  let user = getCurrentUser();
+
+  if (user.isAdmin || tab === "Private") return true;
+  if (!user || !user.permissions) return false;
+
+  return user.permissions.includes("s_password_add");
+};
+
+const checkUpdatePermission = (tab) => {
+  let user = getCurrentUser();
+  if (!user || !user.permissions) return false;
+  if (user.isAdmin || tab === "Private") return true;
+
+  return user.permissions.includes("s_password_update");
+};
+
+const checkDeletePermission = (tab) => {
+  let user = getCurrentUser();
+  if (user.isAdmin || tab === "Private") return true;
+
+  if (!user || !user.permissions) return false;
+  return user.permissions.includes("s_password_delete");
+};
+
 export default function Password() {
   // Lock system state
   const [locked, setLocked] = useState(true);
@@ -754,24 +784,28 @@ export default function Password() {
               size="sm"
             />
             {/* Edit Button */}
-            <Button
-              title="Edit"
-              variant="primary"
-              onClick={() => {
-                setCurrentRowData(row);
-                setIsUpdateMode(true);
-                setShowAddUpdateModal(true);
-              }}
-              appendClasses="flex-center "
-              beforeTitle={() => {
-                return <Pencil size={12} />;
-              }}
-              size="sm"
-            />
-            <DeleteModalButton
-              loading={loading}
-              onDeleteConfirm={() => handleDeletePassword(row.id)}
-            />
+            {checkUpdatePermission(filterByTab) && (
+              <Button
+                title="Edit"
+                variant="primary"
+                onClick={() => {
+                  setCurrentRowData(row);
+                  setIsUpdateMode(true);
+                  setShowAddUpdateModal(true);
+                }}
+                appendClasses="flex-center "
+                beforeTitle={() => {
+                  return <Pencil size={12} />;
+                }}
+                size="sm"
+              />
+            )}
+            {checkDeletePermission(filterByTab) && (
+              <DeleteModalButton
+                loading={loading}
+                onDeleteConfirm={() => handleDeletePassword(row.id)}
+              />
+            )}
           </div>
         );
       },
@@ -951,12 +985,14 @@ export default function Password() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            title="Save"
-            onClick={handleSaveNotes}
-            disabled={notesLoading}
-            variant="primary"
-          />
+          {checkUpdatePermission(filterByTab) && (
+            <Button
+              title="Save"
+              onClick={handleSaveNotes}
+              disabled={notesLoading}
+              variant="primary"
+            />
+          )}
           <Button
             title="Cancel"
             variant="secondary"
