@@ -357,6 +357,7 @@ export default function SubPermGroup({
                 name="name"
                 value={formData.name}
                 onChange={onChange}
+                autoFocus={true}
                 placeholder="Enter sub group name"
               />
               <div className="mt-4">

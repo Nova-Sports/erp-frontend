@@ -306,6 +306,7 @@ export default function MainPermGroup({
                 name="name"
                 value={formData.name}
                 onChange={onChange}
+                autoFocus={true}
                 placeholder="Enter group name"
               />
 

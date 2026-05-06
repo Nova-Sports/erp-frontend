@@ -330,6 +330,7 @@ export default function PermItems({
                 name="name"
                 value={formData.name}
                 onChange={onChange}
+                autoFocus={true}
                 placeholder="Enter permission name"
               />
               <div className="mt-4">
