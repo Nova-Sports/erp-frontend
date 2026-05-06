@@ -3,6 +3,7 @@ import FormInput from "@/components/form-input/FormInput";
 import { Modal } from "@/components/modal/Modal";
 import { useNotification } from "@/contexts/NotificationContext";
 import React, { useActionState, useEffect, useState } from "react";
+import { Dropdown } from "@/components/dropdown/Dropdown";
 // Helper to fetch decrypted password
 const fetchDecryptedPassword = async (id) => {
   try {
@@ -86,6 +87,8 @@ export default function PsAddUpdate({
   refreshFunc,
 }) {
   const { notify } = useNotification();
+  const isPrivate = filterByTab === "Private";
+
   /* ========================= All States ========================= */
 
   const [form, setForm] = useState({
@@ -95,7 +98,27 @@ export default function PsAddUpdate({
     ps_passwordValue: "",
   });
 
+  const [employees, setEmployees] = useState([]);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState([]);
+
   /*  ========================= All Functions ========================= */
+
+  const fetchEmployees = async () => {
+    try {
+      setEmployeesLoading(true);
+      const { data } = await API.get("/sales/password-employees", {
+        headers: authHeader(),
+      });
+      if (data?.success) {
+        setEmployees(data.data || []);
+      }
+    } catch (err) {
+      console.log("Fetch Employees Error:", err);
+    } finally {
+      setEmployeesLoading(false);
+    }
+  };
 
   const generateRandomPassword = () => {
     let randomPassword = generatePassword();
@@ -144,7 +167,11 @@ export default function PsAddUpdate({
     try {
       const { data } = await API.post(
         "/sales/password",
-        { ...form, ps_passwordType: getPasswordType(filterByTab) },
+        {
+          ...form,
+          ps_passwordType: getPasswordType(filterByTab),
+          ...(!isPrivate && { ps_availableTo: selectedEmployeeIds }),
+        },
         { headers: authHeader() },
       );
       return data;
@@ -157,7 +184,11 @@ export default function PsAddUpdate({
     try {
       const { data } = await API.patch(
         "/sales/password",
-        { ...form, id: currentRowData.id },
+        {
+          ...form,
+          id: currentRowData.id,
+          ...(!isPrivate && { ps_availableTo: selectedEmployeeIds }),
+        },
         { headers: authHeader() },
       );
       return data;
@@ -181,6 +212,17 @@ export default function PsAddUpdate({
           ps_username: currentRowData?.ps_username || "",
           ps_passwordValue: decrypted || "",
         });
+        // Pre-populate available-to selections
+        if (!isPrivate && currentRowData?.ps_availableTo) {
+          try {
+            const ids = Array.isArray(currentRowData.ps_availableTo)
+              ? currentRowData.ps_availableTo
+              : JSON.parse(currentRowData.ps_availableTo || "[]");
+            setSelectedEmployeeIds(ids);
+          } catch {
+            setSelectedEmployeeIds([]);
+          }
+        }
       } else {
         setForm({
           ps_title: currentRowData?.ps_title || "",
@@ -191,6 +233,7 @@ export default function PsAddUpdate({
       }
     };
     setInitialForm();
+    if (!isPrivate) fetchEmployees();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -244,6 +287,49 @@ export default function PsAddUpdate({
                 />
               </div>
             ))}
+            {/* Available To */}
+            {!isPrivate && (
+              <div className="mb-3 bg-neutral-200 p-3 rounded-md">
+                <label className="block mb-2 font-medium">Available To</label>
+                <Dropdown
+                  value={selectedEmployeeIds.map(String)}
+                  onChange={(vals) => setSelectedEmployeeIds(vals.map(Number))}
+                  mode="multi"
+                  searchable
+                  autoCloseOnChange={false}
+                  loading={employeesLoading}
+                  showSelected={false}
+                  placeholder="Search employees..."
+                >
+                  <Dropdown.Trigger appendClass="!w-full" />
+                  <Dropdown.Menu floating={true} appendClass="!w-full">
+                    {employees.map((emp) => (
+                      <Dropdown.Item key={emp.id} value={String(emp.id)}>
+                        {emp.em_firstName} {emp.em_lastName}
+                        {emp.em_email ? (
+                          <span className="text-gray-400 ml-1 text-xs">
+                            ({emp.em_email})
+                          </span>
+                        ) : null}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+                {selectedEmployeeIds.length > 0 && (
+                  <p className="text-xs text-gray-400 mt-1">
+                    Selected:{" "}
+                    {selectedEmployeeIds
+                      .map((id) => {
+                        const emp = employees.find((e) => e.id === id);
+                        return emp
+                          ? `${emp.em_firstName} ${emp.em_lastName}`
+                          : id;
+                      })
+                      .join(", ")}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
           <Modal.Footer>
             <SubmitButton isUpdateMode={isUpdateMode} />

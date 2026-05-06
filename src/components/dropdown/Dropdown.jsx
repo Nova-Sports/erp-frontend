@@ -67,6 +67,7 @@ export function Dropdown({
   children,
   value,
   onChange,
+  showSelected = true,
   mode = "single",
   searchable = false,
   onSearch,
@@ -166,6 +167,7 @@ export function Dropdown({
     placeholder,
     loading,
     async: Boolean(onSearch),
+    showSelected,
   };
 
   return (
@@ -185,14 +187,19 @@ export function Dropdown({
 ========================================= */
 
 function Trigger({ children, customClass, appendClass, renderIcon = true }) {
-  const { isOpen, toggle, mode, value, placeholder, removeItem } =
+  const { isOpen, toggle, mode, value, placeholder, removeItem, showSelected } =
     useDropdownContext();
 
   // Default display when no custom children
   const renderValue = () => {
     if (children) return children;
 
-    if (mode === "multi" && Array.isArray(value) && value.length > 0) {
+    if (
+      showSelected &&
+      mode === "multi" &&
+      Array.isArray(value) &&
+      value.length > 0
+    ) {
       return (
         <div className="flex flex-wrap gap-1">
           {value.map((v) => (
@@ -212,7 +219,7 @@ function Trigger({ children, customClass, appendClass, renderIcon = true }) {
       );
     }
 
-    if (mode === "single" && value) {
+    if (showSelected && mode === "single" && value) {
       return <span>{value}</span>;
     }
 

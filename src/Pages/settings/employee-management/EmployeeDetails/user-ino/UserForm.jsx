@@ -136,6 +136,7 @@ export default function UserForm({
   refreshFunc,
   handleBack,
   locations = [],
+  selectedPermissions = [],
 }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
@@ -205,6 +206,7 @@ export default function UserForm({
         em_allowedLocations: extractLocationIds(
           formData.em_allowedLocations || [],
         ),
+        em_permissions: selectedPermissions,
       };
       const { data } = await API.post(
         "/employee",
@@ -224,6 +226,7 @@ export default function UserForm({
         em_allowedLocations: extractLocationIds(
           formData.em_allowedLocations || [],
         ),
+        em_permissions: selectedPermissions,
       };
 
       if (!formData.em_password || formData.em_password.trim() === "") {

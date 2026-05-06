@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import UserForm from "./UserForm";
 import UserPermissions from "./UserPermissions";
 
@@ -12,6 +12,7 @@ export default function UserInfo({
   locations = [],
 }) {
   /* ========================= All States ========================= */
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
 
   /*  ========================= All Functions ========================= */
 
@@ -28,15 +29,15 @@ export default function UserInfo({
         userData={userData}
         setUserData={setUserData}
         locations={locations}
+        selectedPermissions={selectedPermissions}
       />
-
-      {/* <div className=""></div> */}
 
       {/* Permissions */}
       <UserPermissions
         isUpdateMode={isUpdateMode}
-        setIsUpdateMode={setIsUpdateMode}
-        refreshFunc={refreshFunc}
+        userData={userData}
+        selectedPermissions={selectedPermissions}
+        setSelectedPermissions={setSelectedPermissions}
       />
     </div>
   );

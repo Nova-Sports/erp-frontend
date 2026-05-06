@@ -379,12 +379,6 @@ export default function EmployeeManagement({ RenderFilterTabs }) {
     return () => clearTimeout(timeout);
   }, [limit, query, page, filterBy]);
 
-  useEffect(() => {
-    return () => {
-      updateParam("user-id", null);
-    };
-  }, []);
-
   return (
     <div className="h-full">
       {showAddUpdatePage ? (
