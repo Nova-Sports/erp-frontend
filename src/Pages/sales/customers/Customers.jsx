@@ -136,7 +136,7 @@ const ActionItems = ({
       </div>
 
       {/* Mobile */}
-      <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 mx-3 my-2">
+      <div className="lg:hidden flex flex-col bg-white rounded-xl py-3 px-3 my-2">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <div className="">
