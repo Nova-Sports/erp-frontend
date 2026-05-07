@@ -40,6 +40,7 @@ import { getDateTimeFromTimeStamp } from "@/utils/dateUtils";
 import { AnimatePresence, motion } from "framer-motion";
 import { truncateString } from "@/utils/utilityFunc";
 import { getCurrentUser } from "@/utils/auth";
+import CTextEditor from "@/components/text-editor/CTextEditor";
 
 const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
   const activeTabClass = "bg-primary text-white";
@@ -58,10 +59,10 @@ const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
             title={tab.label}
             appendClasses={`${
               index === 0
-                ? "rounded-l"
+                ? "rounded-l border-r-0"
                 : index === filterTabs.length - 1
                   ? "rounded-r"
-                  : "border-x-0"
+                  : "border-r-0"
             } ${filterByTab === tab.id ? activeTabClass : inactiveTabClass} ${commonTabClasses}`}
             onClick={tab.onClick}
           />
@@ -1005,14 +1006,18 @@ export default function Password() {
             <div className="">
               <label className="block mb-1 font-medium">Notes</label>
             </div>
-            <textarea
+            <CTextEditor
+              initialHtml={notesValue || ""}
+              onChange={(html) => setNotesValue(html)}
+            />
+            {/* <textarea
               className="w-full form-control h-full border rounded p-2"
               value={notesValue}
               type="text-area"
               onChange={(e) => setNotesValue(e.target.value)}
               placeholder="Enter notes..."
               disabled={notesLoading}
-            />
+            /> */}
           </div>
         </Modal.Body>
         <Modal.Footer>

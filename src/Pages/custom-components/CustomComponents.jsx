@@ -8,6 +8,7 @@ import { Modal } from "@/components/modal/Modal";
 import { Dropdown } from "@/components/dropdown/Dropdown";
 import Table from "@/components/table/Table";
 import Tabs from "@/components/tabs/Tabs";
+import CTextEditor from "@/components/text-editor/CTextEditor";
 
 /*=======================================
     API Search Demo
@@ -897,6 +898,23 @@ const RenderTable = () => {
   );
 };
 
+const RenderTextEditor = () => {
+  /* ========================= All States ========================= */
+
+  /*  ========================= All Functions ========================= */
+  const handleOnChange = (editorState) => {
+    console.log(editorState);
+  };
+
+  /* ========================= All UseEffects ========================= */
+
+  return (
+    <>
+      <CTextEditor onChange={handleOnChange} />
+    </>
+  );
+};
+
 export default function CustomComponents() {
   /* ******************** All States ************************* */
 
@@ -904,9 +922,14 @@ export default function CustomComponents() {
 
   const components = [
     {
+      name: "Text Editor",
+      render: <RenderTextEditor />,
+      defaultOpen: true,
+    },
+    {
       name: "Tabs",
       render: <RenderTabs />,
-      defaultOpen: true,
+      defaultOpen: false,
     },
     {
       name: "Buttons",
