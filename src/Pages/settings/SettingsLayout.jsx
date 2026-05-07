@@ -8,6 +8,7 @@ import Locations from "./locations/Locations";
 import Permissions from "./permissions/Permissions";
 import TaxRates from "./tax-rates/TaxRates";
 import SalesPersons from "./sales-person/SalesPersons";
+import DiscountLevels from "./discount-levels/DiscountLevels";
 
 let settingsNavItems = [
   {
@@ -27,6 +28,11 @@ let settingsNavItems = [
   {
     id: "tax-rates",
     label: "Tax Rates",
+  },
+
+  {
+    id: "discount-levels",
+    label: "Discount Levels",
   },
 
   {
@@ -123,6 +129,8 @@ let ContentById = () => {
       return <SettingsTemplate RenderFilterTabs={RenderFilterTabs} />;
     case "tax-rates":
       return <TaxRates RenderFilterTabs={RenderFilterTabs} />;
+    case "discount-levels":
+      return <DiscountLevels RenderFilterTabs={RenderFilterTabs} />;
     case "sales-person":
       return <SalesPersons RenderFilterTabs={RenderFilterTabs} />;
     default:
