@@ -1,5 +1,5 @@
 import Button from "@/components/buttons/Button";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserInfo from "./user-ino/UserInfo";
 import UserSmtp from "./user-smtp/UserSmtp";
 import { useSearchParams } from "react-router-dom";
@@ -37,6 +37,7 @@ export default function EmAddUpdate({
 
   const [userData, setUserData] = useState(null);
   const [locations, setLocations] = useState(null);
+  const userFormRef = useRef(null);
 
   /*  ========================= All Functions ========================= */
 
@@ -119,7 +120,17 @@ export default function EmAddUpdate({
             ))}
           </div>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          {selectedTab === 1 && (
+            <Button
+              onClick={() => userFormRef.current?.requestSubmit()}
+              size="sm"
+              isUpdateMode
+              variant="success"
+              appendClasses="!py-1"
+              title={isUpdateMode ? "Save User" : "Add User"}
+            />
+          )}
           <Button
             onClick={handleBack}
             size="sm"
@@ -144,6 +155,7 @@ export default function EmAddUpdate({
             userData={userData}
             setUserData={setUserData}
             locations={locations}
+            userFormRef={userFormRef}
           />
         )}
         {selectedTab === 2 && (
@@ -173,7 +185,14 @@ export default function EmAddUpdate({
               />
             ))}
           </div>
-          <div>
+          <div className="flex items-center gap-2">
+            {selectedTab === 1 && (
+              <Button
+                onClick={() => userFormRef.current?.requestSubmit()}
+                size="sm"
+                title={isUpdateMode ? "Save User" : "Add User"}
+              />
+            )}
             <Button
               onClick={handleBack}
               size="sm"

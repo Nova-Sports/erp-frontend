@@ -10,6 +10,7 @@ export default function UserInfo({
   userData,
   setUserData,
   locations = [],
+  userFormRef,
 }) {
   /* ========================= All States ========================= */
   const [selectedPermissions, setSelectedPermissions] = useState([]);
@@ -30,6 +31,7 @@ export default function UserInfo({
         setUserData={setUserData}
         locations={locations}
         selectedPermissions={selectedPermissions}
+        formRef={userFormRef}
       />
 
       {/* Permissions */}

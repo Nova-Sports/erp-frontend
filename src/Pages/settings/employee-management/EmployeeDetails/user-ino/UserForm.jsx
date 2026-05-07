@@ -137,6 +137,7 @@ export default function UserForm({
   handleBack,
   locations = [],
   selectedPermissions = [],
+  formRef,
 }) {
   /* ========================= All States ========================= */
   const { notify } = useNotification();
@@ -179,7 +180,7 @@ export default function UserForm({
       }
 
       if (response.success) {
-        handleBack();
+        // handleBack();
         notify(
           isUpdateMode
             ? "User updated successfully"
@@ -270,7 +271,13 @@ export default function UserForm({
   }, [userData, locations]);
 
   return (
-    <form action={formAction} noValidate className="">
+    <form
+      id="user-info-form"
+      ref={formRef}
+      action={formAction}
+      noValidate
+      className=""
+    >
       {state && state.error && (
         <p className="text-sm text-red-500 mb-3">{state.error}</p>
       )}
@@ -278,7 +285,6 @@ export default function UserForm({
         <h3 className="text-lg font-bold  uppercase tracking-wider text-gray-600   mb-2">
           {isUpdateMode ? "Update User" : "Add User"}
         </h3>
-        <SubmitButton isUpdateMode={isUpdateMode} />
       </div>
       <div className="my-3">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

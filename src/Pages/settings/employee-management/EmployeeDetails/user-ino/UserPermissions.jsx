@@ -129,7 +129,7 @@ export default function UserPermissions({
 
         {/* Main Group Tabs */}
         {mainGroups.length > 0 && (
-          <div className="flex flex-wrap gap-0 w-fit rounded-md overflow-hidden shadow-sm mb-4">
+          <div className="flex flex-wrap border gap-0 w-fit rounded-md overflow-hidden shadow-sm mb-4">
             {mainGroups.map((group) => (
               <button
                 key={group.id}

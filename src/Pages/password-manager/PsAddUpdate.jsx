@@ -295,7 +295,7 @@ export default function PsAddUpdate({
               <div className="mb-3 bg-neutral-200 p-3 rounded-md">
                 <label className="block mb-2 font-medium">Available To</label>
                 <Dropdown
-                  value={selectedEmployeeIds.map(String)}
+                  value={selectedEmployeeIds?.map(String)}
                   onChange={(vals) => setSelectedEmployeeIds(vals.map(Number))}
                   mode="multi"
                   searchable
