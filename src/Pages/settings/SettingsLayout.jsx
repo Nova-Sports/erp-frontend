@@ -9,6 +9,7 @@ import Permissions from "./permissions/Permissions";
 import TaxRates from "./tax-rates/TaxRates";
 import SalesPersons from "./sales-person/SalesPersons";
 import DiscountLevels from "./discount-levels/DiscountLevels";
+import PaymentTerms from "./payment-terms/PaymentTerms";
 
 let settingsNavItems = [
   {
@@ -33,6 +34,11 @@ let settingsNavItems = [
   {
     id: "discount-levels",
     label: "Discount Levels",
+  },
+
+  {
+    id: "payment-terms",
+    label: "Payment Terms",
   },
 
   {
@@ -131,6 +137,8 @@ let ContentById = () => {
       return <TaxRates RenderFilterTabs={RenderFilterTabs} />;
     case "discount-levels":
       return <DiscountLevels RenderFilterTabs={RenderFilterTabs} />;
+    case "payment-terms":
+      return <PaymentTerms RenderFilterTabs={RenderFilterTabs} />;
     case "sales-person":
       return <SalesPersons RenderFilterTabs={RenderFilterTabs} />;
     default:
