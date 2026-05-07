@@ -39,14 +39,6 @@ API.interceptors.response.use(
     if (error.response) {
       console.log(error.response);
 
-      if (error.response.status === 403) {
-        return Promise.reject(
-          new Error(
-            "Required Admin Role! You do not have permission to perform this action.",
-          ),
-        );
-      }
-
       if (
         error.response.status === 401 &&
         //  || error.response.status === 403
@@ -60,6 +52,21 @@ API.interceptors.response.use(
         // Optionally, redirect the user to the login page
         // window.location.href = "/app/client-login";
       }
+
+      if (error.response.status === 403) {
+        return Promise.reject(
+          new Error(
+            "Required Admin Role! You do not have permission to perform this action.",
+          ),
+        );
+      }
+
+      return Promise.reject(
+        new Error(
+          error.response.data.message ||
+            `Request failed with status code ${error.response.status}`,
+        ),
+      );
     }
 
     return Promise.reject(error);
