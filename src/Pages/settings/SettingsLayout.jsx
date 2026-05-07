@@ -7,6 +7,7 @@ import SettingsTemplate from "./settingsTemplate/SettingsTemplate";
 import Locations from "./locations/Locations";
 import Permissions from "./permissions/Permissions";
 import TaxRates from "./tax-rates/TaxRates";
+import SalesPersons from "./sales-person/SalesPersons";
 
 let settingsNavItems = [
   {
@@ -16,6 +17,11 @@ let settingsNavItems = [
   {
     id: "locations",
     label: "Locations",
+  },
+
+  {
+    id: "sales-person",
+    label: "Sales Persons",
   },
 
   {
@@ -113,11 +119,12 @@ let ContentById = () => {
 
     case "permissions":
       return <Permissions RenderFilterTabs={RenderFilterTabs} />;
-
     case "templates":
       return <SettingsTemplate RenderFilterTabs={RenderFilterTabs} />;
     case "tax-rates":
       return <TaxRates RenderFilterTabs={RenderFilterTabs} />;
+    case "sales-person":
+      return <SalesPersons RenderFilterTabs={RenderFilterTabs} />;
     default:
       return <DefaultContent message={"Select a setting to view details"} />;
   }

@@ -253,7 +253,6 @@ export default function Locations({ RenderFilterTabs }) {
     {
       id: "name",
       label: "Name",
-      sortBy: "name",
       customHClasses: "",
       customRClasses: "",
       render: (row) => <span className="text-nowrap">{row.name}</span>,
@@ -261,20 +260,17 @@ export default function Locations({ RenderFilterTabs }) {
     {
       id: "companyName",
       label: "Company Name",
-      sortBy: "companyName",
       render: (row) => <span className="text-nowrap">{row.companyName}</span>,
     },
     {
       id: "pdfLogo",
       label: "PDF Logo",
-      sortBy: "pdfLogo",
       render: (row) => <span className="text-nowrap">{row.pdfLogo}</span>,
     },
 
     {
       id: "actions",
       label: "Actions",
-      sortBy: false,
 
       render: (row) => {
         return (

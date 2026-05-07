@@ -11,7 +11,7 @@ import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
 import { ArrowDown01, ArrowUp01, Menu } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import TaxRateAddUpdate from "./tax-rate-details/TaxRateAddUpdate";
+import SalesPersonAddUpdate from "./sales-person-details/SalesPersonAddUpdate";
 
 const ActionItems = ({
   limit,
@@ -146,17 +146,17 @@ const ActionItems = ({
 
 const searchFilters = [
   { label: "All", value: null },
-  { label: "Account Number", value: "taxAccountNumber" },
-  { label: "Account Name", value: "taxAccountName" },
-  { label: "Tax Rate", value: "taxRate" },
+  { label: "Name", value: "name" },
+  { label: "Email", value: "email" },
+  { label: "Phone", value: "phone" },
 ];
 
-const getDataApi = "/tax-rates";
-const deleteDataApi = "/tax-rate";
-const sortUpApi = "/tax-rate-sort-up";
-const sortDownApi = "/tax-rate-sort-down";
+const getDataApi = "/sales-persons";
+const deleteDataApi = "/sales-person";
+const sortUpApi = "/sales-person-sort-up";
+const sortDownApi = "/sales-person-sort-down";
 
-export default function TaxRates({ RenderFilterTabs }) {
+export default function SalesPersons({ RenderFilterTabs }) {
   const { notify } = useNotification();
   const updateParam = useUpdateParams();
 
@@ -174,23 +174,24 @@ export default function TaxRates({ RenderFilterTabs }) {
 
   const tableHeaders = [
     {
-      id: "taxAccountNumber",
-      label: "Account Number",
-      render: (row) => (
-        <span className="text-nowrap">{row.taxAccountNumber}</span>
-      ),
+      id: "name",
+      label: "Name",
+      render: (row) => <span className="text-nowrap">{row.name || "-"}</span>,
     },
     {
-      id: "taxAccountName",
-      label: "Account Name",
-      render: (row) => (
-        <span className="text-nowrap">{row.taxAccountName}</span>
-      ),
+      id: "email",
+      label: "Email",
+      render: (row) => <span className="text-nowrap">{row.email || "-"}</span>,
     },
     {
-      id: "taxRate",
-      label: "Tax Rate (%)",
-      render: (row) => <span className="text-nowrap">{row.taxRate}</span>,
+      id: "phone",
+      label: "Phone",
+      render: (row) => <span className="text-nowrap">{row.phone || "-"}</span>,
+    },
+    {
+      id: "sortId",
+      label: "Sort",
+      render: (row) => <span className="text-nowrap">{row.sortId ?? "-"}</span>,
     },
     {
       id: "actions",
@@ -216,7 +217,7 @@ export default function TaxRates({ RenderFilterTabs }) {
             variant="primary"
             size="sm"
             onClick={() => {
-              updateParam("tax-rate-id", row.id);
+              updateParam("sales-person-id", row.id);
               setShowAddUpdateModal(true);
             }}
           />
@@ -238,10 +239,10 @@ export default function TaxRates({ RenderFilterTabs }) {
   };
 
   const handleSortBy = (sortColumn, sortDirection) => {
-    getTaxRates(sortColumn, sortDirection);
+    getSalesPersons(sortColumn, sortDirection);
   };
 
-  const getTaxRates = useCallback(
+  const getSalesPersons = useCallback(
     async (sortBy = null, sortDirection = null) => {
       try {
         setLoading(true);
@@ -255,7 +256,11 @@ export default function TaxRates({ RenderFilterTabs }) {
           setTotalPages(data.totalPages);
           setTotalResults(data.total);
         } else {
-          notify(data.message || "Failed to fetch tax rates", "error", 3000);
+          notify(
+            data.message || "Failed to fetch sales persons",
+            "error",
+            3000,
+          );
         }
       } catch (err) {
         notify(err.message, "error", 5000);
@@ -272,10 +277,10 @@ export default function TaxRates({ RenderFilterTabs }) {
         headers: authHeader(),
       });
       if (data?.success) {
-        notify("Tax rate deleted successfully", "success", 3000);
-        getTaxRates();
+        notify("Sales person deleted successfully", "success", 3000);
+        getSalesPersons();
       } else {
-        notify(data.message || "Failed to delete tax rate", "error", 3000);
+        notify(data.message || "Failed to delete sales person", "error", 3000);
       }
     } catch (err) {
       notify(err.message, "error", 5000);
@@ -292,7 +297,7 @@ export default function TaxRates({ RenderFilterTabs }) {
       );
       if (data?.success) {
         notify(data.message || "Sorted up successfully", "success", 3000);
-        getTaxRates();
+        getSalesPersons();
       } else {
         notify(data.message || "Failed to sort up", "error", 3000);
       }
@@ -313,7 +318,7 @@ export default function TaxRates({ RenderFilterTabs }) {
       );
       if (data?.success) {
         notify(data.message || "Sorted down successfully", "success", 3000);
-        getTaxRates();
+        getSalesPersons();
       } else {
         notify(data.message || "Failed to sort down", "error", 3000);
       }
@@ -328,7 +333,7 @@ export default function TaxRates({ RenderFilterTabs }) {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      getTaxRates();
+      getSalesPersons();
     }, 50);
     return () => clearTimeout(timeout);
   }, [limit, query, page, filterBy]);
@@ -368,13 +373,13 @@ export default function TaxRates({ RenderFilterTabs }) {
         </div>
       </div>
 
-      <TaxRateAddUpdate
+      <SalesPersonAddUpdate
         open={showAddUpdateModal}
         onHide={() => {
           setShowAddUpdateModal(false);
-          updateParam("tax-rate-id", null);
+          updateParam("sales-person-id", null);
         }}
-        refreshFunc={getTaxRates}
+        refreshFunc={getSalesPersons}
       />
     </div>
   );
