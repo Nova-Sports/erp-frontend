@@ -390,13 +390,13 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
       );
       if (data?.success) {
         notify(
-          data.message || "Location moved up successfully",
+          data.message || "Template moved up successfully",
           "success",
           3000,
         );
-        getLocations();
+        getTemplates();
       } else {
-        notify(data.message || "Failed to move location up", "error", 3000);
+        notify(data.message || "Failed to move template up", "error", 3000);
       }
     } catch (err) {
       console.log(err.message);
@@ -416,13 +416,13 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
       );
       if (data?.success) {
         notify(
-          data.message || "Location moved down successfully",
+          data.message || "Template moved down successfully",
           "success",
           3000,
         );
-        getLocations();
+        getTemplates();
       } else {
-        notify(data.message || "Failed to move location down", "error", 3000);
+        notify(data.message || "Failed to move template down", "error", 3000);
       }
     } catch (err) {
       console.log(err.message);
@@ -442,7 +442,7 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
   }, [limit, query, page, filterBy]);
 
   return (
-    <div className="h-full">
+    <div className="flex flex-col h-full overflow-y-auto overflow-auto">
       {showAddUpdatePage ? (
         <AnimatePresence mode="wait">
           <motion.div
@@ -451,7 +451,7 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.13 }}
-            className="h-full"
+            className="flex-1 min-h-0 overflow-y-auto"
           >
             <TemplateAddUpdate
               setShowAddUpdatePage={setShowAddUpdatePage}
@@ -459,6 +459,7 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
               getDataByIdApi={getDataByIdApi}
               addDataApi={addDataApi}
               updateDataApi={updateDataApi}
+              RenderFilterTabs={RenderFilterTabs}
             />
           </motion.div>
         </AnimatePresence>
@@ -498,8 +499,9 @@ export default function SettingsTemplate({ RenderFilterTabs }) {
                 <Pagination
                   page={page}
                   setPage={setPage}
-                  totalPages={totalPages}
+                  totalPages={totalPages || 1}
                   totalResults={totalResults}
+                  updateParams={false}
                 />
               </div>
               <div className="lg:hidden flex items-end grow h-full flex-col">
