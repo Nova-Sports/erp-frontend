@@ -13,6 +13,7 @@ import CustomComponents from "./Pages/custom-components/CustomComponents";
 import { SidebarProvider } from "./components/dashboard/sidebar/SidebarContext";
 import TestComponent from "./components/test/TestComponent";
 import SettingsLayout from "./Pages/settings/SettingsLayout";
+import Customers from "./Pages/sales/customers/Customers";
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
@@ -56,6 +57,7 @@ function AppRoutes() {
         <Route path="password" element={<Password />} />
 
         {/* =========== Sales Routes =============== */}
+        <Route path="sales/customers" element={<Customers />} />
         {/* =========== Manufacturing Routes =============== */}
         {/* =========== Miscellaneous Routes =============== */}
         <Route path="settings" element={<SettingsLayout />} />
