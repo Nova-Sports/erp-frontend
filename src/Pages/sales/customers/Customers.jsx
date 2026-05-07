@@ -86,29 +86,59 @@ const ActionItems = ({
     </Dropdown>
   );
 
-  const RenderFilterByLocation = () => (
-    <Dropdown
-      value={selectedLocation}
-      onChange={(value) => {
-        const loc = locationsList.find((l) => l.id === value) || null;
-        setSelectedLocation(loc);
-      }}
-    >
-      <Dropdown.Trigger appendClass="!border-primary !border-1 !bg-primary/10">
-        <span className="text-nowrap">
-          {selectedLocation?.name || "All Locations"}
-        </span>
-      </Dropdown.Trigger>
-      <Dropdown.Menu appendClass="w-full">
-        <Dropdown.Item value={null}>All Locations</Dropdown.Item>
-        {locationsList.map((location) => (
-          <Dropdown.Item key={location.id} value={location.id}>
-            {location.name}
+  //   const RenderFilterByLocation = () => (
+  //     <Dropdown
+  //       value={selectedLocation}
+  //       onChange={(value) => {
+  //         const loc = locationsList.find((l) => l.id === value) || null;
+  //         setSelectedLocation(loc);
+  //       }}
+  //     >
+  //       <Dropdown.Trigger appendClass="!border-primary !border-1 !bg-primary/10">
+  //         <span className="text-nowrap">
+  //           {selectedLocation?.name || "All Locations"}
+  //         </span>
+  //       </Dropdown.Trigger>
+  //       <Dropdown.Menu appendClass="w-full">
+  //         <Dropdown.Item value={null}>All Locations</Dropdown.Item>
+  //         {locationsList.map((location) => (
+  //           <Dropdown.Item key={location.id} value={location.id}>
+  //             {location.name}
+  //           </Dropdown.Item>
+  //         ))}
+  //       </Dropdown.Menu>
+  //     </Dropdown>
+  //   );
+
+  const RenderFilterByLocation = () => {
+    return (
+      <Dropdown
+        value={selectedLocation}
+        onChange={(value) => setSelectedLocation(value)}
+      >
+        <Dropdown.Trigger
+          appendClass={"!border-primary !border-1 !bg-primary/10"}
+          // renderIcon={false}
+        >
+          Filter By : {selectedLocation?.locationName || "All Locations"}
+        </Dropdown.Trigger>
+        <Dropdown.Menu>
+          <Dropdown.Item value={{ id: 9999999, locationName: "no-location" }}>
+            Without Location
           </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    </Dropdown>
-  );
+          {locationsList.map((location) => (
+            <Dropdown.Item
+              key={location.id}
+              value={location.id}
+              onClick={() => setSelectedLocation(location)}
+            >
+              {location.locationName}
+            </Dropdown.Item>
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  };
 
   const RenderSearch = () => (
     <div className="flex items-center gap-2">
@@ -172,7 +202,7 @@ const ActionItems = ({
             <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 shadow-sm">
               <span className="font-medium text-gray-700 flex items-center gap-2">
                 <ListOrdered size={18} className="inline-block" />
-                Show
+                Show Per Page
               </span>
               <RenderLimit direction="right" />
             </div>

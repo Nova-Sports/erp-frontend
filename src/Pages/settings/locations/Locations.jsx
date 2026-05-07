@@ -197,7 +197,7 @@ const ActionItems = ({
             <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 shadow-sm">
               <span className="font-medium text-gray-700 flex items-center gap-2">
                 <ListOrdered size={18} className="inline-block" />
-                Show
+                Show Per Page
               </span>
               <RenderLimit direction="right" />
             </div>
