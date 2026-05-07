@@ -427,7 +427,7 @@ export default function Customers() {
         loading={loading}
       />
 
-      <div className="bg-white grow w-full shadow-md rounded-xl px-4 py-2 my-2">
+      <div className="bg-white w-full shadow-md rounded-xl px-4 py-2 my-2">
         <Pagination
           page={page}
           setPage={setPage}

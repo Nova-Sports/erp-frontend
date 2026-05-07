@@ -9,7 +9,7 @@ import { useNotification } from "@/contexts/NotificationContext";
 import { useUpdateParams } from "@/custom-hooks/useUpdateParams";
 import authHeader from "@/services/auth-header";
 import API from "@/services/axios";
-import { ArrowDown01, ArrowUp01, Menu } from "lucide-react";
+import { ArrowDown01, ArrowUp01, ListOrdered, Menu, Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import DiscountLevelAddUpdate from "./discount-level-details/DiscountLevelAddUpdate";
 
@@ -33,14 +33,14 @@ const ActionItems = ({
     [filterBy],
   );
 
-  const RenderLimit = () => (
+  const RenderLimit = ({ direction = "left" }) => (
     <div className="flex items-center gap-2">
       <span className="lg:inline">Show</span>
       <Dropdown value={limit} onChange={(v) => handleLimitChange(v)}>
         <Dropdown.Trigger appendClass="w-16 !py-1 !border-primary !bg-primary-light">
           {limit}
         </Dropdown.Trigger>
-        <Dropdown.Menu appendClass="min-w-20" direction="left">
+        <Dropdown.Menu appendClass="min-w-20" direction={direction}>
           {[5, 10, 20, 50].map((option) => (
             <Dropdown.Item key={option} value={option}>
               {option}
@@ -119,15 +119,30 @@ const ActionItems = ({
         onHide={() => setShowMobileActionMenu(false)}
         position="bottom"
         size="full"
-        appendClass="max-h-[50dvh]"
+        appendClass="max-h-[55svh] bg-gradient-to-t from-primary/10 via-white to-white rounded-t-2xl shadow-2xl border-t-2 border-primary"
       >
-        <Modal.Header>Actions</Modal.Header>
+        <Modal.Header>
+          <div className="flex items-center gap-2 text-primary font-bold text-lg">
+            <Menu size={22} className="inline-block" />
+            Quick Actions
+          </div>
+        </Modal.Header>
         <Modal.Body>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <RenderLimit />
+          <div className="flex flex-col gap-5 px-1 py-2">
+            <div className="flex items-center justify-between bg-primary/5 rounded-lg px-3 py-2 shadow-sm">
+              <span className="font-medium text-gray-700 flex items-center gap-2">
+                <ListOrdered size={18} className="inline-block" />
+                Show
+              </span>
+              <RenderLimit direction="right" />
             </div>
-            <RenderAfterSearchButtons />
+            <div className="flex flex-col gap-2 bg-primary/5 rounded-lg px-3 py-3 shadow-sm">
+              <span className="font-medium text-gray-700 flex items-center gap-2 mb-1">
+                <Plus size={18} className="inline-block" />
+                Add New
+              </span>
+              <RenderAfterSearchButtons />
+            </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -135,6 +150,7 @@ const ActionItems = ({
             title="Close"
             variant="secondary"
             onClick={() => setShowMobileActionMenu(false)}
+            appendClasses="w-full py-2 text-lg font-semibold rounded-lg"
           />
         </Modal.Footer>
       </Modal>
