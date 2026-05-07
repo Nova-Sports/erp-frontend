@@ -41,6 +41,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { truncateString } from "@/utils/utilityFunc";
 import { getCurrentUser } from "@/utils/auth";
 import CTextEditor from "@/components/text-editor/CTextEditor";
+import FormLabel from "@/components/form-label/FormLabel";
 
 const RenderFilterTabs = ({ filterTabs, filterByTab, setFilterByTab }) => {
   const activeTabClass = "bg-primary text-white";
@@ -529,7 +530,7 @@ let user = getCurrentUser();
 
 const checkShowPermission = (tab) => {
   let user = getCurrentUser();
-  if (!user || !user.permissions) return false;
+  if (!user) return false;
   if (user.isAdmin || tab === "Private") return true;
 
   if (tab === "Company") {
@@ -543,7 +544,8 @@ const checkShowPermission = (tab) => {
 
 const checkAddPermission = (tab) => {
   let user = getCurrentUser();
-  if (!user || !user.permissions) return false;
+
+  if (!user) return false;
   if (user.isAdmin || tab === "Private") return true;
 
   if (tab === "Company") {
@@ -557,7 +559,7 @@ const checkAddPermission = (tab) => {
 
 const checkUpdatePermission = (tab) => {
   let user = getCurrentUser();
-  if (!user || !user.permissions) return false;
+  if (!user) return false;
   if (user.isAdmin || tab === "Private") return true;
 
   if (tab === "Company") {
@@ -571,7 +573,7 @@ const checkUpdatePermission = (tab) => {
 
 const checkDeletePermission = (tab) => {
   let user = getCurrentUser();
-  if (!user || !user.permissions) return false;
+  if (!user) return false;
   if (user.isAdmin || tab === "Private") return true;
 
   if (tab === "Company") {
@@ -588,7 +590,7 @@ export default function Password() {
   const [locked, setLocked] = useState(true);
   const inactivityTimer = useRef(null);
 
-  // Reset inactivity timer and relock after 5 seconds
+  // Reset inactivity timer and re-lock after 5 seconds
   const resetInactivityTimer = useCallback(() => {
     if (inactivityTimer.current) clearTimeout(inactivityTimer.current);
     inactivityTimer.current = setTimeout(() => {
@@ -1002,22 +1004,17 @@ export default function Password() {
       >
         <Modal.Header>Notes</Modal.Header>
         <Modal.Body>
-          <div className="flex flex-col h-full mb-3 bg-neutral-200 px-4 py-2 pb-4 rounded-md flex-1">
-            <div className="">
+          <div className="flex flex-col overflow-hidden mb-3 bg-neutral-200 px-4 py-2 pb-4 rounded-md flex-1">
+            {/* <div className="">
               <label className="block mb-1 font-medium">Notes</label>
-            </div>
+            </div> */}
+            <FormLabel>Notes</FormLabel>
             <CTextEditor
+              customClasses={"h-[63svh] overflow-y-auto"}
               initialHtml={notesValue || ""}
+              // minHeight={"100%"}
               onChange={(html) => setNotesValue(html)}
             />
-            {/* <textarea
-              className="w-full form-control h-full border rounded p-2"
-              value={notesValue}
-              type="text-area"
-              onChange={(e) => setNotesValue(e.target.value)}
-              placeholder="Enter notes..."
-              disabled={notesLoading}
-            /> */}
           </div>
         </Modal.Body>
         <Modal.Footer>

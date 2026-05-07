@@ -409,6 +409,7 @@ export default function CTextEditor({
   initialHtml,
   onChange,
   editorRef,
+  customClasses = "",
   minHeight = 200,
 }) {
   /* ========================= All States ========================= */
@@ -429,13 +430,16 @@ export default function CTextEditor({
 
   return (
     <LexicalComposer initialConfig={makeLexicalConfig(initialHtml)}>
-      <div className="border border-gray-300 rounded-lg overflow-hidden">
+      <div className="border flex-1 flex flex-col border-gray-300 rounded-lg overflow-hidden">
         <ToolbarPlugin />
-        <div className="relative bg-white" style={{ minHeight }}>
+        <div
+          className={`relative bg-white ${customClasses}`}
+          // style={{ minHeight }}
+        >
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className="outline-none px-3 py-2 text-sm"
+                className={`outline-none px-3 py-2 text-sm `}
                 style={{ minHeight }}
               />
             }
